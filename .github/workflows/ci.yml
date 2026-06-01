@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # Pure-JVM core: compiles + unit tests (Ktor MockEngine), no Android SDK needed.
+      - name: Test arcane-core
+        run: ./gradlew :arcane-core:test --stacktrace
+
+      # Android library: assembles the AAR (ubuntu-latest ships the Android SDK).
+      - name: Assemble arcane-android
+        run: ./gradlew :arcane-android:assembleRelease --stacktrace
