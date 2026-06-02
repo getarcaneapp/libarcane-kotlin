@@ -33,6 +33,7 @@ import app.getarcane.sdk.services.VulnerabilitiesService
 import app.getarcane.sdk.services.WebhooksService
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
@@ -70,6 +71,7 @@ public class ArcaneClient private constructor(
         logLevel = configuration.logLevel,
         requestTimeoutMillis = configuration.requestTimeoutMillis,
         connectTimeoutMillis = configuration.connectTimeoutMillis,
+        defaultHeaders = configuration.defaultHeaders,
     )
 
     public val authManager: AuthManager = sharedAuthManager ?: AuthManager(
@@ -140,11 +142,19 @@ internal fun buildHttpClient(
     logLevel: LogLevel,
     requestTimeoutMillis: Long,
     connectTimeoutMillis: Long,
+    defaultHeaders: Map<String, String> = emptyMap(),
 ): HttpClient = HttpClient(engine) {
     // We map non-2xx to ArcaneError ourselves; don't let Ktor throw on them.
     expectSuccess = false
 
     install(ContentNegotiation) { json(json) }
+
+    // Headers applied to every request (e.g. the hosted-demo session-id cookie).
+    if (defaultHeaders.isNotEmpty()) {
+        install(DefaultRequest) {
+            defaultHeaders.forEach { (key, value) -> headers.append(key, value) }
+        }
+    }
 
     install(HttpTimeout) {
         this.requestTimeoutMillis = requestTimeoutMillis

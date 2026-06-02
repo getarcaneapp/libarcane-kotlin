@@ -2,6 +2,7 @@ package app.getarcane.sdk.services
 
 import app.getarcane.sdk.EnvironmentId
 import app.getarcane.sdk.http.RestService
+import app.getarcane.sdk.http.requestDecoded
 import app.getarcane.sdk.models.base.SearchPaginationSort
 import app.getarcane.sdk.models.container.ContainerCreate
 import app.getarcane.sdk.models.container.ContainerCreated
@@ -36,7 +37,10 @@ public class ContainersService internal constructor(private val rest: RestServic
             updates?.let { add("updates" to it) }
             standalone?.let { add("standalone" to it) }
         }
-        return rest.get(rest.environmentPath(envId, "containers"), items)
+        // The list endpoint returns the ContainerListResponse envelope directly
+        // ({success, data:[...], counts, pagination}) — NOT wrapped in an outer ApiResponse —
+        // so decode it as-is rather than unwrapping ApiResponse<T>.data.
+        return rest.transport.requestDecoded(rest.environmentPath(envId, "containers"), query = items)
     }
 
     public suspend fun statusCounts(

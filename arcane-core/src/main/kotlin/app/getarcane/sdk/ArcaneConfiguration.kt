@@ -24,4 +24,11 @@ public data class ArcaneConfiguration(
     public val requestTimeoutMillis: Long = 30_000,
     public val connectTimeoutMillis: Long = 15_000,
     public val json: Json = ArcaneJson.default,
+    /**
+     * Extra headers applied to every request from this client (REST, streaming, and WebSocket).
+     * The Swift SDK inherits `URLSession`'s shared `HTTPCookieStorage`; on Kotlin/Ktor there is no
+     * implicit cookie jar, so this is the hook for e.g. the hosted-demo `session-id` cookie that
+     * routes requests to a provisioned instance.
+     */
+    public val defaultHeaders: Map<String, String> = emptyMap(),
 )

@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.1.0"
+kotlin = "2.2.10"
 ktor = "3.0.3"
 coroutines = "1.9.0"
 serialization = "1.7.3"
@@ -7,7 +7,7 @@ datetime = "0.6.1"
 junit5 = "5.11.4"
 junitPlatform = "1.11.4"
 # --- Android (used in Phase H) ---
-agp = "8.7.3"
+agp = "9.1.1"
 androidxSecurity = "1.1.0-alpha06"
 androidxBrowser = "1.8.0"
 androidxDatastore = "1.1.1"
@@ -44,5 +44,4 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
