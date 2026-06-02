@@ -19,7 +19,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/** Port of Tests/ArcaneTests/RoleModelsTests.swift. */
+/** Decoding/encoding of the role and permission models. */
 class RoleModelsTest {
     private val json = ArcaneJson.default
 

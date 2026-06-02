@@ -20,7 +20,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 private data class AutoUpdateBody(val enabled: Boolean)
 
-/** Container lifecycle, logs, stats, and exec. Port of Swift `ContainersService`. */
+/** Container lifecycle, logs, stats, and exec. */
 public class ContainersService internal constructor(private val rest: RestService) {
     public suspend fun list(
         envId: EnvironmentId? = null,

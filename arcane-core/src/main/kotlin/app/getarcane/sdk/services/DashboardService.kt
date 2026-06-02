@@ -6,7 +6,7 @@ import app.getarcane.sdk.models.dashboard.ActionItems
 import app.getarcane.sdk.models.dashboard.DashboardEnvironmentsOverview
 import app.getarcane.sdk.models.dashboard.DashboardSnapshot
 
-/** Dashboard endpoints. Port of Swift `DashboardService`. */
+/** Dashboard endpoints. */
 public class DashboardService internal constructor(private val rest: RestService) {
     /** Returns the per-environment dashboard first-paint snapshot. */
     public suspend fun snapshot(envId: EnvironmentId? = null, debugAllGood: Boolean = false): DashboardSnapshot =

@@ -16,7 +16,7 @@ import app.getarcane.sdk.pagination.PaginatedResponse
 
 /**
  * Exposes the Docker network endpoints registered under `/environments/{id}/networks`, including
- * topology and prune. Port of Swift `NetworksService`.
+ * topology and prune.
  */
 public class NetworksService internal constructor(private val rest: RestService) {
     /** Paginated list of networks. */

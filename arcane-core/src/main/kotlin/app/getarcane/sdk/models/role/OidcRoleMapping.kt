@@ -5,7 +5,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Mirrors Swift `OidcRoleMappingSource`. */
+/** Origin of an OIDC role mapping: created manually or derived from environment configuration. */
 @Serializable
 public enum class OidcRoleMappingSource(public val wire: String) {
     @SerialName("manual")
@@ -15,7 +15,7 @@ public enum class OidcRoleMappingSource(public val wire: String) {
     ENV("env"),
 }
 
-/** Maps an OIDC claim value to a role. Mirrors Swift `OidcRoleMapping`. */
+/** Maps an OIDC claim value to a role. */
 @Serializable
 public data class OidcRoleMapping(
     public val id: String,
@@ -32,7 +32,7 @@ public data class OidcRoleMapping(
         get() = OidcRoleMappingSource.entries.firstOrNull { it.wire == source }
 }
 
-/** Mirrors Swift `CreateOidcRoleMapping`. */
+/** Request body to create an OIDC role mapping. */
 @Serializable
 public data class CreateOidcRoleMapping(
     public val claimValue: String,
@@ -40,7 +40,7 @@ public data class CreateOidcRoleMapping(
     public val environmentId: String? = null,
 )
 
-/** Mirrors Swift `UpdateOidcRoleMapping`. */
+/** Request body to update an existing OIDC role mapping. */
 @Serializable
 public data class UpdateOidcRoleMapping(
     public val claimValue: String,

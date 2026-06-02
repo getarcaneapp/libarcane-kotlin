@@ -13,7 +13,7 @@ import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 
-/** Compact history sample for container CPU and memory usage. Mirrors Swift `ContainerStatsHistorySample`. */
+/** Compact history sample for container CPU and memory usage. */
 @Serializable
 public data class ContainerStatsHistorySample(
     public val cpuTenths: Int = 0,
@@ -24,8 +24,7 @@ public data class ContainerStatsHistorySample(
 /**
  * Container stats websocket payload. Mirrors Docker's StatsResponse (embedded) plus Arcane-added
  * history. The Docker portion is exposed as raw JSON so we stay forward-compatible with the upstream
- * schema. Mirrors Swift `ContainerStatsPayload`, including its custom `init(from:)`/`encode(to:)`
- * which capture unknown keys into [raw]; see [ContainerStatsPayloadSerializer].
+ * schema. The custom serializer captures unknown keys into [raw]; see [ContainerStatsPayloadSerializer].
  */
 @Serializable(with = ContainerStatsPayloadSerializer::class)
 public data class ContainerStatsPayload(
@@ -36,10 +35,9 @@ public data class ContainerStatsPayload(
 )
 
 /**
- * Custom serializer reproducing Swift `ContainerStatsPayload.init(from:)`/`encode(to:)`: the payload
- * is a single JSON object; `statsHistory` and `currentHistorySample` are pulled out and decoded, and
- * every other key is captured into [ContainerStatsPayload.raw]. Encoding merges [raw] back with the
- * two known keys.
+ * Custom serializer for [ContainerStatsPayload]: the payload is a single JSON object; `statsHistory`
+ * and `currentHistorySample` are pulled out and decoded, and every other key is captured into
+ * [ContainerStatsPayload.raw]. Encoding merges [raw] back with the two known keys.
  */
 public object ContainerStatsPayloadSerializer : KSerializer<ContainerStatsPayload> {
     private val knownKeys = setOf("statsHistory", "currentHistorySample")

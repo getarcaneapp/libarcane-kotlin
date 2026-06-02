@@ -3,7 +3,7 @@ package app.getarcane.sdk.models.volume
 import app.getarcane.sdk.models.base.PaginationResponse
 import kotlinx.serialization.Serializable
 
-/** A single volume backup record. Mirrors Swift `BackupEntry`. */
+/** A single volume backup record. */
 @Serializable
 public data class BackupEntry(
     public val id: String,
@@ -12,7 +12,7 @@ public data class BackupEntry(
     public val createdAt: String,
 )
 
-/** The page envelope returned by `GET volumes/{name}/backups`. Mirrors Swift `VolumeBackupListPage`. */
+/** The page envelope returned by `GET volumes/{name}/backups`. */
 @Serializable
 public data class VolumeBackupListPage(
     public val success: Boolean,
@@ -21,13 +21,13 @@ public data class VolumeBackupListPage(
     public val warnings: List<String>? = null,
 )
 
-/** The response for the `has-path` lookup. Mirrors Swift `BackupHasPath`. */
+/** The response for the `has-path` lookup. */
 @Serializable
 public data class BackupHasPath(
     public val exists: Boolean,
 )
 
-/** Body for the partial restore endpoint. Mirrors Swift `RestoreBackupFilesRequest`. */
+/** Body for the partial restore endpoint. */
 @Serializable
 public data class RestoreBackupFilesRequest(
     public val paths: List<String>,

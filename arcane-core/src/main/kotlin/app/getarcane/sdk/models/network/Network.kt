@@ -6,7 +6,7 @@ import app.getarcane.sdk.serialization.ArcaneInstantSerializer
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
-/** List/summary representation of a Docker network. Mirrors Swift `NetworkSummary`. */
+/** List/summary representation of a Docker network. */
 @Serializable
 public data class NetworkSummary(
     public val id: String,
@@ -21,7 +21,7 @@ public data class NetworkSummary(
     public val isDefault: Boolean = false,
 )
 
-/** Counts of networks by usage status. Mirrors Swift `NetworkUsageCounts`. */
+/** Counts of networks by usage status. */
 @Serializable
 public data class NetworkUsageCounts(
     public val inuse: Int = 0,
@@ -29,7 +29,7 @@ public data class NetworkUsageCounts(
     public val total: Int = 0,
 )
 
-/** A single subnet's IPAM configuration. Mirrors Swift `IPAMConfig`. */
+/** A single subnet's IPAM configuration. */
 @Serializable
 public data class IPAMConfig(
     public val subnet: String? = null,
@@ -38,7 +38,7 @@ public data class IPAMConfig(
     public val auxAddress: Map<String, String>? = null,
 )
 
-/** The IP Address Management configuration block. Mirrors Swift `IPAM`. */
+/** The IP Address Management configuration block. */
 @Serializable
 public data class IPAM(
     public val driver: String? = null,
@@ -46,7 +46,7 @@ public data class IPAM(
     public val config: List<IPAMConfig>? = null,
 )
 
-/** One container attached to a network. Mirrors Swift `NetworkContainerEndpoint`. */
+/** One container attached to a network. */
 @Serializable
 public data class NetworkContainerEndpoint(
     public val id: String,
@@ -57,7 +57,7 @@ public data class NetworkContainerEndpoint(
     public val macAddress: String = "",
 )
 
-/** The detailed inspect view of a Docker network. Mirrors Swift `NetworkInspect`. */
+/** The detailed inspect view of a Docker network. */
 @Serializable
 public data class NetworkInspect(
     public val id: String,
@@ -82,7 +82,7 @@ public data class NetworkInspect(
     public val containersList: List<NetworkContainerEndpoint> = emptyList(),
 )
 
-/** Configures a network create request. Mirrors Swift `NetworkCreateOptions`. */
+/** Configures a network create request. */
 @Serializable
 public data class NetworkCreateOptions(
     public val driver: String? = null,
@@ -96,28 +96,28 @@ public data class NetworkCreateOptions(
     public val labels: Map<String, String>? = null,
 )
 
-/** Body for `POST environments/{id}/networks`. Mirrors Swift `NetworkCreateRequest`. */
+/** Body for `POST environments/{id}/networks`. */
 @Serializable
 public data class NetworkCreateRequest(
     public val name: String,
     public val options: NetworkCreateOptions = NetworkCreateOptions(),
 )
 
-/** Response of a network create request. Mirrors Swift `NetworkCreateResponse`. */
+/** Response of a network create request. */
 @Serializable
 public data class NetworkCreateResponse(
     public val id: String,
     public val warning: String? = null,
 )
 
-/** Result of a network prune operation. Mirrors Swift `NetworkPruneReport`. */
+/** Result of a network prune operation. */
 @Serializable
 public data class NetworkPruneReport(
     public val networksDeleted: List<String> = emptyList(),
     public val spaceReclaimed: ULong = 0u,
 )
 
-/** The page envelope returned by `GET /environments/{id}/networks`. Mirrors Swift `NetworkListPage`. */
+/** The page envelope returned by `GET /environments/{id}/networks`. */
 @Serializable
 public data class NetworkListPage(
     public val success: Boolean,

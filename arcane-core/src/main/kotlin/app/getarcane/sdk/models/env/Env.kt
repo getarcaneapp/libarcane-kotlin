@@ -2,7 +2,7 @@ package app.getarcane.sdk.models.env
 
 import kotlinx.serialization.Serializable
 
-/** A generic `KEY=value` template variable. Mirrors Swift `EnvVariable` (Models/Env/Env.swift). */
+/** A generic `KEY=value` template variable. */
 @Serializable
 public data class EnvVariable(
     public val key: String,
@@ -10,8 +10,7 @@ public data class EnvVariable(
 )
 
 /**
- * Wraps a collection of variables for endpoints that accept a `variables` array. Mirrors Swift
- * `EnvVariables`.
+ * Wraps a collection of variables for endpoints that accept a `variables` array.
  */
 @Serializable
 public data class EnvVariables(

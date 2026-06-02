@@ -2,7 +2,7 @@ package app.getarcane.sdk.models.container
 
 import kotlinx.serialization.Serializable
 
-/** A single probe result from the healthcheck log. Mirrors Swift `ContainerHealthLogEntry`. */
+/** A single probe result from the healthcheck log. */
 @Serializable
 public data class ContainerHealthLogEntry(
     public val start: String? = null,
@@ -11,7 +11,7 @@ public data class ContainerHealthLogEntry(
     public val output: String? = null,
 )
 
-/** Current healthcheck state of a container. Mirrors Swift `ContainerHealth`. */
+/** Current healthcheck state of a container. */
 @Serializable
 public data class ContainerHealth(
     public val status: String,
@@ -19,7 +19,7 @@ public data class ContainerHealth(
     public val log: List<ContainerHealthLogEntry>? = null,
 )
 
-/** Container healthcheck configuration. Duration values are expressed in nanoseconds. Mirrors Swift `ContainerHealthcheck`. */
+/** Container healthcheck configuration. Duration values are expressed in nanoseconds. */
 @Serializable
 public data class ContainerHealthcheck(
     public val test: List<String>? = null,
@@ -30,7 +30,7 @@ public data class ContainerHealthcheck(
     public val retries: Int? = null,
 )
 
-/** State of a container. Mirrors Swift `ContainerState`. */
+/** State of a container. */
 @Serializable
 public data class ContainerState(
     public val status: String,
@@ -41,7 +41,7 @@ public data class ContainerState(
     public val health: ContainerHealth? = null,
 )
 
-/** Configuration details for a container. Mirrors Swift `ContainerConfig`. */
+/** Configuration details for a container. */
 @Serializable
 public data class ContainerConfig(
     public val env: List<String>? = null,
@@ -52,7 +52,7 @@ public data class ContainerConfig(
     public val healthcheck: ContainerHealthcheck? = null,
 )
 
-/** Docker Compose project information extracted from container labels. Mirrors Swift `ContainerComposeInfo`. */
+/** Docker Compose project information extracted from container labels. */
 @Serializable
 public data class ContainerComposeInfo(
     public val projectName: String,

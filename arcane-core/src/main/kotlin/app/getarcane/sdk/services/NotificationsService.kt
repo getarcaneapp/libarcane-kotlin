@@ -11,8 +11,7 @@ import app.getarcane.sdk.models.notification.UpdateAppriseSettings
 import app.getarcane.sdk.models.notification.UpdateNotificationSettings
 
 /**
- * Manages notification provider settings, Apprise integration, and dispatch. Port of Swift
- * `NotificationsService`.
+ * Manages notification provider settings, Apprise integration, and dispatch.
  */
 public class NotificationsService internal constructor(private val rest: RestService) {
     // Provider settings

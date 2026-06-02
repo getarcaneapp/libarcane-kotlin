@@ -4,7 +4,7 @@ import app.getarcane.sdk.serialization.ArcaneInstantSerializer
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
-/** A swarm stack as listed by the stacks endpoint. Mirrors Swift `SwarmStackSummary`. */
+/** A swarm stack as listed by the stacks endpoint. */
 @Serializable
 public data class SwarmStackSummary(
     public val id: String,
@@ -17,7 +17,7 @@ public data class SwarmStackSummary(
     public val updatedAt: Instant,
 )
 
-/** A swarm stack inspect payload (no ID — stacks are keyed by name). Mirrors Swift `SwarmStackInspect`. */
+/** A swarm stack inspect payload (no ID — stacks are keyed by name). */
 @Serializable
 public data class SwarmStackInspect(
     public val name: String,
@@ -30,9 +30,8 @@ public data class SwarmStackInspect(
 )
 
 /**
- * A file synced alongside a swarm stack compose deployment. Mirrors Swift `SwarmSyncFile`;
- * [content] holds the Base64-encoded file bytes (Swift models this as `Data`, which `Codable`
- * serializes as a base64 string).
+ * A file synced alongside a swarm stack compose deployment; [content] holds the Base64-encoded
+ * file bytes.
  */
 @Serializable
 public data class SwarmSyncFile(
@@ -40,7 +39,7 @@ public data class SwarmSyncFile(
     public val content: String,
 )
 
-/** Body for `POST /environments/{id}/swarm/stacks` to deploy a stack. Mirrors Swift `SwarmStackDeployRequest`. */
+/** Body for `POST /environments/{id}/swarm/stacks` to deploy a stack. */
 @Serializable
 public data class SwarmStackDeployRequest(
     public val name: String,
@@ -53,13 +52,13 @@ public data class SwarmStackDeployRequest(
     public val workingDir: String? = null,
 )
 
-/** Result of `POST /environments/{id}/swarm/stacks`. Mirrors Swift `SwarmStackDeployResponse`. */
+/** Result of `POST /environments/{id}/swarm/stacks`. */
 @Serializable
 public data class SwarmStackDeployResponse(
     public val name: String,
 )
 
-/** Persisted source for a deployed stack. Mirrors Swift `SwarmStackSource`. */
+/** Persisted source for a deployed stack. */
 @Serializable
 public data class SwarmStackSource(
     public val name: String,
@@ -68,7 +67,7 @@ public data class SwarmStackSource(
     public val files: List<SwarmSyncFile>? = null,
 )
 
-/** Update payload for the persisted stack source. Mirrors Swift `SwarmStackSourceUpdateRequest`. */
+/** Update payload for the persisted stack source. */
 @Serializable
 public data class SwarmStackSourceUpdateRequest(
     public val composeContent: String,
@@ -76,7 +75,7 @@ public data class SwarmStackSourceUpdateRequest(
     public val files: List<SwarmSyncFile>? = null,
 )
 
-/** Render/validate request for a compose file before deploying. Mirrors Swift `SwarmStackRenderConfigRequest`. */
+/** Render/validate request for a compose file before deploying. */
 @Serializable
 public data class SwarmStackRenderConfigRequest(
     public val name: String,
@@ -84,7 +83,7 @@ public data class SwarmStackRenderConfigRequest(
     public val envContent: String? = null,
 )
 
-/** Result of rendering a compose config — normalized YAML plus referenced resources. Mirrors Swift `SwarmStackRenderConfigResponse`. */
+/** Result of rendering a compose config — normalized YAML plus referenced resources. */
 @Serializable
 public data class SwarmStackRenderConfigResponse(
     public val name: String,

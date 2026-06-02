@@ -3,7 +3,7 @@ package app.getarcane.sdk.models.container
 import app.getarcane.sdk.models.image.ImageUpdateInfo
 import kotlinx.serialization.Serializable
 
-/** A container summary as returned by the list endpoint. Mirrors Swift `ContainerSummary` (Models/container/ContainerSummary.swift). */
+/** A container summary as returned by the list endpoint. */
 @Serializable
 public data class ContainerSummary(
     public val id: String,
@@ -23,14 +23,14 @@ public data class ContainerSummary(
     public val redeployDisabled: Boolean? = null,
 )
 
-/** A group of container summaries, e.g. by Compose project. Mirrors Swift `ContainerSummaryGroup`. */
+/** A group of container summaries, e.g. by Compose project. */
 @Serializable
 public data class ContainerSummaryGroup(
     public val groupName: String,
     public val items: List<ContainerSummary>,
 )
 
-/** Counts of containers by status. Mirrors Swift `ContainerStatusCounts`. */
+/** Counts of containers by status. */
 @Serializable
 public data class ContainerStatusCounts(
     public val runningContainers: Int,
@@ -38,7 +38,7 @@ public data class ContainerStatusCounts(
     public val totalContainers: Int,
 )
 
-/** Result of a container batch action (start/stop/etc). Mirrors Swift `ContainerActionResult`. */
+/** Result of a container batch action (start/stop/etc). */
 @Serializable
 public data class ContainerActionResult(
     public val started: List<String>? = null,
@@ -48,7 +48,7 @@ public data class ContainerActionResult(
     public val errors: List<String>? = null,
 )
 
-/** A newly created container. Mirrors Swift `ContainerCreated`. */
+/** A newly created container. */
 @Serializable
 public data class ContainerCreated(
     public val id: String,

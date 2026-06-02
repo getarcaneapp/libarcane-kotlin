@@ -2,7 +2,7 @@ package app.getarcane.sdk.models.category
 
 import kotlinx.serialization.Serializable
 
-/** Category metadata used by the settings UI. Mirrors Swift `SettingCategory` (Models/Category/Category.swift). */
+/** Category metadata used by the settings UI. */
 @Serializable
 public data class SettingCategory(
     public val id: String,
@@ -16,7 +16,7 @@ public data class SettingCategory(
     public val relevanceScore: Int? = null,
 )
 
-/** Setting-level metadata used by the settings UI. Mirrors Swift `SettingMetadata`. */
+/** Setting-level metadata used by the settings UI. */
 @Serializable
 public data class SettingMetadata(
     public val key: String,

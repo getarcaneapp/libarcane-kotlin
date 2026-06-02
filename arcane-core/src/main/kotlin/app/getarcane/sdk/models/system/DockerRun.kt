@@ -2,7 +2,7 @@ package app.getarcane.sdk.models.system
 
 import kotlinx.serialization.Serializable
 
-/** Parsed representation of a `docker run` command. Mirrors Swift `DockerRunCommand`. */
+/** Parsed representation of a `docker run` command. */
 @Serializable
 public data class DockerRunCommand(
     public val image: String,
@@ -27,13 +27,13 @@ public data class DockerRunCommand(
     public val cpuLimit: String? = null,
 )
 
-/** Body for `POST /environments/{id}/system/convert`. Mirrors Swift `ConvertDockerRunRequest`. */
+/** Body for `POST /environments/{id}/system/convert`. */
 @Serializable
 public data class ConvertDockerRunRequest(
     public val dockerRunCommand: String,
 )
 
-/** Result of converting a `docker run` command to compose form. Mirrors Swift `ConvertDockerRunResponse`. */
+/** Result of converting a `docker run` command to compose form. */
 @Serializable
 public data class ConvertDockerRunResponse(
     public val success: Boolean,

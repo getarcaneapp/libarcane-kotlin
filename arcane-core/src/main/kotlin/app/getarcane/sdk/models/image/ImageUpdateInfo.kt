@@ -4,7 +4,7 @@ import app.getarcane.sdk.serialization.ArcaneInstantSerializer
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
-/** Image update availability info attached to image and container summaries. Mirrors Swift `ImageUpdateInfo` (Models/image/ImageUpdateInfo.swift). */
+/** Image update availability info attached to image and container summaries. */
 @Serializable
 public data class ImageUpdateInfo(
     public val hasUpdate: Boolean,

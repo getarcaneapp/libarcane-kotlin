@@ -3,7 +3,7 @@ package app.getarcane.sdk.models.base
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Mirrors Swift `PaginationResponse` (Models/Base/Pagination.swift). */
+/** Pagination metadata returned alongside paged list responses. */
 @Serializable
 public data class PaginationResponse(
     public val totalPages: Long,
@@ -13,7 +13,7 @@ public data class PaginationResponse(
     public val grandTotalItems: Long? = null,
 )
 
-/** Mirrors Swift `SortOrder`. The [wire] value is interpolated into query strings. */
+/** Sort direction. The [wire] value is interpolated into query strings. */
 @Serializable
 public enum class SortOrder(public val wire: String) {
     @SerialName("asc")
@@ -25,8 +25,8 @@ public enum class SortOrder(public val wire: String) {
 
 /**
  * Common query parameters for Arcane list endpoints that support search, sort, and
- * offset-based pagination. Mirrors Swift `SearchPaginationSort`. Produces plain
- * name/value pairs so the model layer stays free of Ktor types.
+ * offset-based pagination. Produces plain name/value pairs so the model layer stays free of
+ * Ktor types.
  */
 public data class SearchPaginationSort(
     public val search: String? = null,

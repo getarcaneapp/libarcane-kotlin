@@ -10,7 +10,7 @@ import app.getarcane.sdk.models.containerregistry.CreateContainerRegistry
 import app.getarcane.sdk.models.containerregistry.UpdateContainerRegistry
 import app.getarcane.sdk.pagination.PaginatedResponse
 
-/** Manages container image registry configurations. Port of Swift `ContainerRegistriesService`. */
+/** Manages container image registry configurations. */
 public class ContainerRegistriesService internal constructor(private val rest: RestService) {
     /** List container registries with pagination. */
     public suspend fun listPaginated(

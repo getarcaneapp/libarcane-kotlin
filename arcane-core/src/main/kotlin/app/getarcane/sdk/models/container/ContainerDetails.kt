@@ -3,7 +3,7 @@ package app.getarcane.sdk.models.container
 import app.getarcane.sdk.models.base.PaginationResponse
 import kotlinx.serialization.Serializable
 
-/** Detailed container information. Mirrors Swift `ContainerDetails` (Models/container/ContainerDetails.swift). */
+/** Detailed container information. */
 @Serializable
 public data class ContainerDetails(
     public val id: String,
@@ -22,7 +22,7 @@ public data class ContainerDetails(
     public val redeployDisabled: Boolean? = null,
 )
 
-/** Paginated container list response. Includes optional groups + status counts. Mirrors Swift `ContainerListResponse`. */
+/** Paginated container list response. Includes optional groups + status counts. */
 @Serializable
 public data class ContainerListResponse(
     public val success: Boolean,

@@ -20,7 +20,6 @@ import app.getarcane.sdk.pagination.PaginatedResponse
 
 /**
  * Manages compose templates, registries, default templates, and per-environment template variables.
- * Port of Swift `TemplatesService`.
  */
 public class TemplatesService internal constructor(private val rest: RestService) {
     // Templates

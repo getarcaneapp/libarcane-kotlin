@@ -5,8 +5,8 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
 /**
- * A v2 RBAC role. Mirrors Swift `Role` (Models/Role/Role.swift). Optional fields default to match
- * Swift's `decodeIfPresent(...) ?? default`; `createdAt` is required.
+ * A v2 RBAC role. Optional fields fall back to their defaults when absent from the payload;
+ * `createdAt` is required.
  */
 @Serializable
 public data class Role(
@@ -21,7 +21,7 @@ public data class Role(
     @Serializable(with = ArcaneInstantSerializer::class)
     public val updatedAt: Instant? = null,
 ) {
-    /** Stable built-in role IDs seeded by the v2 backend migration. Mirrors Swift `Role.BuiltIn`. */
+    /** Stable built-in role IDs seeded by the v2 backend migration. */
     public object BuiltIn {
         public const val ADMIN: String = "role_admin"
         public const val EDITOR: String = "role_editor"
@@ -32,7 +32,7 @@ public data class Role(
     }
 }
 
-/** Mirrors Swift `CreateRole`. */
+/** Request body to create a role. */
 @Serializable
 public data class CreateRole(
     public val name: String,
@@ -40,7 +40,7 @@ public data class CreateRole(
     public val permissions: List<String>,
 )
 
-/** Mirrors Swift `UpdateRole`. */
+/** Request body to update an existing role. */
 @Serializable
 public data class UpdateRole(
     public val name: String,

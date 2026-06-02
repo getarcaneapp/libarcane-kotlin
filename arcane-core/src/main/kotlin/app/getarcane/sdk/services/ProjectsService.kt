@@ -23,7 +23,7 @@ import app.getarcane.sdk.streaming.ndjsonFlow
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Docker Compose project management. Port of Swift `ProjectsService`.
+ * Docker Compose project management.
  *
  * The HTTP-streaming endpoints ([deploy], [build], [pullImages]) issue the request and resolve only
  * once the server finishes emitting its NDJSON progress stream. Use the `*Stream` variants to

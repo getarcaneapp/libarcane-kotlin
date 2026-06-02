@@ -22,11 +22,10 @@ import kotlinx.serialization.encoding.Encoder
 
 /**
  * CreateEnvironmentResult is the response payload returned by [EnvironmentsService.create]. It
- * contains the created environment plus an optional one-time API key. Mirrors Swift
- * `CreateEnvironmentResult`.
+ * contains the created environment plus an optional one-time API key.
  *
  * The server returns a flat environment object that additionally carries `apiKey`; decoding
- * delegates to [Environment] and surfaces its `apiKey` here, matching Swift's `WireFormat` flattening.
+ * delegates to [Environment] and surfaces its `apiKey` here.
  */
 @Serializable(with = CreateEnvironmentResultSerializer::class)
 public data class CreateEnvironmentResult(
@@ -35,9 +34,9 @@ public data class CreateEnvironmentResult(
 )
 
 /**
- * Reproduces Swift `CreateEnvironmentResult.init(from:)`/`encode(to:)`: decode the flat payload as an
- * [Environment] (which already carries `apiKey`), exposing the same value on both fields; on encode,
- * merge [CreateEnvironmentResult.apiKey] back onto the environment and encode it flat.
+ * Custom serialization for the flat wire format: decode the payload as an [Environment] (which
+ * already carries `apiKey`), exposing the same value on both fields; on encode, merge
+ * [CreateEnvironmentResult.apiKey] back onto the environment and encode it flat.
  */
 public object CreateEnvironmentResultSerializer : KSerializer<CreateEnvironmentResult> {
     private val envSer = Environment.serializer()
@@ -57,7 +56,7 @@ public object CreateEnvironmentResultSerializer : KSerializer<CreateEnvironmentR
 
 /**
  * Environment management endpoints registered under `/environments` along with agent pairing, mTLS,
- * and version helpers. Port of Swift `EnvironmentsService`.
+ * and version helpers.
  */
 public class EnvironmentsService internal constructor(private val rest: RestService) {
     // MARK: - CRUD

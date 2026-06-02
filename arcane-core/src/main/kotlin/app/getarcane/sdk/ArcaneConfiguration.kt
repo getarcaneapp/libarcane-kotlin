@@ -9,9 +9,9 @@ import io.ktor.client.plugins.logging.LogLevel
 import kotlinx.serialization.json.Json
 
 /**
- * Configuration for an [ArcaneClient]. Mirrors Swift `ArcaneClient.Configuration`. Swift's injectable
- * `URLSession` becomes a Ktor [HttpClientEngine] (default CIO; pass a `MockEngine` in tests), and the
- * `JSONDecoder`/`JSONEncoder` pair becomes a single [Json] instance.
+ * Configuration for an [ArcaneClient]. The HTTP backend is an injectable Ktor [HttpClientEngine]
+ * (default CIO; pass a `MockEngine` in tests), and JSON decoding/encoding is handled by a single
+ * [Json] instance.
  */
 public data class ArcaneConfiguration(
     public val baseUrl: String,
@@ -26,9 +26,8 @@ public data class ArcaneConfiguration(
     public val json: Json = ArcaneJson.default,
     /**
      * Extra headers applied to every request from this client (REST, streaming, and WebSocket).
-     * The Swift SDK inherits `URLSession`'s shared `HTTPCookieStorage`; on Kotlin/Ktor there is no
-     * implicit cookie jar, so this is the hook for e.g. the hosted-demo `session-id` cookie that
-     * routes requests to a provisioned instance.
+     * Ktor has no implicit cookie jar, so this is the hook for e.g. the hosted-demo `session-id`
+     * cookie that routes requests to a provisioned instance.
      */
     public val defaultHeaders: Map<String, String> = emptyMap(),
 )

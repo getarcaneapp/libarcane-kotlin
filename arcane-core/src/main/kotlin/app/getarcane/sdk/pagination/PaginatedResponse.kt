@@ -4,9 +4,8 @@ import app.getarcane.sdk.models.base.PaginationResponse
 import kotlinx.serialization.Serializable
 
 /**
- * A page of results plus its pagination metadata, `{ "success", "data": [T], "pagination" }`.
- * Mirrors Swift `PaginatedResponse` / `PaginatedAPIResponse`. (The streaming [ArcanePaginator]
- * that walks pages as a `Flow` is added in the streaming phase.)
+ * A page of results plus its pagination metadata, `{ "success", "data": [T], "pagination" }`. The
+ * streaming [ArcanePaginator] walks pages as a `Flow`.
  */
 @Serializable
 public data class PaginatedResponse<T>(

@@ -6,7 +6,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Options passed when triggering the updater (`POST .../updater/run`). Mirrors Swift `UpdaterOptions`. */
+/** Options passed when triggering the updater (`POST .../updater/run`). */
 @Serializable
 public data class UpdaterOptions(
     public val type: String? = null,
@@ -15,7 +15,7 @@ public data class UpdaterOptions(
     public val dryRun: Boolean? = null,
 )
 
-/** Result for a single resource updated by the updater. Mirrors Swift `UpdaterResourceResult`. */
+/** Result for a single resource updated by the updater. */
 @Serializable
 public data class UpdaterResourceResult(
     public val resourceId: String,
@@ -30,7 +30,7 @@ public data class UpdaterResourceResult(
     public val details: Map<String, JsonValue>? = null,
 )
 
-/** Overall result of an updater run. Mirrors Swift `UpdaterResult`. */
+/** Overall result of an updater run. */
 @Serializable
 public data class UpdaterResult(
     public val success: Boolean? = null,
@@ -44,7 +44,7 @@ public data class UpdaterResult(
     public val items: List<UpdaterResourceResult> = emptyList(),
 )
 
-/** Live status of the updater. Mirrors Swift `UpdaterStatus`. */
+/** Live status of the updater. */
 @Serializable
 public data class UpdaterStatus(
     public val updatingContainers: Int = 0,
@@ -53,7 +53,7 @@ public data class UpdaterStatus(
     public val projectIds: List<String> = emptyList(),
 )
 
-/** One row in the updater run history. Mirrors Swift `AutoUpdateRecord`. */
+/** One row in the updater run history. */
 @Serializable
 public data class AutoUpdateRecord(
     public val id: String,
@@ -77,7 +77,7 @@ public data class AutoUpdateRecord(
     public val updatedAt: Instant? = null,
 )
 
-/** Mirrors Swift `AutoUpdateRecordStatus`. */
+/** Status of an auto-update record. */
 @Serializable
 public enum class AutoUpdateRecordStatus(public val wire: String) {
     @SerialName("pending")

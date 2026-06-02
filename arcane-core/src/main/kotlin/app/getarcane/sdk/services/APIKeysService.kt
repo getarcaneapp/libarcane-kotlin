@@ -9,7 +9,7 @@ import app.getarcane.sdk.models.apikey.UpdateAPIKey
 import app.getarcane.sdk.models.base.SortOrder
 import app.getarcane.sdk.pagination.PaginatedResponse
 
-/** Manages API keys for programmatic access. Port of Swift `APIKeysService`. */
+/** Manages API keys for programmatic access. */
 public class APIKeysService internal constructor(private val rest: RestService) {
     /** List API keys with pagination. */
     public suspend fun listPaginated(

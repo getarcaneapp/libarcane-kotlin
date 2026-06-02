@@ -4,8 +4,8 @@ import app.getarcane.sdk.models.role.Permission
 import app.getarcane.sdk.models.role.Role
 
 /**
- * Permission helpers on [User], mirroring Swift `User+Permissions.swift`. They unify the v1
- * (string roles) and v2 (role assignments + per-env permission sets) shapes.
+ * Permission helpers on [User]. They unify the v1 (string roles) and v2 (role assignments +
+ * per-env permission sets) shapes.
  */
 
 /**

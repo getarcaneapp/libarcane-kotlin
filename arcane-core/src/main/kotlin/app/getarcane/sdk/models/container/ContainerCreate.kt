@@ -4,21 +4,21 @@ import app.getarcane.sdk.models.base.JsonValue
 import app.getarcane.sdk.models.containerregistry.ContainerRegistryCredential
 import kotlinx.serialization.Serializable
 
-/** Restart policy options for container creation. Mirrors Swift `ContainerRestartPolicyCreate`. */
+/** Restart policy options for container creation. */
 @Serializable
 public data class ContainerRestartPolicyCreate(
     public val name: String? = null,
     public val maximumRetryCount: Int? = null,
 )
 
-/** Host port binding for container creation. Mirrors Swift `PortBindingCreate`. */
+/** Host port binding for container creation. */
 @Serializable
 public data class PortBindingCreate(
     public val hostIp: String? = null,
     public val hostPort: String? = null,
 )
 
-/** Host configuration for container creation. Mirrors Swift `HostConfigCreate`. */
+/** Host configuration for container creation. */
 @Serializable
 public data class HostConfigCreate(
     public val binds: List<String>? = null,
@@ -35,19 +35,19 @@ public data class HostConfigCreate(
     public val publishAllPorts: Boolean? = null,
 )
 
-/** Network endpoint settings for container creation. Mirrors Swift `EndpointSettingsCreate`. */
+/** Network endpoint settings for container creation. */
 @Serializable
 public data class EndpointSettingsCreate(
     public val aliases: List<String>? = null,
 )
 
-/** Network configuration for container creation. Mirrors Swift `NetworkingConfigCreate`. */
+/** Network configuration for container creation. */
 @Serializable
 public data class NetworkingConfigCreate(
     public val endpointsConfig: Map<String, EndpointSettingsCreate>? = null,
 )
 
-/** Container create request body. Mirrors Swift `ContainerCreate`. */
+/** Container create request body. */
 @Serializable
 public data class ContainerCreate(
     public val name: String,

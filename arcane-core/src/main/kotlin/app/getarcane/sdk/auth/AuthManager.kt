@@ -29,9 +29,8 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
 
 /**
- * Thread-safe token lifecycle + capability cache. Coroutine port of Swift's `actor AuthManager`
- * (Auth/AuthManager.swift): a [Mutex] guards mutable state and a shared lazy [Deferred] de-duplicates
- * concurrent refreshes (Swift's `refreshTask`), so N simultaneous 401s trigger exactly one
+ * Thread-safe token lifecycle + capability cache: a [Mutex] guards mutable state and a shared lazy
+ * [Deferred] de-duplicates concurrent refreshes, so N simultaneous 401s trigger exactly one
  * `auth/refresh`. X-API-Key takes precedence over the Bearer token. The refresh request uses a
  * dedicated [HttpClient] so it never recurses into the transport's auth-retry loop.
  */
@@ -94,9 +93,9 @@ public class AuthManager internal constructor(
     }
 
     /**
-     * Refreshes the access token, de-duplicating concurrent calls. Mirrors Swift `refreshTokens()`:
-     * the first caller creates the in-flight [Deferred] and performs the post-success persistence;
-     * concurrent callers join the same [Deferred]. On failure the auth state is cleared.
+     * Refreshes the access token, de-duplicating concurrent calls: the first caller creates the
+     * in-flight [Deferred] and performs the post-success persistence; concurrent callers join the
+     * same [Deferred]. On failure the auth state is cleared.
      */
     public suspend fun refreshTokens(): TokenPair {
         mutex.withLock { refreshJob }?.let { return it.await() }

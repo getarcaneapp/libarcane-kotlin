@@ -26,7 +26,7 @@ import kotlinx.serialization.SerializationException
 
 private const val NDJSON_ACCEPT = "application/x-ndjson, application/x-json-stream, application/json"
 
-/** A file part for a multipart/form-data upload. Mirrors Swift `MultipartFile`. */
+/** A file part for a multipart/form-data upload. */
 public class MultipartFile(
     public val fieldName: String,
     public val filename: String,
@@ -49,8 +49,8 @@ internal fun buildMultipart(fields: Map<String, String>, files: List<MultipartFi
 }
 
 /**
- * Uploads a multipart/form-data request and decodes the `APIResponse<T>` envelope. Port of Swift
- * `multipartUpload`. Refreshes once on a 401, mirroring the unary request path.
+ * Uploads a multipart/form-data request and decodes the `APIResponse<T>` envelope. Refreshes once
+ * on a 401, like the unary request path.
  */
 public suspend fun <T> ArcaneTransport.multipartUpload(
     path: String,
@@ -90,8 +90,8 @@ public suspend fun <T> ArcaneTransport.multipartUpload(
 }
 
 /**
- * Uploads a multipart/form-data request and streams an NDJSON response as a [Flow]. Port of Swift
- * `multipartUploadStream` (e.g. `POST /images/upload`).
+ * Uploads a multipart/form-data request and streams an NDJSON response as a [Flow]
+ * (e.g. `POST /images/upload`).
  */
 public fun <T> ArcaneTransport.multipartUploadNdjson(
     path: String,

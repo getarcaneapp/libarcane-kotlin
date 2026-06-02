@@ -3,7 +3,7 @@ package app.getarcane.sdk.models.image
 import app.getarcane.sdk.models.containerregistry.ContainerRegistryCredential
 import kotlinx.serialization.Serializable
 
-/** Request body for the image pull endpoint. Mirrors Swift `ImagePullOptions` (Models/image/ImagePull.swift). */
+/** Request body for the image pull endpoint. */
 @Serializable
 public data class ImagePullOptions(
     public val imageName: String,

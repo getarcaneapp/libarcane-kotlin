@@ -20,9 +20,9 @@ import app.getarcane.sdk.models.base.MessageResponse
 import app.getarcane.sdk.models.user.User
 
 /**
- * High-level authentication operations. Port of Swift `AuthService` (Auth/AuthService.swift). OIDC
- * endpoints return un-enveloped bodies, so they use [requestDecoded]. Successful auth saves tokens
- * via [AuthManager] and records server capabilities from the returned [User].
+ * High-level authentication operations. OIDC endpoints return un-enveloped bodies, so they use
+ * [requestDecoded]. Successful auth saves tokens via [AuthManager] and records server capabilities
+ * from the returned [User].
  */
 public class AuthService internal constructor(
     private val transport: ArcaneTransport,

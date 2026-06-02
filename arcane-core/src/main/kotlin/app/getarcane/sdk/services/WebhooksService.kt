@@ -8,7 +8,7 @@ import app.getarcane.sdk.models.webhook.UpdateWebhook
 import app.getarcane.sdk.models.webhook.Webhook
 import app.getarcane.sdk.models.webhook.WebhookCreated
 
-/** Manages webhook resources scoped to an environment. Port of Swift `WebhooksService`. */
+/** Manages webhook resources scoped to an environment. */
 public class WebhooksService internal constructor(private val rest: RestService) {
     /** List all webhooks configured for an environment. Tokens are masked. */
     public suspend fun list(envId: EnvironmentId? = null): List<Webhook> =

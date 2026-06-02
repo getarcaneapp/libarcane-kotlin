@@ -7,7 +7,7 @@ import app.getarcane.sdk.models.base.SearchPaginationSort
 import app.getarcane.sdk.models.port.PortMapping
 import app.getarcane.sdk.pagination.PaginatedResponse
 
-/** Port mappings across containers in an environment. Port of Swift `PortsService`. */
+/** Port mappings across containers in an environment. */
 public class PortsService internal constructor(private val rest: RestService) {
     /** Paginated list of port mappings across containers in an environment. */
     public suspend fun list(

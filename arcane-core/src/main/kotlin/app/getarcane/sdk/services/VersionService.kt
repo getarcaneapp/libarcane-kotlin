@@ -7,7 +7,7 @@ import app.getarcane.sdk.models.version.VersionCheck
 import app.getarcane.sdk.models.version.VersionInfo
 
 /**
- * Version endpoints. Port of Swift `VersionService`.
+ * Version endpoints.
  *
  * `/version` and `/app-version` return their payloads *without* the standard `{success, data}`
  * envelope, so we go through [requestDecoded] and decode the body type directly.

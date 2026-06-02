@@ -5,7 +5,7 @@ import app.getarcane.sdk.serialization.ArcaneInstantSerializer
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
-/** Mirrors Swift `OIDCStatusInfo` (Models/Auth/OIDC.swift). */
+/** Status of OIDC configuration on the server. */
 @Serializable
 public data class OidcStatusInfo(
     public val envForced: Boolean,
@@ -15,20 +15,20 @@ public data class OidcStatusInfo(
     public val providerLogoUrl: String? = null,
 )
 
-/** Mirrors Swift `OIDCAuthURLRequest`. */
+/** Request body for obtaining an OIDC authorization URL. */
 @Serializable
 public data class OidcAuthUrlRequest(
     public val redirectUri: String,
     public val mobileRedirectUri: String? = null,
 )
 
-/** Mirrors Swift `OIDCAuthURLResponse`. */
+/** Response carrying the OIDC authorization URL. */
 @Serializable
 public data class OidcAuthUrlResponse(
     public val authUrl: String,
 )
 
-/** Mirrors Swift `OIDCConfigResponse`. */
+/** OIDC provider configuration details. */
 @Serializable
 public data class OidcConfigResponse(
     public val clientId: String,
@@ -41,7 +41,7 @@ public data class OidcConfigResponse(
     public val scopes: String,
 )
 
-/** Mirrors Swift `OIDCCallbackRequest`. */
+/** Request body for the OIDC authorization callback. */
 @Serializable
 public data class OidcCallbackRequest(
     public val code: String,
@@ -49,7 +49,7 @@ public data class OidcCallbackRequest(
     public val mobileRedirectUri: String? = null,
 )
 
-/** Mirrors Swift `OIDCCallbackResponse`. */
+/** Response returned after a successful OIDC callback, carrying tokens and the user. */
 @Serializable
 public data class OidcCallbackResponse(
     public val success: Boolean,
@@ -60,13 +60,13 @@ public data class OidcCallbackResponse(
     public val user: User,
 )
 
-/** Mirrors Swift `OIDCDeviceAuthRequest`. */
+/** Request body for starting the OIDC device authorization flow. */
 @Serializable
 public data class OidcDeviceAuthRequest(
     public val redirectUri: String? = null,
 )
 
-/** Mirrors Swift `OIDCDeviceAuthResponse`. */
+/** Response carrying device and user codes for the OIDC device authorization flow. */
 @Serializable
 public data class OidcDeviceAuthResponse(
     public val deviceCode: String,
@@ -77,13 +77,13 @@ public data class OidcDeviceAuthResponse(
     public val interval: Int? = null,
 )
 
-/** Mirrors Swift `OIDCDeviceTokenRequest`. */
+/** Request body for polling the OIDC device token endpoint. */
 @Serializable
 public data class OidcDeviceTokenRequest(
     public val deviceCode: String,
 )
 
-/** Mirrors Swift `OIDCDeviceTokenResponse`. */
+/** Response returned when the OIDC device flow completes, carrying tokens and the user. */
 @Serializable
 public data class OidcDeviceTokenResponse(
     public val success: Boolean,

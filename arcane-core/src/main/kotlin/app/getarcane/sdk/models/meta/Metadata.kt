@@ -2,7 +2,7 @@ package app.getarcane.sdk.models.meta
 
 import kotlinx.serialization.Serializable
 
-/** Metadata describing a configuration / setting field. Mirrors Swift `ConfigMetadata`. */
+/** Metadata describing a configuration / setting field. */
 @Serializable
 public data class ConfigMetadata(
     public val key: String,
@@ -12,7 +12,7 @@ public data class ConfigMetadata(
     public val description: String? = null,
 )
 
-/** Metadata associated with a template (URLs, tags, author etc.). Mirrors Swift `TemplateMetadata`. */
+/** Metadata associated with a template (URLs, tags, author etc.). */
 @Serializable
 public data class TemplateMetadata(
     public val version: String? = null,

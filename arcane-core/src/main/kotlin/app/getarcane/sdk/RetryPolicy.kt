@@ -1,9 +1,8 @@
 package app.getarcane.sdk
 
 /**
- * Retry configuration for idempotent requests. Mirrors Swift `RetryPolicy` (Client/Environment.swift),
- * with Swift's `Duration` replaced by milliseconds. Backoff for attempt `n` is
- * `min(baseBackoffMillis * 2^(n-1), maxBackoffMillis)`.
+ * Retry configuration for idempotent requests, with backoff durations expressed in milliseconds.
+ * Backoff for attempt `n` is `min(baseBackoffMillis * 2^(n-1), maxBackoffMillis)`.
  */
 public data class RetryPolicy(
     public val maxAttempts: Int = 3,

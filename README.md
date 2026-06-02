@@ -1,17 +1,17 @@
 # Arcane Kotlin
 
-Hand-written Kotlin SDK for the [Arcane](https://github.com/getarcaneapp/arcane) API, for Android (and any JVM) apps that talk to an Arcane manager or agent. It mirrors [`libarcane-swift`](../libarcane-swift) feature-for-feature.
+Hand-written Kotlin SDK for the [Arcane](https://github.com/getarcaneapp/arcane) API, for Android (and any JVM) apps that talk to an Arcane manager or agent.
 
 ## Overview
 
-`libarcane-kotlin` is a single-layer, idiomatic Kotlin client built on [Ktor](https://ktor.io) and [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization). There is no code generation: every DTO and every endpoint method is hand-crafted to mirror the Arcane Go types and HTTP surface (and the Swift SDK that mirrors them).
+`libarcane-kotlin` is a single-layer, idiomatic Kotlin client built on [Ktor](https://ktor.io) and [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization). There is no code generation: every DTO and every endpoint method is hand-crafted to match the Arcane API's types and HTTP surface.
 
 Two Gradle modules:
 
 - **`arcane-core`** — pure Kotlin/JVM. Auth, token storage interface, environment scoping, REST helpers, WebSocket + NDJSON streams (as `Flow`s), and per-resource services. Runs on any JVM and is unit-tested with Ktor's `MockEngine` (no device/emulator).
 - **`arcane-android`** — thin Android layer: a Keystore-backed secure `TokenStore` and the OIDC browser flow (Custom Tabs). Apps using only API-key or username/password auth, or providing their own token storage, can depend on `arcane-core` alone.
 
-Concurrency is coroutines-first: blocking calls are `suspend` functions and streams are `Flow`s — the direct analog of Swift's `async`/`await` and `AsyncSequence`.
+Concurrency is coroutines-first: blocking calls are `suspend` functions and streams are `Flow`s.
 
 ## Modules
 
@@ -63,7 +63,7 @@ try {
 
 ### Authentication
 
-Three paths, matching the Swift SDK:
+Three paths:
 
 - **API key** — set `apiKey` on `ArcaneConfiguration`; sent as `X-API-Key` (takes precedence over a bearer token).
 - **Username / password** — `client.auth.login(username, password)`. Tokens are cached and persisted via the configured `TokenStore`; a 401 triggers a single `auth/refresh` (concurrent calls are de-duplicated) and one retry.
@@ -133,5 +133,3 @@ Each resource is exposed as a service on `ArcaneClient`:
 ./gradlew :arcane-android:assembleRelease
 ARCANE_TEST_URL=https://your-arcane ./gradlew :arcane-core:test   # also runs the live /health integration test
 ```
-
-The type and module layout mirrors the Go packages under `arcane/types/` and the Swift `Sources/Arcane/**`, so engineers moving between the repos pay no translation tax.

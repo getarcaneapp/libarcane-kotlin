@@ -4,7 +4,7 @@ import app.getarcane.sdk.models.base.JsonValue
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Identifiers for notification providers. Mirrors Swift `NotificationProvider` (Models/Notification/Notification.swift). */
+/** Identifiers for notification providers. */
 @Serializable
 public enum class NotificationProvider(public val wire: String) {
     @SerialName("discord")
@@ -38,7 +38,7 @@ public enum class NotificationProvider(public val wire: String) {
     GENERIC("generic"),
 }
 
-/** Mirrors Swift `NotificationSettings`. Swift `id: UInt` maps to [Long]. */
+/** Configured settings for a notification provider. */
 @Serializable
 public data class NotificationSettings(
     public val id: Long,
@@ -47,7 +47,7 @@ public data class NotificationSettings(
     public val config: Map<String, JsonValue> = emptyMap(),
 )
 
-/** Mirrors Swift `UpdateNotificationSettings`. */
+/** Body for updating a notification provider's settings. */
 @Serializable
 public data class UpdateNotificationSettings(
     public val provider: NotificationProvider,
@@ -55,7 +55,7 @@ public data class UpdateNotificationSettings(
     public val config: Map<String, JsonValue> = emptyMap(),
 )
 
-/** Mirrors Swift `AppriseSettings`. Swift `id: UInt` maps to [Long]. */
+/** Configured Apprise notification settings. */
 @Serializable
 public data class AppriseSettings(
     public val id: Long,
@@ -65,7 +65,7 @@ public data class AppriseSettings(
     public val containerUpdateTag: String,
 )
 
-/** Mirrors Swift `UpdateAppriseSettings`. */
+/** Body for updating Apprise notification settings. */
 @Serializable
 public data class UpdateAppriseSettings(
     public val apiUrl: String,
@@ -74,7 +74,7 @@ public data class UpdateAppriseSettings(
     public val containerUpdateTag: String,
 )
 
-/** Mirrors Swift `NotificationTestType`. */
+/** The kind of test notification to send. */
 @Serializable
 public enum class NotificationTestType(public val wire: String) {
     @SerialName("simple")
@@ -96,7 +96,7 @@ public enum class NotificationTestType(public val wire: String) {
     AUTO_HEAL("auto-heal"),
 }
 
-/** Mirrors Swift `NotificationDispatchKind`. */
+/** The kind of notification dispatch payload. */
 @Serializable
 public enum class NotificationDispatchKind(public val wire: String) {
     @SerialName("image_update")
@@ -118,20 +118,20 @@ public enum class NotificationDispatchKind(public val wire: String) {
     AUTO_HEAL("auto_heal"),
 }
 
-/** Mirrors Swift `NotificationDispatchImageUpdate`. */
+/** Dispatch payload for a single image update. */
 @Serializable
 public data class NotificationDispatchImageUpdate(
     public val imageRef: String,
     public val updateInfo: JsonValue,
 )
 
-/** Mirrors Swift `NotificationDispatchBatchImageUpdate`. */
+/** Dispatch payload for a batch of image updates. */
 @Serializable
 public data class NotificationDispatchBatchImageUpdate(
     public val updates: Map<String, JsonValue>,
 )
 
-/** Mirrors Swift `NotificationDispatchContainerUpdate`. */
+/** Dispatch payload for a container update. */
 @Serializable
 public data class NotificationDispatchContainerUpdate(
     public val containerName: String,
@@ -140,7 +140,7 @@ public data class NotificationDispatchContainerUpdate(
     public val newDigest: String? = null,
 )
 
-/** Mirrors Swift `NotificationDispatchVulnerabilityFound`. */
+/** Dispatch payload for a discovered vulnerability. */
 @Serializable
 public data class NotificationDispatchVulnerabilityFound(
     public val cveId: String,
@@ -152,20 +152,20 @@ public data class NotificationDispatchVulnerabilityFound(
     public val installedVersion: String? = null,
 )
 
-/** Mirrors Swift `NotificationDispatchPruneReport`. */
+/** Dispatch payload for a prune report. */
 @Serializable
 public data class NotificationDispatchPruneReport(
     public val result: JsonValue,
 )
 
-/** Mirrors Swift `NotificationDispatchAutoHeal`. */
+/** Dispatch payload for an auto-heal event. */
 @Serializable
 public data class NotificationDispatchAutoHeal(
     public val containerName: String,
     public val containerId: String,
 )
 
-/** Mirrors Swift `NotificationDispatchRequest`. */
+/** Request body for dispatching a notification. */
 @Serializable
 public data class NotificationDispatchRequest(
     public val kind: NotificationDispatchKind,

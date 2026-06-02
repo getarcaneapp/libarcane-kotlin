@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * Detailed application version information returned by `/app-version` and
- * `/environments/{id}/version`. Mirrors Swift `VersionInfo` (Models/Version/VersionInfo.swift).
+ * `/environments/{id}/version`.
  */
 @Serializable
 public data class VersionInfo(
@@ -26,7 +26,7 @@ public data class VersionInfo(
     public val releasedAt: String? = null,
 )
 
-/** Simplified version-check response from `/version`. Mirrors Swift `VersionCheck`. */
+/** Simplified version-check response from `/version`. */
 @Serializable
 public data class VersionCheck(
     public val currentVersion: String,

@@ -24,10 +24,9 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 
 /**
- * Low-level HTTP transport over a Ktor [HttpClient]. Port of Swift `ArcaneURLSessionTransport`
- * (Client/ArcaneURLSessionTransport.swift). The 401-refresh + idempotent-retry loop is implemented
- * manually (NOT via Ktor's Auth/HttpRequestRetry plugins) to reproduce Swift's exact ordering:
- * refresh once per request → retry → clear auth on a second 401.
+ * Low-level HTTP transport over a Ktor [HttpClient]. The 401-refresh + idempotent-retry loop is
+ * implemented manually (NOT via Ktor's Auth/HttpRequestRetry plugins) to guarantee this exact
+ * ordering: refresh once per request → retry → clear auth on a second 401.
  */
 public class ArcaneTransport internal constructor(
     @PublishedApi internal val httpClient: HttpClient,
@@ -39,7 +38,7 @@ public class ArcaneTransport internal constructor(
     /**
      * Executes a request and returns the raw response body bytes, applying auth headers, the
      * 401-refresh-once retry, the idempotent-method retry policy, and non-2xx → [ArcaneError]
-     * mapping. Mirrors Swift `rawRequest`.
+     * mapping.
      */
     public suspend fun rawRequestBytes(
         path: String,
@@ -151,8 +150,7 @@ public class ArcaneTransport internal constructor(
 }
 
 /**
- * Decodes the standard `{ success, data }` envelope and returns `data`. Mirrors Swift
- * `transport.request<T>`.
+ * Decodes the standard `{ success, data }` envelope and returns `data`.
  */
 public suspend inline fun <reified T> ArcaneTransport.request(
     path: String,
@@ -189,7 +187,7 @@ public suspend inline fun <reified T> ArcaneTransport.requestDecoded(
     }
 }
 
-/** Decodes a `{ success, data, pagination }` page. Mirrors Swift `transport.paginated<T>`. */
+/** Decodes a `{ success, data, pagination }` page. */
 public suspend inline fun <reified T> ArcaneTransport.paginated(
     path: String,
     start: Int,

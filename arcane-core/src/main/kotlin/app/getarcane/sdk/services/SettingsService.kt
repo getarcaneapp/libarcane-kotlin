@@ -10,7 +10,7 @@ import app.getarcane.sdk.models.settings.PublicSetting
 import app.getarcane.sdk.models.settings.SettingDto
 import app.getarcane.sdk.models.settings.UpdateSettings
 
-/** Manages application settings, search, and category metadata. Port of Swift `SettingsService`. */
+/** Manages application settings, search, and category metadata. */
 public class SettingsService internal constructor(private val rest: RestService) {
     // Per-environment settings
 

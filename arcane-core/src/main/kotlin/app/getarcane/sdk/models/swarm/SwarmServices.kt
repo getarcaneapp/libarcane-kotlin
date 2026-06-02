@@ -6,7 +6,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** A published port mapping for a swarm service endpoint. Mirrors Swift `SwarmServicePort`. */
+/** A published port mapping for a swarm service endpoint. */
 @Serializable
 public data class SwarmServicePort(
     @SerialName("protocol")
@@ -16,7 +16,7 @@ public data class SwarmServicePort(
     public val publishMode: String? = null,
 )
 
-/** A mount configured on a swarm service task. Mirrors Swift `SwarmServiceMount`. */
+/** A mount configured on a swarm service task. */
 @Serializable
 public data class SwarmServiceMount(
     public val type: String,
@@ -30,7 +30,7 @@ public data class SwarmServiceMount(
 
 /**
  * Lightweight summary of a swarm service used in list views. Named `SwarmServiceSummary` to avoid
- * collision with the `SwarmService` facade. Mirrors Swift `SwarmServiceSummary`.
+ * collision with the `SwarmService` facade.
  */
 @Serializable
 public data class SwarmServiceSummary(
@@ -52,7 +52,7 @@ public data class SwarmServiceSummary(
     public val mounts: List<SwarmServiceMount> = emptyList(),
 )
 
-/** A single IPAM configuration entry for a service-attached network. Mirrors Swift `SwarmServiceNetworkIPAMConfig`. */
+/** A single IPAM configuration entry for a service-attached network. */
 @Serializable
 public data class SwarmServiceNetworkIPAMConfig(
     public val subnet: String? = null,
@@ -60,7 +60,7 @@ public data class SwarmServiceNetworkIPAMConfig(
     public val ipRange: String? = null,
 )
 
-/** Details about a config-only network referenced by `configFrom`. Mirrors Swift `SwarmServiceNetworkConfigDetail`. */
+/** Details about a config-only network referenced by `configFrom`. */
 @Serializable
 public data class SwarmServiceNetworkConfigDetail(
     public val name: String,
@@ -73,7 +73,7 @@ public data class SwarmServiceNetworkConfigDetail(
     public val ipv6Configs: List<SwarmServiceNetworkIPAMConfig>? = null,
 )
 
-/** Enriched network info for a service's attached network. Mirrors Swift `SwarmServiceNetworkDetail`. */
+/** Enriched network info for a service's attached network. */
 @Serializable
 public data class SwarmServiceNetworkDetail(
     public val id: String,
@@ -95,7 +95,7 @@ public data class SwarmServiceNetworkDetail(
 
 /**
  * Full inspect payload for a swarm service. Docker SDK sub-blobs (spec, endpoint, version,
- * updateStatus) are preserved verbatim as JSON. Mirrors Swift `SwarmServiceInspect`.
+ * updateStatus) are preserved verbatim as JSON.
  */
 @Serializable
 public data class SwarmServiceInspect(
@@ -113,14 +113,14 @@ public data class SwarmServiceInspect(
     public val mounts: List<SwarmServiceMount>? = null,
 )
 
-/** Extra options used when creating a swarm service. Mirrors Swift `SwarmServiceCreateOptions`. */
+/** Extra options used when creating a swarm service. */
 @Serializable
 public data class SwarmServiceCreateOptions(
     public val encodedRegistryAuth: String? = null,
     public val queryRegistry: Boolean? = null,
 )
 
-/** Extra options used when updating a swarm service. Mirrors Swift `SwarmServiceUpdateOptions`. */
+/** Extra options used when updating a swarm service. */
 @Serializable
 public data class SwarmServiceUpdateOptions(
     public val encodedRegistryAuth: String? = null,
@@ -129,14 +129,14 @@ public data class SwarmServiceUpdateOptions(
     public val queryRegistry: Boolean? = null,
 )
 
-/** Body for creating a swarm service; [spec] is the raw Docker ServiceSpec JSON. Mirrors Swift `SwarmServiceCreateRequest`. */
+/** Body for creating a swarm service; [spec] is the raw Docker ServiceSpec JSON. */
 @Serializable
 public data class SwarmServiceCreateRequest(
     public val spec: JsonValue,
     public val options: SwarmServiceCreateOptions? = null,
 )
 
-/** Body for updating a swarm service. Mirrors Swift `SwarmServiceUpdateRequest`. */
+/** Body for updating a swarm service. */
 @Serializable
 public data class SwarmServiceUpdateRequest(
     public val version: ULong,
@@ -144,20 +144,20 @@ public data class SwarmServiceUpdateRequest(
     public val options: SwarmServiceUpdateOptions? = null,
 )
 
-/** Response for swarm service create. Mirrors Swift `SwarmServiceCreateResponse`. */
+/** Response for swarm service create. */
 @Serializable
 public data class SwarmServiceCreateResponse(
     public val id: String,
     public val warnings: List<String>? = null,
 )
 
-/** Response for swarm service update / rollback / scale. Mirrors Swift `SwarmServiceUpdateResponse`. */
+/** Response for swarm service update / rollback / scale. */
 @Serializable
 public data class SwarmServiceUpdateResponse(
     public val warnings: List<String>? = null,
 )
 
-/** Body for scaling a replicated swarm service. Mirrors Swift `SwarmServiceScaleRequest`. */
+/** Body for scaling a replicated swarm service. */
 @Serializable
 public data class SwarmServiceScaleRequest(
     public val replicas: ULong,

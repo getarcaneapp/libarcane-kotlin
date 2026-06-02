@@ -4,7 +4,7 @@ import app.getarcane.sdk.serialization.ArcaneInstantSerializer
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
-/** Options for building an image with BuildKit. Mirrors Swift `ImageBuildRequest` (Models/image/ImageBuild.swift). */
+/** Options for building an image with BuildKit. */
 @Serializable
 public data class ImageBuildRequest(
     public val contextDir: String,
@@ -31,7 +31,7 @@ public data class ImageBuildRequest(
     public val provider: String? = null,
 )
 
-/** Result of an image build. Mirrors Swift `ImageBuildResult`. */
+/** Result of an image build. */
 @Serializable
 public data class ImageBuildResult(
     public val provider: String,
@@ -39,7 +39,7 @@ public data class ImageBuildResult(
     public val digest: String? = null,
 )
 
-/** A historical image build entry. Mirrors Swift `ImageBuildRecord`. */
+/** A historical image build entry. */
 @Serializable
 public data class ImageBuildRecord(
     public val id: String,

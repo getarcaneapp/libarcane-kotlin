@@ -9,7 +9,7 @@ import app.getarcane.sdk.models.version.VersionInfo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Kinds of dashboard action items. Mirrors Swift `ActionItemKind`. */
+/** Kinds of dashboard action items. */
 @Serializable
 public enum class ActionItemKind(public val wire: String) {
     @SerialName("stopped_containers")
@@ -25,7 +25,7 @@ public enum class ActionItemKind(public val wire: String) {
     EXPIRING_KEYS("expiring_keys"),
 }
 
-/** Mirrors Swift `ActionItemSeverity`. */
+/** Severity of a dashboard action item. */
 @Serializable
 public enum class ActionItemSeverity(public val wire: String) {
     @SerialName("warning")
@@ -35,7 +35,7 @@ public enum class ActionItemSeverity(public val wire: String) {
     CRITICAL("critical"),
 }
 
-/** A single attention item rendered on the dashboard. Mirrors Swift `ActionItem`. */
+/** A single attention item rendered on the dashboard. */
 @Serializable
 public data class ActionItem(
     public val kind: ActionItemKind,
@@ -43,7 +43,7 @@ public data class ActionItem(
     public val severity: ActionItemSeverity,
 )
 
-/** Collection of dashboard action items. Mirrors Swift `ActionItems`. */
+/** Collection of dashboard action items. */
 @Serializable
 public data class ActionItems(
     public val items: List<ActionItem> = emptyList(),
@@ -51,12 +51,12 @@ public data class ActionItems(
 
 /**
  * Settings payload carried in dashboard snapshots. Currently empty server-side — modeled as an
- * opaque object so future fields land transparently. Mirrors Swift `DashboardSnapshotSettings`.
+ * opaque object so future fields land transparently.
  */
 @Serializable
 public class DashboardSnapshotSettings
 
-/** Mirrors Swift `EnvironmentSnapshotState`. */
+/** State of an environment snapshot in a dashboard overview. */
 @Serializable
 public enum class EnvironmentSnapshotState(public val wire: String) {
     @SerialName("ready")
@@ -70,8 +70,8 @@ public enum class EnvironmentSnapshotState(public val wire: String) {
 }
 
 /**
- * Dashboard environment-overview row, one per visible environment. Mirrors Swift
- * `DashboardEnvironmentOverview`. The full [environment] blob is preserved as JSON.
+ * Dashboard environment-overview row, one per visible environment. The full [environment] blob is
+ * preserved as JSON.
  */
 @Serializable
 public data class DashboardEnvironmentOverview(
@@ -85,7 +85,7 @@ public data class DashboardEnvironmentOverview(
     public val snapshotError: String? = null,
 )
 
-/** Mirrors Swift `DashboardEnvironmentsSummary`. */
+/** Aggregate summary across all dashboard environments. */
 @Serializable
 public data class DashboardEnvironmentsSummary(
     public val totalEnvironments: Int = 0,
@@ -95,21 +95,21 @@ public data class DashboardEnvironmentsSummary(
     public val pendingEnvironments: Int = 0,
     public val errorEnvironments: Int = 0,
     public val disabledEnvironments: Int = 0,
-    // Swift defaults these to `.init()`, whose all-zero counts are reproduced explicitly here
-    // because the ported `ContainerStatusCounts`/`ImageUsageCounts` have no parameter defaults.
+    // Explicit all-zero counts are supplied here because `ContainerStatusCounts`/`ImageUsageCounts`
+    // have no parameter defaults of their own.
     public val containers: ContainerStatusCounts = ContainerStatusCounts(0, 0, 0),
     public val imageUsageCounts: ImageUsageCounts = ImageUsageCounts(0, 0, 0, 0),
     public val environmentsWithActionItems: Int = 0,
 )
 
-/** Mirrors Swift `DashboardEnvironmentsOverview`. */
+/** Overview of all dashboard environments plus their aggregate summary. */
 @Serializable
 public data class DashboardEnvironmentsOverview(
     public val summary: DashboardEnvironmentsSummary,
     public val environments: List<DashboardEnvironmentOverview> = emptyList(),
 )
 
-/** Container table payload on the dashboard. Mirrors Swift `DashboardSnapshotContainers`. */
+/** Container table payload on the dashboard. */
 @Serializable
 public data class DashboardSnapshotContainers(
     public val data: List<ContainerSummary> = emptyList(),
@@ -119,7 +119,7 @@ public data class DashboardSnapshotContainers(
 
 /**
  * Image table payload on the dashboard. Images are kept as opaque JSON until the image-summary type
- * is fully ported. Mirrors Swift `DashboardSnapshotImages`.
+ * is fully modeled.
  */
 @Serializable
 public data class DashboardSnapshotImages(
@@ -127,7 +127,7 @@ public data class DashboardSnapshotImages(
     public val pagination: PaginationResponse,
 )
 
-/** Top-level dashboard first-paint snapshot. Mirrors Swift `DashboardSnapshot`. */
+/** Top-level dashboard first-paint snapshot. */
 @Serializable
 public data class DashboardSnapshot(
     public val containers: DashboardSnapshotContainers,

@@ -3,7 +3,7 @@ package app.getarcane.sdk.models.container
 import app.getarcane.sdk.models.base.JsonValue
 import kotlinx.serialization.Serializable
 
-/** A port binding for a container. Mirrors Swift `ContainerPort` (Models/container/Container.swift). */
+/** A port binding for a container. */
 @Serializable
 public data class ContainerPort(
     public val ip: String? = null,
@@ -12,7 +12,7 @@ public data class ContainerPort(
     public val type: String,
 )
 
-/** A volume mount for a container. Mirrors Swift `ContainerMount`. */
+/** A volume mount for a container. */
 @Serializable
 public data class ContainerMount(
     public val type: String,
@@ -25,7 +25,7 @@ public data class ContainerMount(
     public val propagation: String? = null,
 )
 
-/** Network endpoint settings for a container. Mirrors Swift `ContainerNetworkEndpoint`. */
+/** Network endpoint settings for a container. */
 @Serializable
 public data class ContainerNetworkEndpoint(
     public val ipamConfig: JsonValue? = null,
@@ -45,13 +45,13 @@ public data class ContainerNetworkEndpoint(
     public val dnsNames: List<String>? = null,
 )
 
-/** Network configuration for a container. Mirrors Swift `ContainerNetworkSettings`. */
+/** Network configuration for a container. */
 @Serializable
 public data class ContainerNetworkSettings(
     public val networks: Map<String, ContainerNetworkEndpoint>,
 )
 
-/** Host configuration for a container. Mirrors Swift `ContainerHostConfig`. */
+/** Host configuration for a container. */
 @Serializable
 public data class ContainerHostConfig(
     public val networkMode: String? = null,

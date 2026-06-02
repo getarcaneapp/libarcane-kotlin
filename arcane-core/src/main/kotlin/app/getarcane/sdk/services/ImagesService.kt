@@ -30,7 +30,7 @@ import app.getarcane.sdk.streaming.ndjsonFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.Serializable
 
-/** Request body for the image prune endpoint. Mirrors the Swift `ImagesService.prune` local `Body`. */
+/** Request body for the image prune endpoint. */
 @Serializable
 private data class PruneBody(
     val mode: String? = null,
@@ -39,7 +39,7 @@ private data class PruneBody(
     val filters: Map<String, List<String>>? = null,
 )
 
-/** Image listing, pull/build streaming, upload, and update checks. Port of Swift `ImagesService`. */
+/** Image listing, pull/build streaming, upload, and update checks. */
 public class ImagesService internal constructor(private val rest: RestService) {
     // MARK: - Listing
 

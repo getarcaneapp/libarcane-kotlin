@@ -4,7 +4,7 @@ import app.getarcane.sdk.models.base.PaginationResponse
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Mirrors Docker SDK volume usage data. Mirrors Swift `VolumeUsageData`. */
+/** Docker SDK volume usage data. */
 @Serializable
 public data class VolumeUsageData(
     @SerialName("Size")
@@ -14,9 +14,8 @@ public data class VolumeUsageData(
 )
 
 /**
- * A Docker volume. Mirrors Swift `Volume` (Models/volume/Volume.swift). Several fields default to
- * empty/false/0 (matching Swift's `decodeIfPresent(...) ?? default`) because the Docker daemon
- * often emits `null` for empty labels/options/containers; the project [ArcaneJson] config
+ * A Docker volume. Several fields default to empty/false/0 because the Docker daemon often emits
+ * `null` for empty labels/options/containers; the project [ArcaneJson] config
  * (`coerceInputValues = true`) coerces those nulls to these defaults.
  */
 @Serializable
@@ -35,7 +34,7 @@ public data class Volume(
     public val containers: List<String> = emptyList(),
 )
 
-/** Counts of volumes by usage status. Mirrors Swift `VolumeUsageCounts`. */
+/** Counts of volumes by usage status. */
 @Serializable
 public data class VolumeUsageCounts(
     public val inuse: Int = 0,
@@ -43,14 +42,14 @@ public data class VolumeUsageCounts(
     public val total: Int = 0,
 )
 
-/** Result of a volume prune operation. Mirrors Swift `VolumePruneReport`. */
+/** Result of a volume prune operation. */
 @Serializable
 public data class VolumePruneReport(
     public val volumesDeleted: List<String> = emptyList(),
     public val spaceReclaimed: ULong = 0u,
 )
 
-/** Used to create a new volume. Mirrors Swift `CreateVolume`. */
+/** Used to create a new volume. */
 @Serializable
 public data class CreateVolume(
     public val name: String,
@@ -59,14 +58,14 @@ public data class CreateVolume(
     public val labels: Map<String, String>? = null,
 )
 
-/** Per-volume usage details returned by `GET /volumes/{name}/usage`. Mirrors Swift `VolumeUsage`. */
+/** Per-volume usage details returned by `GET /volumes/{name}/usage`. */
 @Serializable
 public data class VolumeUsage(
     public val inUse: Boolean,
     public val containers: List<String> = emptyList(),
 )
 
-/** Size information for a single volume. Mirrors Swift `VolumeSizeInfo`. */
+/** Size information for a single volume. */
 @Serializable
 public data class VolumeSizeInfo(
     public val name: String,
@@ -74,7 +73,7 @@ public data class VolumeSizeInfo(
     public val refCount: Long,
 )
 
-/** The page envelope returned by `GET /environments/{id}/volumes`. Mirrors Swift `VolumeListPage`. */
+/** The page envelope returned by `GET /environments/{id}/volumes`. */
 @Serializable
 public data class VolumeListPage(
     public val success: Boolean,

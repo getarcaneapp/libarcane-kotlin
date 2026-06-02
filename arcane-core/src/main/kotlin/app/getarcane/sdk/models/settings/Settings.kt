@@ -2,18 +2,18 @@ package app.getarcane.sdk.models.settings
 
 import kotlinx.serialization.Serializable
 
-/** A publicly accessible setting value. Mirrors Swift `PublicSetting` (Models/Settings/Settings.swift). */
+/** A publicly accessible setting value. */
 @Serializable
 public data class PublicSetting(
     public val key: String,
     public val type: String,
     public val value: String,
 ) {
-    /** Swift exposes `id == key` for `Identifiable`. */
+    /** Stable identifier; aliases [key]. */
     public val id: String get() = key
 }
 
-/** A setting value with visibility metadata. Mirrors Swift `SettingDto`. */
+/** A setting value with visibility metadata. */
 @Serializable
 public data class SettingDto(
     public val key: String,
@@ -21,13 +21,13 @@ public data class SettingDto(
     public val value: String,
     public val isPublic: Boolean,
 ) {
-    /** Swift exposes `id == key` for `Identifiable`. */
+    /** Stable identifier; aliases [key]. */
     public val id: String get() = key
 }
 
 /**
- * Request body for `PUT /environments/{id}/settings`. Mirrors Swift `UpdateSettings`. All fields are
- * optional strings — only the fields you set are updated.
+ * Request body for `PUT /environments/{id}/settings`. All fields are optional strings — only the
+ * fields you set are updated.
  */
 @Serializable
 public data class UpdateSettings(

@@ -1,9 +1,9 @@
 package app.getarcane.sdk.models.role
 
 /**
- * Well-known permission strings recognized by the Arcane v2 RBAC system. Mirrors Swift `Permission`
- * (Models/Role/Permission.swift) — a namespace of string constants, not an enum. Custom permission
- * strings are also accepted; the SDK treats permissions as free-form strings.
+ * Well-known permission strings recognized by the Arcane v2 RBAC system — a namespace of string
+ * constants, not an enum. Custom permission strings are also accepted; the SDK treats permissions
+ * as free-form strings.
  */
 public object Permission {
     /** Sudo wildcard. A user holding `"*"` in any in-scope bucket passes every permission check. */

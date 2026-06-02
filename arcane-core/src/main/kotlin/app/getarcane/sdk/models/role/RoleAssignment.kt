@@ -5,7 +5,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Mirrors Swift `RoleAssignmentSource`. */
+/** Origin of a role assignment: created manually or derived from OIDC. */
 @Serializable
 public enum class RoleAssignmentSource(public val wire: String) {
     @SerialName("manual")
@@ -15,7 +15,7 @@ public enum class RoleAssignmentSource(public val wire: String) {
     OIDC("oidc"),
 }
 
-/** A role granted to a user, optionally scoped to an environment. Mirrors Swift `RoleAssignment`. */
+/** A role granted to a user, optionally scoped to an environment. */
 @Serializable
 public data class RoleAssignment(
     public val id: String,
@@ -30,7 +30,7 @@ public data class RoleAssignment(
         get() = RoleAssignmentSource.entries.firstOrNull { it.wire == source }
 }
 
-/** Compact role assignment carried on a v2 `User` payload. Mirrors Swift `RoleAssignmentSummary`. */
+/** Compact role assignment carried on a v2 `User` payload. */
 @Serializable
 public data class RoleAssignmentSummary(
     public val roleId: String,
@@ -41,14 +41,14 @@ public data class RoleAssignmentSummary(
         get() = RoleAssignmentSource.entries.firstOrNull { it.wire == source }
 }
 
-/** A single desired assignment when setting a user's roles. Mirrors Swift `UserAssignmentInput`. */
+/** A single desired assignment when setting a user's roles. */
 @Serializable
 public data class UserAssignmentInput(
     public val roleId: String,
     public val environmentId: String? = null,
 )
 
-/** Request body to replace a user's role assignments. Mirrors Swift `SetUserAssignments`. */
+/** Request body to replace a user's role assignments. */
 @Serializable
 public data class SetUserAssignments(
     public val assignments: List<UserAssignmentInput>,

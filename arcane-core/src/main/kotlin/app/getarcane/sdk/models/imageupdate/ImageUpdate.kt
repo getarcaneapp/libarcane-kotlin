@@ -5,7 +5,7 @@ import app.getarcane.sdk.serialization.ArcaneInstantSerializer
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
-/** Result of an image update check. Mirrors Swift `ImageUpdateResponse` (Models/imageupdate/ImageUpdate.swift). */
+/** Result of an image update check. */
 @Serializable
 public data class ImageUpdateResponse(
     public val hasUpdate: Boolean,
@@ -24,7 +24,7 @@ public data class ImageUpdateResponse(
     public val usedCredential: Boolean? = null,
 )
 
-/** Aggregate summary of image update status across an environment. Mirrors Swift `ImageUpdateSummary`. */
+/** Aggregate summary of image update status across an environment. */
 @Serializable
 public data class ImageUpdateSummary(
     public val totalImages: Int,
@@ -33,18 +33,18 @@ public data class ImageUpdateSummary(
     public val errorsCount: Int,
 )
 
-/** Request body for the batch image update check endpoint. Mirrors Swift `BatchImageUpdateRequest`. */
+/** Request body for the batch image update check endpoint. */
 @Serializable
 public data class BatchImageUpdateRequest(
     public val imageRefs: List<String>,
     public val credentials: List<ContainerRegistryCredential>? = null,
 )
 
-/** Request body for the "check all images" endpoint. Mirrors Swift `CheckAllImagesRequest`. */
+/** Request body for the "check all images" endpoint. */
 @Serializable
 public data class CheckAllImagesRequest(
     public val credentials: List<ContainerRegistryCredential>? = null,
 )
 
-/** Map keyed by image reference. Values may be null if the check failed. Mirrors Swift `ImageUpdateBatchResponse`. */
+/** Map keyed by image reference. Values may be null if the check failed. */
 public typealias ImageUpdateBatchResponse = Map<String, ImageUpdateResponse?>

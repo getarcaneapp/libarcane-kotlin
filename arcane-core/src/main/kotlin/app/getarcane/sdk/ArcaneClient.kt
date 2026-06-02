@@ -47,7 +47,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.serialization.json.Json
 
 /**
- * The SDK entry point. Port of Swift `ArcaneClient` (Client/ArcaneClient.swift). Owns a single
+ * The SDK entry point. Owns a single
  * Ktor [HttpClient], an [AuthManager], the [ArcaneTransport], the [RestService], and per-resource
  * services. Because the Kotlin client owns IO resources it is [AutoCloseable] (use `client.use { }`
  * or call [close]); [scoped] returns a view that shares the same client/auth.

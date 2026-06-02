@@ -49,7 +49,7 @@ import app.getarcane.sdk.streaming.logStream
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Facade for the Docker Swarm endpoints under `/environments/{id}/swarm`. Port of Swift `SwarmService`.
+ * Facade for the Docker Swarm endpoints under `/environments/{id}/swarm`.
  *
  * This class collides on name with the Docker concept of a "swarm service" (a deployed service
  * object), which is modeled as `SwarmServiceSummary` / `SwarmServiceInspect` to keep things

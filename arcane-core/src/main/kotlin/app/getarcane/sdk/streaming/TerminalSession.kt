@@ -13,8 +13,8 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.receiveAsFlow
 
 /**
- * A bidirectional container exec terminal over a WebSocket. Port of Swift `TerminalSession`:
- * [send] writes input, [output] is a cold [Flow] of decoded output frames. Open via [connect].
+ * A bidirectional container exec terminal over a WebSocket: [send] writes input, [output] is a cold
+ * [Flow] of decoded output frames. Open via [connect].
  */
 public class TerminalSession internal constructor(
     private val session: DefaultClientWebSocketSession,

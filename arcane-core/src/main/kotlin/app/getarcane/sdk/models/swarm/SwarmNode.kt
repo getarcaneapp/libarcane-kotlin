@@ -5,7 +5,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** State of the Arcane node-agent reporting back from a swarm node. Mirrors Swift `SwarmNodeAgentState`. */
+/** State of the Arcane node-agent reporting back from a swarm node. */
 @Serializable
 public enum class SwarmNodeAgentState(public val wire: String) {
     @SerialName("none")
@@ -24,7 +24,7 @@ public enum class SwarmNodeAgentState(public val wire: String) {
     MISMATCHED("mismatched"),
 }
 
-/** Coverage info for a swarm node from Arcane's node-agent perspective. Mirrors Swift `SwarmNodeAgentStatus`. */
+/** Coverage info for a swarm node from Arcane's node-agent perspective. */
 @Serializable
 public data class SwarmNodeAgentStatus(
     public val state: SwarmNodeAgentState,
@@ -38,7 +38,7 @@ public data class SwarmNodeAgentStatus(
     public val reportedHostname: String? = null,
 )
 
-/** A swarm node summary as returned by the list/get endpoints. Mirrors Swift `SwarmNode`. */
+/** A swarm node summary as returned by the list/get endpoints. */
 @Serializable
 public data class SwarmNode(
     public val id: String,
@@ -60,7 +60,7 @@ public data class SwarmNode(
     public val agent: SwarmNodeAgentStatus,
 )
 
-/** Request payload for updating a swarm node's spec. Mirrors Swift `SwarmNodeUpdateRequest`. */
+/** Request payload for updating a swarm node's spec. */
 @Serializable
 public data class SwarmNodeUpdateRequest(
     public val version: ULong? = null,
@@ -70,7 +70,7 @@ public data class SwarmNodeUpdateRequest(
     public val availability: String? = null,
 )
 
-/** Request for the swarm node agent deployment-snippet endpoint. Mirrors Swift `SwarmNodeAgentDeploymentRequest`. */
+/** Request for the swarm node agent deployment-snippet endpoint. */
 @Serializable
 public data class SwarmNodeAgentDeploymentRequest(
     public val rotate: Boolean = false,
@@ -78,7 +78,7 @@ public data class SwarmNodeAgentDeploymentRequest(
 
 /**
  * File payload returned alongside deployment snippets (re-stated here so the swarm module is
- * self-contained even before the environments module is ported). Mirrors Swift `SwarmDeploymentSnippetFile`.
+ * self-contained even before the environments module is ported).
  */
 @Serializable
 public data class SwarmDeploymentSnippetFile(
@@ -90,7 +90,7 @@ public data class SwarmDeploymentSnippetFile(
     public val permissions: String,
 )
 
-/** Mirrors Swift `SwarmDeploymentSnippetMTLS`. */
+/** mTLS deployment snippets (docker-run / docker-compose) and supporting files for a swarm node. */
 @Serializable
 public data class SwarmDeploymentSnippetMTLS(
     public val dockerRun: String,
@@ -99,7 +99,7 @@ public data class SwarmDeploymentSnippetMTLS(
     public val hostDirHint: String,
 )
 
-/** Bundle of docker-run / docker-compose deployment snippets for a swarm node. Mirrors Swift `SwarmNodeAgentDeployment`. */
+/** Bundle of docker-run / docker-compose deployment snippets for a swarm node. */
 @Serializable
 public data class SwarmNodeAgentDeployment(
     public val dockerRun: String,
@@ -109,7 +109,7 @@ public data class SwarmNodeAgentDeployment(
     public val agent: SwarmNodeAgentStatus,
 )
 
-/** Identifies the local swarm node (used by the cross-environment node identity endpoint). Mirrors Swift `SwarmNodeIdentity`. */
+/** Identifies the local swarm node (used by the cross-environment node identity endpoint). */
 @Serializable
 public data class SwarmNodeIdentity(
     public val swarmNodeId: String,

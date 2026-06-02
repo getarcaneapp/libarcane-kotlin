@@ -4,8 +4,8 @@ import app.getarcane.sdk.models.user.User
 
 /**
  * Snapshot of which Arcane API shape the server speaks, detected from the first authenticated
- * [User] payload the SDK decodes. Mirrors Swift `ServerCapabilities` (Client/ServerCapabilities.swift).
- * Surfaced via [ArcaneClient.serverCapabilities] so callers can gate v2-only screens.
+ * [User] payload the SDK decodes. Surfaced via [ArcaneClient.serverCapabilities] so callers can
+ * gate v2-only screens.
  */
 public data class ServerCapabilities(
     public val mode: Mode,

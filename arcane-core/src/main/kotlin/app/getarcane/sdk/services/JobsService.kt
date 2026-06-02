@@ -8,7 +8,7 @@ import app.getarcane.sdk.models.jobschedule.JobRunResponse
 import app.getarcane.sdk.models.jobschedule.JobScheduleConfig
 import app.getarcane.sdk.models.jobschedule.UpdateJobScheduleConfig
 
-/** Background job schedules and manual execution for an environment. Port of Swift `JobsService`. */
+/** Background job schedules and manual execution for an environment. */
 public class JobsService internal constructor(private val rest: RestService) {
     /**
      * Get configured cron schedules for background jobs.

@@ -14,14 +14,13 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 /**
- * Docker daemon version + system info as returned by `/system/docker/info`. Mirrors Swift
- * `DockerInfo` (Models/System/DockerInfo.swift).
+ * Docker daemon version + system info as returned by `/system/docker/info`.
  *
  * The fields below the top-level metadata mirror the Docker SDK's `system.Info` struct, which the
  * Go API embeds verbatim. Rather than re-modeling every Docker SDK field, the merged object is
  * exposed as a dictionary of [JsonValue] via [info]; use the strongly-typed top-level fields for
- * the values Arcane massages itself. Decoding/encoding follows Swift's catch-all single-value
- * container via [DockerInfoSerializer].
+ * the values Arcane massages itself. Decoding/encoding uses a catch-all single-value container via
+ * [DockerInfoSerializer].
  */
 @Serializable(with = DockerInfoSerializer::class)
 public data class DockerInfo(
@@ -56,10 +55,9 @@ public data class DockerInfo(
 }
 
 /**
- * Reproduces Swift `DockerInfo.init(from:)`/`encode(to:)`: decode the whole payload as a
- * `[String: JsonValue]` map, pull the known top-level fields, and stuff the remainder into
- * [DockerInfo.info]. On encode, the known fields plus [DockerInfo.info] are merged back into a flat
- * object.
+ * Serializer for [DockerInfo]: decode the whole payload as a `[String: JsonValue]` map, pull the
+ * known top-level fields, and stuff the remainder into [DockerInfo.info]. On encode, the known
+ * fields plus [DockerInfo.info] are merged back into a flat object.
  */
 public object DockerInfoSerializer : KSerializer<DockerInfo> {
     private val mapSer = MapSerializer(String.serializer(), JsonValue.serializer())

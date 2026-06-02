@@ -3,7 +3,7 @@ package app.getarcane.sdk.models.port
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** A port mapping between a container and its host. Mirrors Swift `PortMapping` (Models/port/PortMapping.swift). */
+/** A port mapping between a container and its host. */
 @Serializable
 public data class PortMapping(
     public val id: String,

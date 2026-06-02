@@ -4,7 +4,7 @@ import app.getarcane.sdk.serialization.ArcaneInstantSerializer
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
-/** Mirrors Swift `ContainerRegistry` (Models/containerregistry/ContainerRegistry.swift). */
+/** A configured container registry. */
 @Serializable
 public data class ContainerRegistry(
     public val id: String,
@@ -22,7 +22,7 @@ public data class ContainerRegistry(
     public val updatedAt: Instant,
 )
 
-/** Mirrors Swift `CreateContainerRegistry`. */
+/** Request body for creating a container registry. */
 @Serializable
 public data class CreateContainerRegistry(
     public val url: String,
@@ -37,7 +37,7 @@ public data class CreateContainerRegistry(
     public val awsRegion: String? = null,
 )
 
-/** Mirrors Swift `UpdateContainerRegistry`. */
+/** Request body for updating a container registry. */
 @Serializable
 public data class UpdateContainerRegistry(
     public val url: String? = null,
@@ -52,13 +52,13 @@ public data class UpdateContainerRegistry(
     public val awsRegion: String? = null,
 )
 
-/** Mirrors Swift `ContainerRegistryPullUsageResponse`. */
+/** Response wrapping pull-usage data for multiple registries. */
 @Serializable
 public data class ContainerRegistryPullUsageResponse(
     public val registries: List<ContainerRegistryPullUsage>,
 )
 
-/** Mirrors Swift `ContainerRegistryPullUsage`. */
+/** Pull-rate usage statistics for a single registry. */
 @Serializable
 public data class ContainerRegistryPullUsage(
     public val registryId: String,
@@ -79,7 +79,7 @@ public data class ContainerRegistryPullUsage(
     public val error: String? = null,
 )
 
-/** Mirrors Swift `ContainerRegistrySync`. */
+/** A registry record including credentials, used for syncing registries. */
 @Serializable
 public data class ContainerRegistrySync(
     public val id: String,
@@ -99,13 +99,13 @@ public data class ContainerRegistrySync(
     public val updatedAt: Instant,
 )
 
-/** Mirrors Swift `ContainerRegistrySyncRequest`. */
+/** Request body for syncing a collection of registries. */
 @Serializable
 public data class ContainerRegistrySyncRequest(
     public val registries: List<ContainerRegistrySync>,
 )
 
-/** Mirrors Swift `ContainerRegistryCredential`. */
+/** Credentials for authenticating against a container registry. */
 @Serializable
 public data class ContainerRegistryCredential(
     public val url: String,

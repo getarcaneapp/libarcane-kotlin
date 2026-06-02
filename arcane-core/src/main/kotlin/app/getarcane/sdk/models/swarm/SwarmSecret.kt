@@ -5,7 +5,7 @@ import app.getarcane.sdk.serialization.ArcaneInstantSerializer
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
-/** A swarm secret (named, write-only blob mountable into services). Mirrors Swift `SwarmSecretSummary`. */
+/** A swarm secret (named, write-only blob mountable into services). */
 @Serializable
 public data class SwarmSecretSummary(
     public val id: String,
@@ -17,13 +17,13 @@ public data class SwarmSecretSummary(
     public val spec: JsonValue,
 )
 
-/** Body for creating a swarm secret; [spec] is the raw Docker SecretSpec. Mirrors Swift `SwarmSecretCreateRequest`. */
+/** Body for creating a swarm secret; [spec] is the raw Docker SecretSpec. */
 @Serializable
 public data class SwarmSecretCreateRequest(
     public val spec: JsonValue,
 )
 
-/** Body for updating a swarm secret. Mirrors Swift `SwarmSecretUpdateRequest`. */
+/** Body for updating a swarm secret. */
 @Serializable
 public data class SwarmSecretUpdateRequest(
     public val version: ULong? = null,

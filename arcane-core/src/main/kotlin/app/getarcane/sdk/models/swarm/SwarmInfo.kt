@@ -5,7 +5,7 @@ import app.getarcane.sdk.serialization.ArcaneInstantSerializer
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
-/** Runtime status reflecting whether swarm mode is enabled in this environment. Mirrors Swift `SwarmRuntimeStatus`. */
+/** Runtime status reflecting whether swarm mode is enabled in this environment. */
 @Serializable
 public data class SwarmRuntimeStatus(
     public val enabled: Boolean,
@@ -13,7 +13,7 @@ public data class SwarmRuntimeStatus(
 
 /**
  * Top-level information about the swarm cluster. The full Docker `Spec` blob is preserved as opaque
- * JSON. Mirrors Swift `SwarmInfo`.
+ * JSON.
  */
 @Serializable
 public data class SwarmInfo(

@@ -14,9 +14,9 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 
 /**
- * Receive-only WebSocket log stream as a cold [Flow]. Port of Swift `LogStream`: appends
- * `format=json`, decodes each frame as a [LogLine] (falling back to raw text). The socket opens on
- * collection and closes when the flow is cancelled or completes.
+ * Receive-only WebSocket log stream as a cold [Flow]: appends `format=json`, decodes each frame as a
+ * [LogLine] (falling back to raw text). The socket opens on collection and closes when the flow is
+ * cancelled or completes.
  */
 public fun ArcaneTransport.logStream(
     path: String,
@@ -42,8 +42,8 @@ public fun ArcaneTransport.logStream(
 }
 
 /**
- * Receive-only WebSocket stats stream as a cold [Flow]. Port of Swift `StatsStream<Element>`:
- * decodes each frame as [T] and throws [ArcaneError.Decoding] on malformed frames.
+ * Receive-only WebSocket stats stream as a cold [Flow]: decodes each frame as [T] and throws
+ * [ArcaneError.Decoding] on malformed frames.
  */
 public fun <T> ArcaneTransport.statsStream(
     path: String,

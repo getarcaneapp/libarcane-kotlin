@@ -7,7 +7,7 @@ import app.getarcane.sdk.models.event.CreateEvent
 import app.getarcane.sdk.models.event.Event
 import app.getarcane.sdk.pagination.PaginatedResponse
 
-/** Manages system audit events. Port of Swift `EventsService`. */
+/** Manages system audit events. */
 public class EventsService internal constructor(private val rest: RestService) {
     /** List system events with pagination and optional filters. */
     public suspend fun listPaginated(

@@ -18,7 +18,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/** Port of Tests/ArcaneTests/UserDecodingTests.swift. */
+/** Decoding of v1/v2 `User` payloads and derived capabilities. */
 class UserDecodingTest {
     private val json = ArcaneJson.default
 

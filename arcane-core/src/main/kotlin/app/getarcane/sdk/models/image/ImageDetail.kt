@@ -3,7 +3,7 @@ package app.getarcane.sdk.models.image
 import app.getarcane.sdk.models.base.JsonValue
 import kotlinx.serialization.Serializable
 
-/** The `config` block on an `ImageDetailSummary`. Mirrors Swift `ImageDetailConfig` (Models/image/ImageDetail.swift). */
+/** The `config` block on an `ImageDetailSummary`. */
 @Serializable
 public data class ImageDetailConfig(
     public val exposedPorts: Map<String, JsonValue>? = null,
@@ -17,27 +17,27 @@ public data class ImageDetailConfig(
     public val labels: Map<String, String>? = null,
 )
 
-/** The `graphDriver` block on an `ImageDetailSummary`. Mirrors Swift `ImageDetailGraphDriver`. */
+/** The `graphDriver` block on an `ImageDetailSummary`. */
 @Serializable
 public data class ImageDetailGraphDriver(
     public val data: JsonValue? = null,
     public val name: String,
 )
 
-/** The `rootFs` block on an `ImageDetailSummary`. Mirrors Swift `ImageDetailRootFs`. */
+/** The `rootFs` block on an `ImageDetailSummary`. */
 @Serializable
 public data class ImageDetailRootFs(
     public val type: String,
     public val layers: List<String>,
 )
 
-/** The `metadata` block on an `ImageDetailSummary`. Mirrors Swift `ImageDetailMetadata`. */
+/** The `metadata` block on an `ImageDetailSummary`. */
 @Serializable
 public data class ImageDetailMetadata(
     public val lastTagTime: String,
 )
 
-/** The `descriptor` block on an `ImageDetailSummary`. Mirrors Swift `ImageDetailDescriptor`. */
+/** The `descriptor` block on an `ImageDetailSummary`. */
 @Serializable
 public data class ImageDetailDescriptor(
     public val mediaType: String,
@@ -45,7 +45,7 @@ public data class ImageDetailDescriptor(
     public val size: Long,
 )
 
-/** Detailed information about a single image (the `inspect` response shape). Mirrors Swift `ImageDetailSummary`. */
+/** Detailed information about a single image (the `inspect` response shape). */
 @Serializable
 public data class ImageDetailSummary(
     public val id: String,

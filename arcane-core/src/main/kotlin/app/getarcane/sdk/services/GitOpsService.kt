@@ -19,7 +19,7 @@ import app.getarcane.sdk.models.gitops.UpdateGitOpsSync
 import app.getarcane.sdk.models.gitops.UpdateGitRepository
 import app.getarcane.sdk.pagination.PaginatedResponse
 
-/** Manages Git repositories and GitOps sync configurations. Port of Swift `GitOpsService`. */
+/** Manages Git repositories and GitOps sync configurations. */
 public class GitOpsService internal constructor(private val rest: RestService) {
     // Git repositories (top-level)
 

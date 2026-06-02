@@ -5,8 +5,7 @@ import kotlinx.coroutines.flow.flow
 
 /**
  * A cold [Flow] that walks a paginated endpoint, fetching successive `limit`-sized pages until
- * `pagination.totalItems` is exhausted (or a page comes back empty). Port of Swift `ArcanePaginator`
- * (Pagination/PaginatedResponse.swift), replacing the `AsyncSequence` with a `Flow`.
+ * `pagination.totalItems` is exhausted (or a page comes back empty).
  */
 public fun <T> arcanePaginator(
     limit: Int = 50,

@@ -6,7 +6,7 @@ import app.getarcane.sdk.models.role.OidcRoleMapping
 import app.getarcane.sdk.models.role.UpdateOidcRoleMapping
 
 /**
- * Manages OIDC claim-value → role mappings. Port of Swift `OidcRoleMappingsService`.
+ * Manages OIDC claim-value → role mappings.
  * Mappings with `source == "env"` are declared via the `OIDC_ROLE_MAPPINGS` env var and are
  * read-only at runtime (update/delete against them return 403). Available only on v2 RBAC servers.
  */

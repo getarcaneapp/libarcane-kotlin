@@ -16,9 +16,8 @@ import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.doubleOrNull
 
 /**
- * A dynamically-typed JSON value, mirroring Swift's `JSONValue` enum (Models/Base/JSONValue.swift).
- * Used for open/polymorphic fields the SDK does not model strictly (labels, `exposedPorts`,
- * Docker `info`, validation `details`, …).
+ * A dynamically-typed JSON value. Used for open/polymorphic fields the SDK does not model strictly
+ * (labels, `exposedPorts`, Docker `info`, validation `details`, …).
  */
 @Serializable(with = JsonValueSerializer::class)
 public sealed interface JsonValue {
@@ -34,7 +33,7 @@ public sealed interface JsonValue {
     }
 }
 
-// Accessor helpers mirroring the Swift `JSONValue` computed properties used by DockerInfo etc.
+// Accessor helpers for reading typed values out of a JsonValue, used by DockerInfo etc.
 public val JsonValue.stringValue: String? get() = (this as? JsonValue.Str)?.value
 public val JsonValue.boolValue: Boolean? get() = (this as? JsonValue.Bool)?.value
 public val JsonValue.doubleValue: Double? get() = (this as? JsonValue.Number)?.value

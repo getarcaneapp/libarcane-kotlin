@@ -9,10 +9,9 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 /**
- * Lenient ISO-8601 [Instant] serializer mirroring Swift's `ArcaneJSON.makeDecoder` date strategy
- * (ArcaneClient.swift): parse an internet date-time with **or** without fractional seconds, and
- * tolerate a space separator or a missing trailing `Z`. Encodes via [Instant.toString] (RFC-3339),
- * matching the Swift `.iso8601` encoding strategy.
+ * Lenient ISO-8601 [Instant] serializer: parse an internet date-time with **or** without fractional
+ * seconds, and tolerate a space separator or a missing trailing `Z`. Encodes via [Instant.toString]
+ * (RFC-3339).
  *
  * kotlinx-datetime's built-in `Instant` serializer already handles the common RFC-3339 forms the
  * Arcane backend emits (Go `time.RFC3339`), so plain `Instant` fields are fine for decoding server

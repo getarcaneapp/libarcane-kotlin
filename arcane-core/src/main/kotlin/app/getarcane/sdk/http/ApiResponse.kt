@@ -3,8 +3,8 @@ package app.getarcane.sdk.http
 import kotlinx.serialization.Serializable
 
 /**
- * Standard Arcane success envelope `{ "success": true, "data": <T> }`. Mirrors Swift `APIResponse`
- * (HTTP/APIResponse.swift). The transport strips the envelope and returns `data` to callers.
+ * Standard Arcane success envelope `{ "success": true, "data": <T> }`. The transport strips the
+ * envelope and returns `data` to callers.
  */
 @Serializable
 public data class ApiResponse<T>(

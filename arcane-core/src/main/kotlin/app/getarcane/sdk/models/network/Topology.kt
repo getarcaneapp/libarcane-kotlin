@@ -3,7 +3,7 @@ package app.getarcane.sdk.models.network
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Distinguishes network nodes from container nodes. Mirrors Swift `TopologyNodeType`. */
+/** Distinguishes network nodes from container nodes. */
 @Serializable
 public enum class TopologyNodeType(public val wire: String) {
     @SerialName("network")
@@ -13,7 +13,7 @@ public enum class TopologyNodeType(public val wire: String) {
     CONTAINER("container"),
 }
 
-/** Additional context shown by the UI. Mirrors Swift `TopologyNodeMetadata`. */
+/** Additional context shown by the UI. */
 @Serializable
 public data class TopologyNodeMetadata(
     public val driver: String? = null,
@@ -23,7 +23,7 @@ public data class TopologyNodeMetadata(
     public val isDefault: Boolean? = null,
 )
 
-/** A single node (network or container) in the topology graph. Mirrors Swift `TopologyNode`. */
+/** A single node (network or container) in the topology graph. */
 @Serializable
 public data class TopologyNode(
     public val id: String,
@@ -32,7 +32,7 @@ public data class TopologyNode(
     public val metadata: TopologyNodeMetadata = TopologyNodeMetadata(),
 )
 
-/** A directed edge from a network node to a container node. Mirrors Swift `TopologyEdge`. */
+/** A directed edge from a network node to a container node. */
 @Serializable
 public data class TopologyEdge(
     public val id: String,
@@ -42,7 +42,7 @@ public data class TopologyEdge(
     public val ipv6Address: String? = null,
 )
 
-/** The full topology graph for a Docker environment. Mirrors Swift `NetworkTopology`. */
+/** The full topology graph for a Docker environment. */
 @Serializable
 public data class NetworkTopology(
     public val nodes: List<TopologyNode> = emptyList(),

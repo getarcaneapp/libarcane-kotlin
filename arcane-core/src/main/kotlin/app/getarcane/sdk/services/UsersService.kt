@@ -12,7 +12,7 @@ import app.getarcane.sdk.models.user.UpdateUser
 import app.getarcane.sdk.models.user.User
 import app.getarcane.sdk.pagination.PaginatedResponse
 
-/** User account management. Port of Swift `UsersService`. */
+/** User account management. */
 public class UsersService internal constructor(private val rest: RestService) {
     public suspend fun listPaginated(
         search: String? = null,

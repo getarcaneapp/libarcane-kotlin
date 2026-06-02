@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * A project-related file (compose include, env file, or other on-disk file shown in the project
- * view). Mirrors Swift `IncludeFile` (Models/project/Project.swift).
+ * view).
  */
 @Serializable
 public data class IncludeFile(
@@ -18,7 +18,7 @@ public data class IncludeFile(
     public val content: String? = null,
 )
 
-/** Body for `POST /environments/{id}/projects`. Mirrors Swift `CreateProject`. */
+/** Body for `POST /environments/{id}/projects`. */
 @Serializable
 public data class CreateProject(
     public val name: String,
@@ -26,7 +26,7 @@ public data class CreateProject(
     public val envContent: String? = null,
 )
 
-/** Body for `PUT /environments/{id}/projects/{id}`. Mirrors Swift `UpdateProject`. */
+/** Body for `PUT /environments/{id}/projects/{id}`. */
 @Serializable
 public data class UpdateProject(
     public val name: String? = null,
@@ -34,21 +34,21 @@ public data class UpdateProject(
     public val envContent: String? = null,
 )
 
-/** Configures the deploy/up call. Mirrors Swift `DeployOptions`. */
+/** Configures the deploy/up call. */
 @Serializable
 public data class DeployOptions(
     public val pullPolicy: String? = null,
     public val forceRecreate: Boolean? = null,
 )
 
-/** Body for the include file update endpoint. Mirrors Swift `UpdateIncludeFile`. */
+/** Body for the include file update endpoint. */
 @Serializable
 public data class UpdateIncludeFile(
     public val relativePath: String,
     public val content: String,
 )
 
-/** Live container state for one compose service. Mirrors Swift `RuntimeService`. */
+/** Live container state for one compose service. */
 @Serializable
 public data class RuntimeService(
     public val name: String,
@@ -63,7 +63,7 @@ public data class RuntimeService(
     public val redeployDisabled: Boolean? = null,
 )
 
-/** Summarises image update status for the whole project. Mirrors Swift `ProjectUpdateInfo`. */
+/** Summarises image update status for the whole project. */
 @Serializable
 public data class ProjectUpdateInfo(
     public val status: String,
@@ -79,7 +79,7 @@ public data class ProjectUpdateInfo(
     public val lastCheckedAt: Instant? = null,
 )
 
-/** Response for `POST projects`. Mirrors Swift `ProjectCreateResponse`. */
+/** Response for `POST projects`. */
 @Serializable
 public data class ProjectCreateResponse(
     public val id: String,
@@ -99,7 +99,7 @@ public data class ProjectCreateResponse(
     public val updatedAt: String,
 )
 
-/** The full project view returned by the list/details endpoints. Mirrors Swift `ProjectDetails`. */
+/** The full project view returned by the list/details endpoints. */
 @Serializable
 public data class ProjectDetails(
     public val id: String,
@@ -134,14 +134,14 @@ public data class ProjectDetails(
     public val gitRepositoryURL: String? = null,
 )
 
-/** Body for the destroy endpoint. Mirrors Swift `DestroyProject`. */
+/** Body for the destroy endpoint. */
 @Serializable
 public data class DestroyProject(
     public val removeFiles: Boolean? = null,
     public val removeVolumes: Boolean? = null,
 )
 
-/** Summarises project status counts for an environment. Mirrors Swift `ProjectStatusCounts`. */
+/** Summarises project status counts for an environment. */
 @Serializable
 public data class ProjectStatusCounts(
     public val runningProjects: Int = 0,
@@ -150,13 +150,13 @@ public data class ProjectStatusCounts(
     public val archivedProjects: Int = 0,
 )
 
-/** Body for `POST projects/{id}/pull`. Mirrors Swift `ImagePullRequest`. */
+/** Body for `POST projects/{id}/pull`. */
 @Serializable
 public data class ImagePullRequest(
     public val credentials: List<ContainerRegistryCredential>? = null,
 )
 
-/** Body for `POST projects/{id}/build`. Mirrors Swift `BuildProjectRequest`. */
+/** Body for `POST projects/{id}/build`. */
 @Serializable
 public data class BuildProjectRequest(
     public val services: List<String>? = null,
@@ -165,7 +165,7 @@ public data class BuildProjectRequest(
     public val load: Boolean? = null,
 )
 
-/** One frame of the streaming pull progress. Mirrors Swift `PullProgressEvent`. */
+/** One frame of the streaming pull progress. */
 @Serializable
 public data class PullProgressEvent(
     public val status: String? = null,
@@ -179,7 +179,7 @@ public data class PullProgressEvent(
      */
     public val stream: String? = null,
 ) {
-    /** Mirrors Swift `PullProgressEvent.Detail`. */
+    /** Byte progress detail for a pull frame. */
     @Serializable
     public data class Detail(
         public val current: Long? = null,
@@ -187,7 +187,7 @@ public data class PullProgressEvent(
     )
 }
 
-/** The page envelope for `GET /environments/{id}/projects`. Mirrors Swift `ProjectListPage`. */
+/** The page envelope for `GET /environments/{id}/projects`. */
 @Serializable
 public data class ProjectListPage(
     public val success: Boolean,

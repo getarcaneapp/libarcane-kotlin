@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * EdgeMTLSCertificate is the lightweight mTLS certificate status for an edge environment surfaced
- * in environment list/detail responses. Mirrors Swift `EdgeMTLSCertificate`.
+ * in environment list/detail responses.
  */
 @Serializable
 public data class EdgeMTLSCertificate(
@@ -18,7 +18,7 @@ public data class EdgeMTLSCertificate(
     public val expiringSoon: Boolean = false,
 )
 
-/** Environment represents one Docker environment (local or edge). Mirrors Swift `Environment`. */
+/** Environment represents one Docker environment (local or edge). */
 @Serializable
 public data class Environment(
     public val id: String,
@@ -45,7 +45,7 @@ public data class Environment(
     public val apiKey: String? = null,
 )
 
-/** CreateEnvironment is the body for `POST /environments`. Mirrors Swift `CreateEnvironment`. */
+/** CreateEnvironment is the body for `POST /environments`. */
 @Serializable
 public data class CreateEnvironment(
     public val apiUrl: String,
@@ -57,7 +57,7 @@ public data class CreateEnvironment(
     public val isEdge: Boolean? = null,
 )
 
-/** UpdateEnvironment is the body for `PUT /environments/{id}`. Mirrors Swift `UpdateEnvironment`. */
+/** UpdateEnvironment is the body for `PUT /environments/{id}`. */
 @Serializable
 public data class UpdateEnvironment(
     public val apiUrl: String? = null,
@@ -68,32 +68,32 @@ public data class UpdateEnvironment(
     public val regenerateApiKey: Boolean? = null,
 )
 
-/** EnvironmentTestResult is the response of the test-connection endpoint. Mirrors Swift `EnvironmentTestResult`. */
+/** EnvironmentTestResult is the response of the test-connection endpoint. */
 @Serializable
 public data class EnvironmentTestResult(
     public val status: String,
     public val message: String? = null,
 )
 
-/** TestConnectionRequest is the body for the test-connection endpoint. Mirrors Swift `TestConnectionRequest`. */
+/** TestConnectionRequest is the body for the test-connection endpoint. */
 @Serializable
 public data class TestConnectionRequest(
     public val apiUrl: String? = null,
 )
 
-/** AgentPairRequest is the body for the local agent pairing endpoint. Mirrors Swift `AgentPairRequest`. */
+/** AgentPairRequest is the body for the local agent pairing endpoint. */
 @Serializable
 public data class AgentPairRequest(
     public val rotate: Boolean? = null,
 )
 
-/** AgentPairResponse is the response for the local agent pairing endpoint. Mirrors Swift `AgentPairResponse`. */
+/** AgentPairResponse is the response for the local agent pairing endpoint. */
 @Serializable
 public data class AgentPairResponse(
     public val token: String,
 )
 
-/** EnvironmentVersion is the response payload for the version endpoint. Mirrors Swift `EnvironmentVersion`. */
+/** EnvironmentVersion is the response payload for the version endpoint. */
 @Serializable
 public data class EnvironmentVersion(
     public val currentVersion: String,

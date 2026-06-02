@@ -9,7 +9,7 @@ import app.getarcane.sdk.models.updater.UpdaterStatus
 
 /**
  * Updater endpoints under `/environments/{id}/updater` and
- * `/environments/{id}/containers/{containerId}/update`. Port of Swift `UpdaterService`.
+ * `/environments/{id}/containers/{containerId}/update`.
  */
 public class UpdaterService internal constructor(private val rest: RestService) {
     /** Runs the updater. When [options] is omitted the server uses its defaults. */

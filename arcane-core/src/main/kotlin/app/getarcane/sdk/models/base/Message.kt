@@ -2,19 +2,19 @@ package app.getarcane.sdk.models.base
 
 import kotlinx.serialization.Serializable
 
-/** Mirrors Swift `MessageResponse` (Models/Base/Message.swift). */
+/** A simple response carrying a human-readable message. */
 @Serializable
 public data class MessageResponse(
     public val message: String,
 )
 
-/** Mirrors Swift `ErrorResponse`. */
+/** A simple response carrying an error string. */
 @Serializable
 public data class ErrorResponse(
     public val error: String,
 )
 
-/** RFC-7807-style error body. Mirrors Swift `ErrorModel`. */
+/** RFC-7807-style error body. */
 @Serializable
 public data class ErrorModel(
     public val title: String? = null,
@@ -25,7 +25,7 @@ public data class ErrorModel(
     public val errors: List<ErrorDetail>? = null,
 )
 
-/** Mirrors Swift `ErrorDetail`. */
+/** A single field-level error detail within an [ErrorModel]. */
 @Serializable
 public data class ErrorDetail(
     public val message: String? = null,

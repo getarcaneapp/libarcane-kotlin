@@ -8,7 +8,7 @@ plugins {
 }
 
 // Thin Android layer over arcane-core: secure token storage (Keystore + DataStore) and the
-// OIDC browser flow. Mirrors the Swift `ArcaneOIDC` product + `KeychainTokenStore`.
+// OIDC browser flow.
 android {
     namespace = "app.getarcane.sdk.android"
     compileSdk = 35

@@ -9,8 +9,7 @@ import app.getarcane.sdk.models.auth.OidcDeviceAuthResponse
 import app.getarcane.sdk.models.auth.OidcDeviceTokenResponse
 
 /**
- * Drives the OIDC browser sign-in flow on Android, the analog of Swift `ArcaneOIDC.OIDCAuthenticator`
- * (which uses `ASWebAuthenticationSession`). Android uses Custom Tabs + an app-handled redirect:
+ * Drives the OIDC browser sign-in flow on Android using Custom Tabs + an app-handled redirect:
  *
  * 1. [startSignIn] fetches the provider authorization URL and opens it in a Custom Tab.
  * 2. The provider redirects to your app's deep link (`redirectUri`); your Activity receives the [Uri].

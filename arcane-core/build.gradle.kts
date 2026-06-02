@@ -6,7 +6,7 @@ plugins {
 }
 
 // Pure Kotlin/JVM library. No Android dependencies — runs and unit-tests on any JVM
-// (Ktor MockEngine), mirroring the Swift `Arcane` core product.
+// (Ktor MockEngine).
 kotlin {
     explicitApi()
     compilerOptions {

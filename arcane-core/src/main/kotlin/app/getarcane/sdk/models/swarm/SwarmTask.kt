@@ -4,7 +4,7 @@ import app.getarcane.sdk.serialization.ArcaneInstantSerializer
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
-/** A swarm task summary (one row in a service's task list). Mirrors Swift `SwarmTaskSummary`. */
+/** A swarm task summary (one row in a service's task list). */
 @Serializable
 public data class SwarmTaskSummary(
     public val id: String,

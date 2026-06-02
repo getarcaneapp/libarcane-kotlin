@@ -7,8 +7,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 /**
- * Typed errors surfaced by the SDK. Sealed class port of Swift's `ArcaneError` enum
- * (Errors/ArcaneError.swift); cases carry the same associated data.
+ * Typed errors surfaced by the SDK. Each case carries its own associated data.
  */
 public sealed class ArcaneError(
     message: String? = null,
@@ -77,8 +76,7 @@ internal data class HumaErrorDetail(
 )
 
 /**
- * Maps an HTTP status + body + headers to an [ArcaneError]. Direct port of
- * `ArcaneError.from(statusCode:data:headers:decoder:)`: prefer the Arcane envelope; fall back to
+ * Maps an HTTP status + body + headers to an [ArcaneError]: prefer the Arcane envelope; fall back to
  * Huma RFC-7807 only when the Arcane envelope has no `error`/`message`/`code`.
  */
 public fun ArcaneError.Companion.fromResponse(

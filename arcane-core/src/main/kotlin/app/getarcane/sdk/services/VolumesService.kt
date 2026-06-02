@@ -22,7 +22,6 @@ import app.getarcane.sdk.pagination.PaginatedResponse
 
 /**
  * Groups all volume, browse, and backup endpoints registered under `/environments/{id}/volumes`.
- * Port of Swift `VolumesService`.
  */
 public class VolumesService internal constructor(private val rest: RestService) {
     // MARK: - Volumes

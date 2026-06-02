@@ -16,7 +16,7 @@ import app.getarcane.sdk.models.vulnerability.VulnerabilityScannerStatus
 import app.getarcane.sdk.models.vulnerability.VulnerabilityWithImage
 import app.getarcane.sdk.pagination.PaginatedResponse
 
-/** Trivy vulnerability scanning, summaries, and ignore records. Port of Swift `VulnerabilitiesService`. */
+/** Trivy vulnerability scanning, summaries, and ignore records. */
 public class VulnerabilitiesService internal constructor(private val rest: RestService) {
     // MARK: - Scans (per-image)
 

@@ -5,8 +5,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
 /**
- * Summary returned in list responses; the token is masked. Mirrors Swift `Webhook`
- * (Models/Webhook/Webhook.swift).
+ * Summary returned in list responses; the token is masked.
  */
 @Serializable
 public data class Webhook(
@@ -25,7 +24,7 @@ public data class Webhook(
     public val createdAt: Instant,
 )
 
-/** Returned once when a webhook is first created, including the raw token. Mirrors Swift `WebhookCreated`. */
+/** Returned once when a webhook is first created, including the raw token. */
 @Serializable
 public data class WebhookCreated(
     public val id: String,
@@ -38,7 +37,7 @@ public data class WebhookCreated(
     public val createdAt: Instant,
 )
 
-/** Mirrors Swift `CreateWebhook`. */
+/** Request body for creating a webhook. */
 @Serializable
 public data class CreateWebhook(
     public val name: String,
@@ -47,7 +46,7 @@ public data class CreateWebhook(
     public val targetId: String,
 )
 
-/** Mirrors Swift `UpdateWebhook`. */
+/** Request body for updating a webhook. */
 @Serializable
 public data class UpdateWebhook(
     public val enabled: Boolean,

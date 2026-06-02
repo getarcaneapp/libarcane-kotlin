@@ -4,7 +4,7 @@ import app.getarcane.sdk.serialization.ArcaneInstantSerializer
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
-/** A single file or directory inside a volume. Mirrors Swift `FileEntry`. */
+/** A single file or directory inside a volume. */
 @Serializable
 public data class FileEntry(
     public val name: String,
@@ -18,7 +18,7 @@ public data class FileEntry(
     public val linkTarget: String? = null,
 )
 
-/** Extends [FileEntry] with MIME and text/binary hints. Mirrors Swift `FileMetadata`. */
+/** Extends [FileEntry] with MIME and text/binary hints. */
 @Serializable
 public data class FileMetadata(
     public val name: String,
@@ -36,9 +36,8 @@ public data class FileMetadata(
 )
 
 /**
- * The response payload returned by `GET volumes/{name}/browse/content`. Mirrors Swift
- * `FileContent`; [content] holds the Base64-encoded file bytes (Swift models this as `Data`, which
- * `Codable` serializes as a base64 string).
+ * The response payload returned by `GET volumes/{name}/browse/content`. [content] holds the
+ * Base64-encoded file bytes.
  */
 @Serializable
 public data class FileContent(

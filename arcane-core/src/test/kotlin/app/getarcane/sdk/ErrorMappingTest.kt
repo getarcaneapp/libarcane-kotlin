@@ -7,7 +7,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
-/** Port of Tests/ArcaneTests/ArcaneTests.swift (error mapping + EnvironmentID literal). */
+/** Error mapping + EnvironmentID literal. */
 class ErrorMappingTest {
     @Test
     fun environmentIdLiteral() {

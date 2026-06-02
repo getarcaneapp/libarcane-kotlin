@@ -6,8 +6,8 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
 /**
- * An audit/activity event. Mirrors Swift `Event` (Models/Event/Event.swift). The Swift `CodingKeys`
- * are all identity (camelCase), so no [kotlinx.serialization.SerialName] overrides are needed.
+ * An audit/activity event. All JSON keys are camelCase, so no
+ * [kotlinx.serialization.SerialName] overrides are needed.
  */
 @Serializable
 public data class Event(
@@ -31,7 +31,7 @@ public data class Event(
     public val updatedAt: Instant? = null,
 )
 
-/** Mirrors Swift `CreateEvent`. */
+/** Body for creating an event. */
 @Serializable
 public data class CreateEvent(
     public val type: String,

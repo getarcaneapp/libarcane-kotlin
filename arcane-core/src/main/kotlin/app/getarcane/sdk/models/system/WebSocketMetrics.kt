@@ -5,7 +5,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Stable identifiers for the different WebSocket connection kinds. Mirrors Swift `WebSocketKind`. */
+/** Stable identifiers for the different WebSocket connection kinds. */
 @Serializable
 public enum class WebSocketKind(public val wire: String) {
     @SerialName("project_logs")
@@ -27,7 +27,7 @@ public enum class WebSocketKind(public val wire: String) {
     SERVICE_LOGS("service_logs"),
 }
 
-/** Description of a single active WebSocket connection on the server. Mirrors Swift `WebSocketConnectionInfo`. */
+/** Description of a single active WebSocket connection on the server. */
 @Serializable
 public data class WebSocketConnectionInfo(
     public val id: String,
@@ -41,7 +41,7 @@ public data class WebSocketConnectionInfo(
     public val startedAt: Instant,
 )
 
-/** Point-in-time snapshot of active WebSocket connection counts by kind. Mirrors Swift `WebSocketMetricsSnapshot`. */
+/** Point-in-time snapshot of active WebSocket connection counts by kind. */
 @Serializable
 public data class WebSocketMetricsSnapshot(
     public val projectLogsActive: Long,

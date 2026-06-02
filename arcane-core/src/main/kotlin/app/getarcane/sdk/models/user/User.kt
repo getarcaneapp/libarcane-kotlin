@@ -8,7 +8,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 /**
- * An Arcane user. Mirrors Swift `User` (Models/User/User.swift), including the dual v1/v2 shape:
+ * An Arcane user, including the dual v1/v2 shape:
  * on a v1 server [roles] is authoritative; on a v2 server [roleAssignments]/[permissionsByEnv] are
  * present and [roles] is synthesized as the deduped list of assigned role IDs so legacy call sites
  * keep working. The synthesis is performed by [UserSerializer].
@@ -36,7 +36,7 @@ public data class User(
 }
 
 /**
- * Custom serializer reproducing Swift `User.init(from:)`: decode the raw payload, then synthesize
+ * Custom serializer: decode the raw payload, then synthesize
  * [User.roles] from [User.roleAssignments] (deduped, order-preserving) when `roles` is absent.
  */
 public object UserSerializer : KSerializer<User> {
@@ -109,7 +109,7 @@ public object UserSerializer : KSerializer<User> {
 }
 
 /**
- * Initial role assignments by name. Mirrors Swift `CreateUser`. On v2 servers [roles] must be null
+ * Initial role assignments by name. On v2 servers [roles] must be null
  * (use role assignments after creation); on v1 servers it is applied.
  */
 @Serializable
@@ -122,7 +122,7 @@ public data class CreateUser(
     public val locale: String? = null,
 )
 
-/** Mirrors Swift `UpdateUser`. */
+/** Fields for updating an existing user. */
 @Serializable
 public data class UpdateUser(
     public val username: String? = null,

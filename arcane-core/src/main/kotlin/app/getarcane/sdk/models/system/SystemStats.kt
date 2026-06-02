@@ -2,7 +2,7 @@ package app.getarcane.sdk.models.system
 
 import kotlinx.serialization.Serializable
 
-/** Resource statistics for a single GPU. Mirrors Swift `GPUStats`. */
+/** Resource statistics for a single GPU. */
 @Serializable
 public data class GPUStats(
     public val name: String,
@@ -13,7 +13,7 @@ public data class GPUStats(
 
 /**
  * System resource statistics for WebSocket streaming over `/environments/{id}/ws/system/stats`.
- * Mirrors Swift `SystemStats`. Swift `UInt64` byte counters map to [Long].
+ * Byte counters are represented as [Long].
  */
 @Serializable
 public data class SystemStats(

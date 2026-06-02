@@ -15,7 +15,7 @@ import app.getarcane.sdk.models.system.UpgradeCheckResult
 import app.getarcane.sdk.streaming.statsStream
 import kotlinx.coroutines.flow.Flow
 
-/** System-level endpoints under `/environments/{id}/system`. Port of Swift `SystemService`. */
+/** System-level endpoints under `/environments/{id}/system`. */
 public class SystemService internal constructor(private val rest: RestService) {
     // MARK: - Health / Info
 

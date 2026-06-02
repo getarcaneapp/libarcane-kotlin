@@ -8,7 +8,7 @@ import app.getarcane.sdk.models.base.MessageResponse
 import app.getarcane.sdk.models.builds.BuildFileContent
 import app.getarcane.sdk.models.volume.FileEntry
 
-/** Browses files in the build workspace for an environment. Port of Swift `BuildsService`. */
+/** Browses files in the build workspace for an environment. */
 public class BuildsService internal constructor(private val rest: RestService) {
     /** List files and directories under the builds workspace root. */
     public suspend fun browse(path: String = "/", envId: EnvironmentId? = null): List<FileEntry> =

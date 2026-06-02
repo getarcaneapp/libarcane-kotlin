@@ -5,14 +5,14 @@ import app.getarcane.sdk.serialization.ArcaneInstantSerializer
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
-/** Mirrors Swift `LoginRequest` (Models/Auth/Login.swift). */
+/** Request body for username/password login. */
 @Serializable
 public data class LoginRequest(
     public val username: String,
     public val password: String,
 )
 
-/** Mirrors Swift `LoginResponse`. */
+/** Response returned on successful login, carrying tokens and the authenticated user. */
 @Serializable
 public data class LoginResponse(
     public val token: String,
@@ -22,13 +22,13 @@ public data class LoginResponse(
     public val user: User,
 )
 
-/** Mirrors Swift `RefreshRequest`. */
+/** Request body for exchanging a refresh token for a new access token. */
 @Serializable
 public data class RefreshRequest(
     public val refreshToken: String,
 )
 
-/** Mirrors Swift `TokenRefreshResponse`. */
+/** Response carrying refreshed tokens and their expiry. */
 @Serializable
 public data class TokenRefreshResponse(
     public val token: String,
@@ -37,14 +37,14 @@ public data class TokenRefreshResponse(
     public val expiresAt: Instant,
 )
 
-/** Mirrors Swift `PasswordChange`. */
+/** Request body for changing a user's password. */
 @Serializable
 public data class PasswordChange(
     public val currentPassword: String? = null,
     public val newPassword: String,
 )
 
-/** Mirrors Swift `AutoLoginConfig`. */
+/** Configuration for automatic login with a preset username. */
 @Serializable
 public data class AutoLoginConfig(
     public val enabled: Boolean,

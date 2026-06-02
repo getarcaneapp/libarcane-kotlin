@@ -2,7 +2,7 @@ package app.getarcane.sdk.models.system
 
 import kotlinx.serialization.Serializable
 
-/** Result of the system upgrade-availability check. Mirrors Swift `UpgradeCheckResult`. */
+/** Result of the system upgrade-availability check. */
 @Serializable
 public data class UpgradeCheckResult(
     public val canUpgrade: Boolean,
@@ -11,8 +11,7 @@ public data class UpgradeCheckResult(
 )
 
 /**
- * Result of a system-level container batch action (start/stop/etc.). Mirrors Swift
- * `SystemContainerActionResult`.
+ * Result of a system-level container batch action (start/stop/etc.).
  */
 @Serializable
 public data class SystemContainerActionResult(

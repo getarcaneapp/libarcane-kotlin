@@ -5,7 +5,7 @@ import app.getarcane.sdk.models.meta.TemplateMetadata
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** A compose template. Mirrors Swift `Template` (Models/Template/Template.swift). */
+/** A compose template. */
 @Serializable
 public data class Template(
     public val id: String,
@@ -20,10 +20,7 @@ public data class Template(
     public val metadata: TemplateMetadata? = null,
 )
 
-/**
- * A template entry from a remote registry. Mirrors Swift `RemoteTemplate`, whose `CodingKeys` map
- * several fields to snake_case.
- */
+/** A template entry from a remote registry; several fields are mapped to snake_case JSON keys. */
 @Serializable
 public data class RemoteTemplate(
     public val id: String,
@@ -40,7 +37,7 @@ public data class RemoteTemplate(
     public val tags: List<String>,
 )
 
-/** A configured template registry. Mirrors Swift `TemplateRegistry`. */
+/** A configured template registry. */
 @Serializable
 public data class TemplateRegistry(
     public val id: String,
@@ -52,8 +49,8 @@ public data class TemplateRegistry(
 )
 
 /**
- * The parsed contents of a remote registry document. Mirrors Swift `RemoteTemplateRegistry`, whose
- * `CodingKeys` map `schema` to the JSON key `$schema`.
+ * The parsed contents of a remote registry document; the `schema` field maps to the JSON key
+ * `$schema`.
  */
 @Serializable
 public data class RemoteTemplateRegistry(
@@ -67,7 +64,7 @@ public data class RemoteTemplateRegistry(
     public val templates: List<RemoteTemplate>,
 )
 
-/** Resolved template content plus parsed services and env variables. Mirrors Swift `TemplateContent`. */
+/** Resolved template content plus parsed services and env variables. */
 @Serializable
 public data class TemplateContent(
     public val template: Template,
@@ -77,7 +74,7 @@ public data class TemplateContent(
     public val envVariables: List<EnvVariable>,
 )
 
-/** Mirrors Swift `CreateTemplate`. */
+/** Body for creating a template. */
 @Serializable
 public data class CreateTemplate(
     public val name: String,
@@ -86,7 +83,7 @@ public data class CreateTemplate(
     public val envContent: String = "",
 )
 
-/** Mirrors Swift `UpdateTemplate`. */
+/** Body for updating a template. */
 @Serializable
 public data class UpdateTemplate(
     public val name: String,
@@ -95,7 +92,7 @@ public data class UpdateTemplate(
     public val envContent: String = "",
 )
 
-/** Mirrors Swift `DefaultTemplates`. */
+/** The set of default compose and env templates. */
 @Serializable
 public data class DefaultTemplates(
     public val composeTemplate: String,
@@ -104,14 +101,14 @@ public data class DefaultTemplates(
     public val envTemplate: String,
 )
 
-/** Mirrors Swift `SaveDefaultTemplates`. */
+/** Body for saving the default templates. */
 @Serializable
 public data class SaveDefaultTemplates(
     public val composeContent: String,
     public val envContent: String = "",
 )
 
-/** Mirrors Swift `CreateTemplateRegistry`. */
+/** Body for creating a template registry. */
 @Serializable
 public data class CreateTemplateRegistry(
     public val name: String,
@@ -120,7 +117,7 @@ public data class CreateTemplateRegistry(
     public val enabled: Boolean = true,
 )
 
-/** Mirrors Swift `UpdateTemplateRegistry`. */
+/** Body for updating a template registry. */
 @Serializable
 public data class UpdateTemplateRegistry(
     public val name: String,

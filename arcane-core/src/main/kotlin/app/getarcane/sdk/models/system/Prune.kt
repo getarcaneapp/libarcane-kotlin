@@ -3,7 +3,7 @@ package app.getarcane.sdk.models.system
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Mirrors Swift `PruneContainerMode`. */
+/** Selects which containers a prune operation should remove. */
 @Serializable
 public enum class PruneContainerMode(public val wire: String) {
     @SerialName("none")
@@ -16,7 +16,7 @@ public enum class PruneContainerMode(public val wire: String) {
     OLDER_THAN("olderThan"),
 }
 
-/** Mirrors Swift `PruneImageMode`. */
+/** Selects which images a prune operation should remove. */
 @Serializable
 public enum class PruneImageMode(public val wire: String) {
     @SerialName("none")
@@ -32,7 +32,7 @@ public enum class PruneImageMode(public val wire: String) {
     OLDER_THAN("olderThan"),
 }
 
-/** Mirrors Swift `PruneVolumeMode`. */
+/** Selects which volumes a prune operation should remove. */
 @Serializable
 public enum class PruneVolumeMode(public val wire: String) {
     @SerialName("none")
@@ -45,7 +45,7 @@ public enum class PruneVolumeMode(public val wire: String) {
     ALL("all"),
 }
 
-/** Mirrors Swift `PruneNetworkMode`. */
+/** Selects which networks a prune operation should remove. */
 @Serializable
 public enum class PruneNetworkMode(public val wire: String) {
     @SerialName("none")
@@ -58,7 +58,7 @@ public enum class PruneNetworkMode(public val wire: String) {
     OLDER_THAN("olderThan"),
 }
 
-/** Mirrors Swift `PruneBuildCacheMode`. */
+/** Selects which build cache entries a prune operation should remove. */
 @Serializable
 public enum class PruneBuildCacheMode(public val wire: String) {
     @SerialName("none")
@@ -74,41 +74,41 @@ public enum class PruneBuildCacheMode(public val wire: String) {
     OLDER_THAN("olderThan"),
 }
 
-/** Mirrors Swift `PruneContainersOptions`. */
+/** Options controlling a container prune operation. */
 @Serializable
 public data class PruneContainersOptions(
     public val mode: PruneContainerMode,
     public val until: String? = null,
 )
 
-/** Mirrors Swift `PruneImagesOptions`. */
+/** Options controlling an image prune operation. */
 @Serializable
 public data class PruneImagesOptions(
     public val mode: PruneImageMode,
     public val until: String? = null,
 )
 
-/** Mirrors Swift `PruneVolumesOptions`. */
+/** Options controlling a volume prune operation. */
 @Serializable
 public data class PruneVolumesOptions(
     public val mode: PruneVolumeMode,
 )
 
-/** Mirrors Swift `PruneNetworksOptions`. */
+/** Options controlling a network prune operation. */
 @Serializable
 public data class PruneNetworksOptions(
     public val mode: PruneNetworkMode,
     public val until: String? = null,
 )
 
-/** Mirrors Swift `PruneBuildCacheOptions`. */
+/** Options controlling a build cache prune operation. */
 @Serializable
 public data class PruneBuildCacheOptions(
     public val mode: PruneBuildCacheMode,
     public val until: String? = null,
 )
 
-/** Body for `POST /environments/{id}/system/prune`. Mirrors Swift `PruneAllRequest`. */
+/** Body for `POST /environments/{id}/system/prune`. */
 @Serializable
 public data class PruneAllRequest(
     public val containers: PruneContainersOptions? = null,
@@ -119,8 +119,8 @@ public data class PruneAllRequest(
 )
 
 /**
- * Result of a system prune. Mirrors Swift `PruneAllResult`. Swift `UInt64` byte counters map to
- * [Long] to match the SDK's JSON number handling.
+ * Result of a system prune. Byte counters are represented as [Long] to match the SDK's JSON number
+ * handling.
  */
 @Serializable
 public data class PruneAllResult(

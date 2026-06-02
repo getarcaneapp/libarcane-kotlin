@@ -10,7 +10,7 @@ import app.getarcane.sdk.models.role.UpdateRole
 import app.getarcane.sdk.pagination.PaginatedResponse
 
 /**
- * Manages roles and role-related metadata in v2 RBAC servers. Port of Swift `RolesService`.
+ * Manages roles and role-related metadata in v2 RBAC servers.
  * Calls fail with `ArcaneError.NotFound` on v1 servers; gate UI on `ArcaneClient.serverCapabilities()`
  * to avoid invoking against v1.
  */

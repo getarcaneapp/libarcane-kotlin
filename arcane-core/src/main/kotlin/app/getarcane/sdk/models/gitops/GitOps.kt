@@ -5,7 +5,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Mirrors Swift `GitRepository`. */
+/** A configured Git repository. */
 @Serializable
 public data class GitRepository(
     public val id: String,
@@ -22,7 +22,7 @@ public data class GitRepository(
     public val updatedAt: Instant,
 )
 
-/** Mirrors Swift `CreateGitRepository`. */
+/** Body for creating a Git repository. */
 @Serializable
 public data class CreateGitRepository(
     public val name: String,
@@ -36,7 +36,7 @@ public data class CreateGitRepository(
     public val enabled: Boolean? = null,
 )
 
-/** Mirrors Swift `UpdateGitRepository`. */
+/** Body for updating a Git repository. */
 @Serializable
 public data class UpdateGitRepository(
     public val name: String? = null,
@@ -50,7 +50,7 @@ public data class UpdateGitRepository(
     public val enabled: Boolean? = null,
 )
 
-/** Mirrors Swift `GitOpsSync`. */
+/** A configured GitOps sync. */
 @Serializable
 public data class GitOpsSync(
     public val id: String,
@@ -81,7 +81,7 @@ public data class GitOpsSync(
     public val updatedAt: Instant,
 )
 
-/** Mirrors Swift `GitOpsSyncCounts`. */
+/** Aggregate counts of GitOps syncs. */
 @Serializable
 public data class GitOpsSyncCounts(
     public val totalSyncs: Int,
@@ -89,7 +89,7 @@ public data class GitOpsSyncCounts(
     public val successfulSyncs: Int,
 )
 
-/** Mirrors Swift `CreateGitOpsSync`. */
+/** Body for creating a GitOps sync. */
 @Serializable
 public data class CreateGitOpsSync(
     public val name: String,
@@ -106,7 +106,7 @@ public data class CreateGitOpsSync(
     public val maxSyncBinarySize: Long? = null,
 )
 
-/** Mirrors Swift `UpdateGitOpsSync`. */
+/** Body for updating a GitOps sync. */
 @Serializable
 public data class UpdateGitOpsSync(
     public val name: String? = null,
@@ -123,7 +123,7 @@ public data class UpdateGitOpsSync(
     public val maxSyncBinarySize: Long? = null,
 )
 
-/** Mirrors Swift `GitOpsSyncResult`. */
+/** Result of a GitOps sync operation. */
 @Serializable
 public data class GitOpsSyncResult(
     public val success: Boolean,
@@ -133,7 +133,7 @@ public data class GitOpsSyncResult(
     public val syncedAt: Instant,
 )
 
-/** Mirrors Swift `GitOpsFileTreeNodeType`. */
+/** Distinguishes file nodes from directory nodes in a GitOps file tree. */
 @Serializable
 public enum class GitOpsFileTreeNodeType(public val wire: String) {
     @SerialName("file")
@@ -143,7 +143,7 @@ public enum class GitOpsFileTreeNodeType(public val wire: String) {
     DIRECTORY("directory"),
 }
 
-/** Mirrors Swift `GitOpsFileTreeNode`. The [children] field makes this a recursive tree node. */
+/** A node in a GitOps file tree. The [children] field makes this a recursive tree node. */
 @Serializable
 public data class GitOpsFileTreeNode(
     public val name: String,
@@ -153,27 +153,27 @@ public data class GitOpsFileTreeNode(
     public val children: List<GitOpsFileTreeNode>? = null,
 )
 
-/** Mirrors Swift `GitOpsBrowseResponse`. */
+/** Response for browsing a GitOps repository path. */
 @Serializable
 public data class GitOpsBrowseResponse(
     public val path: String,
     public val files: List<GitOpsFileTreeNode>,
 )
 
-/** Mirrors Swift `GitOpsBranchInfo`. */
+/** Information about a single Git branch. */
 @Serializable
 public data class GitOpsBranchInfo(
     public val name: String,
     public val isDefault: Boolean,
 )
 
-/** Mirrors Swift `GitOpsBranchesResponse`. */
+/** Response listing the branches of a repository. */
 @Serializable
 public data class GitOpsBranchesResponse(
     public val branches: List<GitOpsBranchInfo>,
 )
 
-/** Mirrors Swift `GitOpsSyncStatus`. */
+/** Current status of a GitOps sync. */
 @Serializable
 public data class GitOpsSyncStatus(
     public val id: String,
@@ -187,7 +187,7 @@ public data class GitOpsSyncStatus(
     public val lastSyncCommit: String? = null,
 )
 
-/** Mirrors Swift `GitRepositorySync`. */
+/** A Git repository entry used when syncing repository configuration. */
 @Serializable
 public data class GitRepositorySync(
     public val id: String,
@@ -206,13 +206,13 @@ public data class GitRepositorySync(
     public val updatedAt: Instant,
 )
 
-/** Mirrors Swift `GitRepositorySyncRequest`. */
+/** Request body for syncing repository configuration. */
 @Serializable
 public data class GitRepositorySyncRequest(
     public val repositories: List<GitRepositorySync>,
 )
 
-/** Mirrors Swift `ImportGitOpsSyncRequest`. */
+/** Request body for importing a GitOps sync. */
 @Serializable
 public data class ImportGitOpsSyncRequest(
     public val syncName: String,
@@ -227,7 +227,7 @@ public data class ImportGitOpsSyncRequest(
     public val maxSyncBinarySize: Long? = null,
 )
 
-/** Mirrors Swift `ImportGitOpsSyncResponse`. */
+/** Response for an import GitOps sync operation. */
 @Serializable
 public data class ImportGitOpsSyncResponse(
     public val successCount: Int,

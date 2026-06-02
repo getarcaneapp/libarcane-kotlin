@@ -5,7 +5,7 @@ import app.getarcane.sdk.models.base.MessageResponse
 import app.getarcane.sdk.pagination.PaginatedResponse
 
 /**
- * Generic REST helpers over [ArcaneTransport], mirroring Swift `RESTService` (HTTP/RESTService.swift).
+ * Generic REST helpers over [ArcaneTransport].
  * Typed methods are reified so services call `rest.get<ContainerDetails>(path)`; `*Void` methods
  * decode the `MessageResponse` envelope and discard it.
  */
@@ -64,7 +64,7 @@ public class RestService internal constructor(
         query: List<Pair<String, String>> = emptyList(),
     ): PaginatedResponse<T> = transport.paginated(path, start, limit, query)
 
-    /** `environments/{id}/{suffix}`, defaulting to [defaultEnvironmentId]. Mirrors Swift `environmentPath`. */
+    /** `environments/{id}/{suffix}`, defaulting to [defaultEnvironmentId]. */
     public fun environmentPath(envId: EnvironmentId?, suffix: String): String =
         "environments/${(envId ?: defaultEnvironmentId).rawValue}/${suffix.trim('/')}"
 }

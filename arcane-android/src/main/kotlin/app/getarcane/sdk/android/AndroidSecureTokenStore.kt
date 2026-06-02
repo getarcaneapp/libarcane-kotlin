@@ -27,9 +27,9 @@ private val Context.arcaneTokenDataStore: DataStore<Preferences> by preferencesD
 
 /**
  * Android [TokenStore] backed by an AES-256-GCM key in the AndroidKeyStore and ciphertext stored in
- * a Preferences DataStore. The Android analog of Swift `KeychainTokenStore`: the OS-protected key
- * never leaves the Keystore, and the serialized [TokenPair] is encrypted at rest. The key has no
- * user-authentication requirement so silent token refresh works in the background.
+ * a Preferences DataStore. The OS-protected key never leaves the Keystore, and the serialized
+ * [TokenPair] is encrypted at rest. The key has no user-authentication requirement so silent token
+ * refresh works in the background.
  *
  * This is the recommended, non-deprecated secure store. See [EncryptedPrefsTokenStore] for the
  * Jetpack-Security fallback.

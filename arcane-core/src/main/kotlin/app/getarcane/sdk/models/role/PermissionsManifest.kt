@@ -3,7 +3,7 @@ package app.getarcane.sdk.models.role
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Mirrors Swift `PermissionResourceScope`. */
+/** Scope at which a permission resource applies: global or per-environment. */
 @Serializable
 public enum class PermissionResourceScope(public val wire: String) {
     @SerialName("global")
@@ -13,13 +13,13 @@ public enum class PermissionResourceScope(public val wire: String) {
     ENV("env"),
 }
 
-/** The server's catalog of assignable permissions, grouped by resource. Mirrors Swift `PermissionsManifest`. */
+/** The server's catalog of assignable permissions, grouped by resource. */
 @Serializable
 public data class PermissionsManifest(
     public val resources: List<PermissionResource>,
 )
 
-/** Mirrors Swift `PermissionResource`. */
+/** A resource in the permissions manifest, with its assignable actions. */
 @Serializable
 public data class PermissionResource(
     public val key: String,
@@ -32,7 +32,7 @@ public data class PermissionResource(
         get() = PermissionResourceScope.entries.firstOrNull { it.wire == scope }
 }
 
-/** Mirrors Swift `PermissionAction`. */
+/** A single assignable action on a permission resource. */
 @Serializable
 public data class PermissionAction(
     public val key: String,

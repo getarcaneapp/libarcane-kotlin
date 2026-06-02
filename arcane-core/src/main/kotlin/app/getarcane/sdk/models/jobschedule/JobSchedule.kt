@@ -4,7 +4,7 @@ import app.getarcane.sdk.serialization.ArcaneInstantSerializer
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
-/** JobScheduleConfig represents the configured intervals (in minutes) for background jobs. Mirrors Swift `JobScheduleConfig`. */
+/** JobScheduleConfig represents the configured intervals (in minutes) for background jobs. */
 @Serializable
 public data class JobScheduleConfig(
     public val environmentHealthInterval: String,
@@ -21,7 +21,6 @@ public data class JobScheduleConfig(
 
 /**
  * UpdateJobScheduleConfig updates job schedule intervals (in minutes). Null fields are ignored.
- * Mirrors Swift `UpdateJobScheduleConfig`.
  */
 @Serializable
 public data class UpdateJobScheduleConfig(
@@ -37,7 +36,7 @@ public data class UpdateJobScheduleConfig(
     public val autoHealInterval: String? = null,
 )
 
-/** Status and metadata for a background job. Mirrors Swift `JobStatus`. */
+/** Status and metadata for a background job. */
 @Serializable
 public data class JobStatus(
     public val id: String,
@@ -55,7 +54,7 @@ public data class JobStatus(
     public val settingsKey: String? = null,
 )
 
-/** Mirrors Swift `JobPrerequisite`. */
+/** A prerequisite condition that must be met for a job to run. */
 @Serializable
 public data class JobPrerequisite(
     public val settingKey: String,
@@ -64,14 +63,14 @@ public data class JobPrerequisite(
     public val settingsUrl: String? = null,
 )
 
-/** Mirrors Swift `JobListResponse`. */
+/** Response listing background jobs. */
 @Serializable
 public data class JobListResponse(
     public val jobs: List<JobStatus>,
     public val isAgent: Boolean,
 )
 
-/** Mirrors Swift `JobRunResponse`. */
+/** Response returned when manually running a job. */
 @Serializable
 public data class JobRunResponse(
     public val success: Boolean,

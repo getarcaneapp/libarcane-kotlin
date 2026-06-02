@@ -3,7 +3,7 @@ package app.getarcane.sdk.models.swarm
 import app.getarcane.sdk.models.base.JsonValue
 import kotlinx.serialization.Serializable
 
-/** Body for `POST /environments/{id}/swarm/init`; the Docker `spec` blob is preserved as raw JSON. Mirrors Swift `SwarmInitRequest`. */
+/** Body for `POST /environments/{id}/swarm/init`; the Docker `spec` blob is preserved as raw JSON. */
 @Serializable
 public data class SwarmInitRequest(
     public val listenAddr: String? = null,
@@ -18,13 +18,13 @@ public data class SwarmInitRequest(
     public val subnetSize: UInt? = null,
 )
 
-/** Response from `POST /environments/{id}/swarm/init`. Mirrors Swift `SwarmInitResponse`. */
+/** Response from `POST /environments/{id}/swarm/init`. */
 @Serializable
 public data class SwarmInitResponse(
     public val nodeId: String,
 )
 
-/** Body for `POST /environments/{id}/swarm/join`. Mirrors Swift `SwarmJoinRequest`. */
+/** Body for `POST /environments/{id}/swarm/join`. */
 @Serializable
 public data class SwarmJoinRequest(
     public val listenAddr: String? = null,
@@ -35,39 +35,39 @@ public data class SwarmJoinRequest(
     public val availability: String? = null,
 )
 
-/** Body for `POST /environments/{id}/swarm/leave`. Mirrors Swift `SwarmLeaveRequest`. */
+/** Body for `POST /environments/{id}/swarm/leave`. */
 @Serializable
 public data class SwarmLeaveRequest(
     public val force: Boolean? = null,
 )
 
-/** Body for `POST /environments/{id}/swarm/unlock`. Mirrors Swift `SwarmUnlockRequest`. */
+/** Body for `POST /environments/{id}/swarm/unlock`. */
 @Serializable
 public data class SwarmUnlockRequest(
     public val key: String,
 )
 
-/** Response from `GET /environments/{id}/swarm/unlock-key`. Mirrors Swift `SwarmUnlockKeyResponse`. */
+/** Response from `GET /environments/{id}/swarm/unlock-key`. */
 @Serializable
 public data class SwarmUnlockKeyResponse(
     public val unlockKey: String,
 )
 
-/** Worker / manager join tokens for the swarm. Mirrors Swift `SwarmJoinTokens`. */
+/** Worker / manager join tokens for the swarm. */
 @Serializable
 public data class SwarmJoinTokens(
     public val worker: String,
     public val manager: String,
 )
 
-/** Body for `POST /environments/{id}/swarm/join-tokens/rotate`. Mirrors Swift `SwarmRotateJoinTokensRequest`. */
+/** Body for `POST /environments/{id}/swarm/join-tokens/rotate`. */
 @Serializable
 public data class SwarmRotateJoinTokensRequest(
     public val rotateWorkerToken: Boolean? = null,
     public val rotateManagerToken: Boolean? = null,
 )
 
-/** Body for `PUT /environments/{id}/swarm/spec`. Mirrors Swift `SwarmUpdateRequest`. */
+/** Body for `PUT /environments/{id}/swarm/spec`. */
 @Serializable
 public data class SwarmUpdateRequest(
     public val version: ULong? = null,

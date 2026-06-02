@@ -5,7 +5,7 @@ import app.getarcane.sdk.models.base.PaginationResponse
 import app.getarcane.sdk.models.vulnerability.VulnerabilityScanSummary
 import kotlinx.serialization.Serializable
 
-/** Describes the project, container, or other consumer using an image. Mirrors Swift `ImageUsedBy` (Models/image/ImageSummary.swift). */
+/** Describes the project, container, or other consumer using an image. */
 @Serializable
 public data class ImageUsedBy(
     public val type: String,
@@ -13,7 +13,7 @@ public data class ImageUsedBy(
     public val id: String? = null,
 )
 
-/** Image summary as returned by the list endpoint. Mirrors Swift `ImageSummary`. */
+/** Image summary as returned by the list endpoint. */
 @Serializable
 public data class ImageSummary(
     public val id: String,
@@ -31,14 +31,14 @@ public data class ImageSummary(
     public val vulnerabilityScan: VulnerabilityScanSummary? = null,
 )
 
-/** Result of an image prune operation. Mirrors Swift `ImagePruneReport`. */
+/** Result of an image prune operation. */
 @Serializable
 public data class ImagePruneReport(
     public val imagesDeleted: List<String>,
     public val spaceReclaimed: Long,
 )
 
-/** Aggregate image usage counts for an environment. Mirrors Swift `ImageUsageCounts`. */
+/** Aggregate image usage counts for an environment. */
 @Serializable
 public data class ImageUsageCounts(
     public val imagesInuse: Int,
@@ -47,20 +47,20 @@ public data class ImageUsageCounts(
     public val totalImageSize: Long,
 )
 
-/** Result of a `docker load` operation. Mirrors Swift `ImageLoadResult`. */
+/** Result of a `docker load` operation. */
 @Serializable
 public data class ImageLoadResult(
     public val stream: String,
 )
 
-/** Standardized NDJSON envelope for pull/build/deploy streams. Mirrors Swift `ImageProgressDetail`. */
+/** Standardized NDJSON envelope for pull/build/deploy streams. */
 @Serializable
 public data class ImageProgressDetail(
     public val current: Long? = null,
     public val total: Long? = null,
 )
 
-/** A single progress event emitted by streaming image endpoints. Mirrors Swift `ImageProgressEvent`. */
+/** A single progress event emitted by streaming image endpoints. */
 @Serializable
 public data class ImageProgressEvent(
     public val type: String? = null,
@@ -72,7 +72,7 @@ public data class ImageProgressEvent(
     public val error: String? = null,
 )
 
-/** Paginated list response for images. Mirrors Swift `ImageListResponse`. */
+/** Paginated list response for images. */
 @Serializable
 public data class ImageListResponse(
     public val success: Boolean,

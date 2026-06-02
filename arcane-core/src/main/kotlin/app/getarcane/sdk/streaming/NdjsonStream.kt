@@ -27,10 +27,10 @@ import kotlin.coroutines.coroutineContext
 private const val NDJSON_ACCEPT = "application/x-ndjson, application/x-json-stream, application/json"
 
 /**
- * Streams a newline-delimited JSON (NDJSON) endpoint as a cold [Flow]. Port of Swift `NDJSONStream`:
- * non-JSON lines (heartbeats) are skipped, but a JSON-shaped line that fails to decode throws
- * [ArcaneError.Decoding]. The request is sent (and a 401 refreshed once) when collection begins.
- * Used by image pull/build and project deploy/down/pull/build progress streams.
+ * Streams a newline-delimited JSON (NDJSON) endpoint as a cold [Flow]: non-JSON lines (heartbeats)
+ * are skipped, but a JSON-shaped line that fails to decode throws [ArcaneError.Decoding]. The
+ * request is sent (and a 401 refreshed once) when collection begins. Used by image pull/build and
+ * project deploy/down/pull/build progress streams.
  */
 public fun <T> ArcaneTransport.ndjsonFlow(
     path: String,

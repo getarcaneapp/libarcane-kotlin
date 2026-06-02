@@ -6,8 +6,8 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /**
- * Port of Tests/ArcaneIntegrationTests/ArcaneIntegrationTests.swift. Hits a live backend's `/health`
- * endpoint only when `ARCANE_TEST_URL` is set; otherwise the test is skipped.
+ * Hits a live backend's `/health` endpoint only when `ARCANE_TEST_URL` is set; otherwise the test
+ * is skipped.
  */
 class IntegrationTest {
     @Test

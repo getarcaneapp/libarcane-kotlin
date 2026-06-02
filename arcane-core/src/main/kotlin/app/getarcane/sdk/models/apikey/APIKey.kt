@@ -4,7 +4,7 @@ import app.getarcane.sdk.serialization.ArcaneInstantSerializer
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
-/** An API key. Mirrors Swift `APIKey` (Models/APIKey/APIKey.swift). */
+/** An API key. */
 @Serializable
 public data class APIKey(
     public val id: String,
@@ -23,7 +23,7 @@ public data class APIKey(
     public val updatedAt: Instant? = null,
 )
 
-/** An API key returned once at creation time, including the raw key. Mirrors Swift `APIKeyCreated`. */
+/** An API key returned once at creation time, including the raw key. */
 @Serializable
 public data class APIKeyCreated(
     public val id: String,
@@ -43,7 +43,7 @@ public data class APIKeyCreated(
     public val key: String,
 )
 
-/** Mirrors Swift `CreateAPIKey`. */
+/** Request body for creating an API key. */
 @Serializable
 public data class CreateAPIKey(
     public val name: String,
@@ -52,7 +52,7 @@ public data class CreateAPIKey(
     public val expiresAt: Instant? = null,
 )
 
-/** Mirrors Swift `UpdateAPIKey`. */
+/** Request body for updating an API key. */
 @Serializable
 public data class UpdateAPIKey(
     public val name: String? = null,
