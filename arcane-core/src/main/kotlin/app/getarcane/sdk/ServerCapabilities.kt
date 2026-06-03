@@ -24,6 +24,9 @@ public data class ServerCapabilities(
     /** True iff the server exposes the v2 RBAC endpoints. */
     public val supportsRoleManagement: Boolean get() = mode == Mode.RBAC
 
+    /** True iff the server exposes the v2 background activity endpoints. */
+    public val supportsActivities: Boolean get() = mode == Mode.RBAC
+
     /** True iff payloads include `permissionsByEnv` for per-permission queries. */
     public val supportsPermissionQueries: Boolean get() = mode == Mode.RBAC
 

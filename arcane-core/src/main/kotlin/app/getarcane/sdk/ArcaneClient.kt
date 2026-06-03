@@ -5,6 +5,7 @@ import app.getarcane.sdk.auth.AuthService
 import app.getarcane.sdk.http.ArcaneTransport
 import app.getarcane.sdk.http.RestService
 import app.getarcane.sdk.http.normalizeBaseUrl
+import app.getarcane.sdk.services.ActivitiesService
 import app.getarcane.sdk.services.APIKeysService
 import app.getarcane.sdk.services.BuildsService
 import app.getarcane.sdk.services.ContainerRegistriesService
@@ -102,6 +103,7 @@ public class ArcaneClient private constructor(
     public val swarm: SwarmService = SwarmService(rest)
     public val system: SystemService = SystemService(rest)
     public val dashboard: DashboardService = DashboardService(rest)
+    public val activities: ActivitiesService = ActivitiesService(rest)
     public val events: EventsService = EventsService(rest)
     public val webhooks: WebhooksService = WebhooksService(rest)
     public val notifications: NotificationsService = NotificationsService(rest)

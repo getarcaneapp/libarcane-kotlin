@@ -13,7 +13,7 @@ public data class ContainerSummary(
     public val command: String,
     public val created: Long,
     public val ports: List<ContainerPort>,
-    public val labels: Map<String, String>,
+    public val labels: Map<String, String> = emptyMap(),
     public val state: String,
     public val status: String,
     public val hostConfig: ContainerHostConfig,

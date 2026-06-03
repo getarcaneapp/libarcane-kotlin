@@ -48,7 +48,7 @@ public data class ContainerNetworkEndpoint(
 /** Network configuration for a container. */
 @Serializable
 public data class ContainerNetworkSettings(
-    public val networks: Map<String, ContainerNetworkEndpoint>,
+    public val networks: Map<String, ContainerNetworkEndpoint> = emptyMap(),
 )
 
 /** Host configuration for a container. */

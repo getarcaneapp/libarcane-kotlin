@@ -22,7 +22,7 @@ public data class ImageSummary(
     public val created: Long,
     public val size: Long,
     public val virtualSize: Long,
-    public val labels: Map<String, JsonValue>,
+    public val labels: Map<String, JsonValue> = emptyMap(),
     public val inUse: Boolean,
     public val usedBy: List<ImageUsedBy>? = null,
     public val repo: String,
