@@ -24,6 +24,7 @@ public data class CreateProject(
     public val name: String,
     public val composeContent: String,
     public val envContent: String? = null,
+    public val projectFiles: List<ProjectFileDraft>? = null,
 )
 
 /** Body for `PUT /environments/{id}/projects/{id}`. */
@@ -32,6 +33,8 @@ public data class UpdateProject(
     public val name: String? = null,
     public val composeContent: String? = null,
     public val envContent: String? = null,
+    public val fileTreeRevision: String? = null,
+    public val fileChanges: List<ProjectFileChange>? = null,
 )
 
 /** Configures the deploy/up call. */
@@ -59,6 +62,8 @@ public data class RuntimeService(
     public val ports: List<String>? = null,
     public val health: String? = null,
     public val iconUrl: String? = null,
+    public val iconLightUrl: String? = null,
+    public val iconDarkUrl: String? = null,
     public val serviceConfig: Map<String, JsonValue>? = null,
     public val redeployDisabled: Boolean? = null,
 )
@@ -108,12 +113,16 @@ public data class ProjectDetails(
     public val relativePath: String? = null,
     public val path: String,
     public val iconUrl: String? = null,
+    public val iconLightUrl: String? = null,
+    public val iconDarkUrl: String? = null,
     public val urls: List<String>? = null,
     public val composeContent: String? = null,
     public val composeFileName: String? = null,
     public val envContent: String? = null,
     public val includeFiles: List<IncludeFile>? = null,
     public val directoryFiles: List<IncludeFile>? = null,
+    public val projectFiles: List<ProjectFile>? = null,
+    public val fileTreeRevision: String? = null,
     public val status: String,
     public val statusReason: String? = null,
     public val serviceCount: Int = 0,

@@ -19,6 +19,7 @@ import app.getarcane.sdk.models.volume.VolumeSizeInfo
 import app.getarcane.sdk.models.volume.VolumeUsage
 import app.getarcane.sdk.models.volume.VolumeUsageCounts
 import app.getarcane.sdk.pagination.PaginatedResponse
+import java.nio.file.Path
 
 /**
  * Groups all volume, browse, and backup endpoints registered under `/environments/{id}/volumes`.
@@ -213,7 +214,31 @@ public class VolumesService internal constructor(private val rest: RestService) 
             query = listOf("path" to path),
         )
 
+    /** Download a file directly to [destination] without buffering it in memory. */
+    public suspend fun downloadFile(
+        envId: EnvironmentId? = null,
+        name: String,
+        path: String,
+        destination: Path,
+    ): Path =
+        rest.transport.downloadRaw(
+            rest.environmentPath(envId, "volumes/$name/browse/download"),
+            destination = destination,
+            query = listOf("path" to path),
+        )
+
     /** Download a backup tarball as raw bytes. */
     public suspend fun downloadBackup(envId: EnvironmentId? = null, backupId: String): ByteArray =
         rest.transport.downloadRaw(rest.environmentPath(envId, "volumes/backups/$backupId/download"))
+
+    /** Download a backup directly to [destination] without buffering it in memory. */
+    public suspend fun downloadBackup(
+        envId: EnvironmentId? = null,
+        backupId: String,
+        destination: Path,
+    ): Path =
+        rest.transport.downloadRaw(
+            rest.environmentPath(envId, "volumes/backups/$backupId/download"),
+            destination = destination,
+        )
 }

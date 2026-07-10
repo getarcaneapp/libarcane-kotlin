@@ -11,6 +11,7 @@ import app.getarcane.sdk.models.containerregistry.ContainerRegistryCredential
 import app.getarcane.sdk.models.image.ImageBuildRecord
 import app.getarcane.sdk.models.image.ImageBuildRequest
 import app.getarcane.sdk.models.image.ImageDetailSummary
+import app.getarcane.sdk.models.image.ImageAttestationList
 import app.getarcane.sdk.models.image.ImageListResponse
 import app.getarcane.sdk.models.image.ImageLoadResult
 import app.getarcane.sdk.models.image.ImageProgressEvent
@@ -76,6 +77,22 @@ public class ImagesService internal constructor(private val rest: RestService) {
     /** Inspect a single image by ID. */
     public suspend fun inspect(envId: EnvironmentId? = null, id: String): ImageDetailSummary =
         rest.get(rest.environmentPath(envId, "images/$id"))
+
+    /** Return in-toto attestations attached to an image. */
+    public suspend fun attestations(
+        envId: EnvironmentId? = null,
+        id: String,
+        platform: String? = null,
+        predicateType: String? = null,
+        includeStatement: Boolean = false,
+    ): ImageAttestationList {
+        val query = buildList {
+            platform?.let { add("platform" to it) }
+            predicateType?.let { add("predicateType" to it) }
+            if (includeStatement) add("statement" to "true")
+        }
+        return rest.get(rest.environmentPath(envId, "images/$id/attestations"), query)
+    }
 
     /** Remove an image, optionally forcing removal even if in use. */
     public suspend fun remove(envId: EnvironmentId? = null, id: String, force: Boolean = false) {

@@ -62,6 +62,8 @@ public enum class ActivityStreamEventType(public val wire: String) {
     @SerialName("activity") ACTIVITY("activity"),
     @SerialName("message") MESSAGE("message"),
     @SerialName("missed") MISSED("missed"),
+    @SerialName("error") ERROR("error"),
+    @SerialName("heartbeat") HEARTBEAT("heartbeat"),
     @SerialName("unknown") UNKNOWN("unknown"),
 }
 
@@ -125,10 +127,12 @@ public data class ActivityDetail(
 @Serializable
 public data class ActivityStreamEvent(
     public val type: ActivityStreamEventType = ActivityStreamEventType.UNKNOWN,
+    public val environmentId: String? = null,
     public val activityId: String? = null,
     public val activity: Activity? = null,
     public val activities: List<Activity> = emptyList(),
     public val message: ActivityMessage? = null,
+    public val error: String? = null,
     @Serializable(with = ArcaneInstantSerializer::class)
     public val timestamp: Instant,
 )

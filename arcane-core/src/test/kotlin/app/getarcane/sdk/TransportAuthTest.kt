@@ -17,9 +17,13 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
+import java.io.IOException
+import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -167,5 +171,125 @@ class TransportAuthTest {
             assertEquals(ServerCapabilities.Mode.RBAC, it.serverCapabilities().mode)
         }
         assertEquals("t", store.loadTokens()?.accessToken)
+    }
+
+    @Test
+    fun publicUnauthorizedDoesNotClearActiveSession() = runTest {
+        val tokens = TokenPair("active", "refresh", future)
+        val store = InMemoryTokenStore(tokens)
+        val (client, _) = client(tokenStore = store) {
+            jsonStatus(HttpStatusCode.Unauthorized, """{"error":"unauthorized"}""")
+        }
+        client.use {
+            assertFailsWith<ArcaneError.Unauthorized> {
+                it.transport.rawRequestBytes("settings/public", authorized = false)
+            }
+        }
+        assertEquals(tokens, store.loadTokens())
+    }
+
+    @Test
+    fun offlineLogoutStillClearsLocalCredentials() = runTest {
+        val store = InMemoryTokenStore(TokenPair("active", "refresh", future))
+        val (client, _) = client(tokenStore = store) { throw IOException("offline") }
+        client.use { assertFailsWith<ArcaneError.Transport> { it.auth.logout() } }
+        assertNull(store.loadTokens())
+    }
+
+    @Test
+    fun transientProactiveRefreshFailureKeepsStoredTokens() = runTest {
+        val expired = TokenPair("stale", "refresh", Instant.parse("2020-01-01T00:00:00Z"))
+        val store = InMemoryTokenStore(expired)
+        val (client, recorded) = client(tokenStore = store) { request ->
+            if (request.url.encodedPath.endsWith("/auth/refresh")) {
+                jsonStatus(HttpStatusCode.ServiceUnavailable, """{"error":"offline"}""")
+            } else {
+                jsonOk(okMessage)
+            }
+        }
+        client.use { it.rest.get<MessageResponse>("ping") }
+        assertEquals(1, recorded.count { it.url.encodedPath.endsWith("/auth/refresh") })
+        assertEquals(expired, store.loadTokens())
+    }
+
+    @Test
+    fun destinationDownloadRetriesAndAtomicallyReplacesFile() = runTest {
+        var attempts = 0
+        val (client, _) = client { request ->
+            if (request.url.encodedPath.endsWith("/download")) {
+                attempts += 1
+                if (attempts == 1) {
+                    jsonStatus(HttpStatusCode.ServiceUnavailable, "retry")
+                } else {
+                    respond(
+                        "new payload",
+                        HttpStatusCode.OK,
+                        headersOf(HttpHeaders.ContentType, "application/octet-stream"),
+                    )
+                }
+            } else {
+                jsonOk(okMessage)
+            }
+        }
+        val directory = Files.createTempDirectory("arcane-download-test-")
+        val destination = directory.resolve("backup.tar")
+        Files.writeString(destination, "old payload")
+        try {
+            client.use { it.transport.downloadRaw("download", destination, authorized = false) }
+            assertEquals("new payload", Files.readString(destination))
+            assertEquals(2, attempts)
+            assertTrue(Files.list(directory).use { files -> files.noneMatch { it.fileName.toString().contains("arcane-download-") } })
+        } finally {
+            Files.deleteIfExists(destination)
+            Files.deleteIfExists(directory)
+        }
+    }
+
+    @Test
+    fun finalUnauthorizedDoesNotClearReplacementCredentials() = runTest {
+        val old = TokenPair("old", "", future)
+        val replacement = TokenPair("replacement", "", future)
+        val store = InMemoryTokenStore(old)
+        val requestStarted = CompletableDeferred<Unit>()
+        val releaseResponse = CompletableDeferred<Unit>()
+        val (client, _) = client(tokenStore = store) {
+            requestStarted.complete(Unit)
+            releaseResponse.await()
+            jsonStatus(HttpStatusCode.Unauthorized, """{"error":"unauthorized"}""")
+        }
+        client.use {
+            val request = async {
+                assertFailsWith<ArcaneError.Unauthorized> { it.transport.rawRequestBytes("protected") }
+            }
+            requestStarted.await()
+            it.authManager.save(replacement)
+            releaseResponse.complete(Unit)
+            request.await()
+        }
+        assertEquals(replacement, store.loadTokens())
+    }
+
+    @Test
+    fun inFlightRefreshCannotRestoreCredentialsAfterClear() = runTest {
+        val store = InMemoryTokenStore(TokenPair("old", "refresh", future))
+        val refreshStarted = CompletableDeferred<Unit>()
+        val releaseRefresh = CompletableDeferred<Unit>()
+        val (client, _) = client(tokenStore = store) { request ->
+            if (request.url.encodedPath.endsWith("/auth/refresh")) {
+                refreshStarted.complete(Unit)
+                releaseRefresh.await()
+                jsonOk(refreshBody("new"))
+            } else {
+                jsonOk(okMessage)
+            }
+        }
+        client.use {
+            val refresh = async { it.authManager.refreshTokens() }
+            refreshStarted.await()
+            it.authManager.clear()
+            releaseRefresh.complete(Unit)
+            assertFailsWith<CancellationException> { refresh.await() }
+        }
+        assertNull(store.loadTokens())
     }
 }

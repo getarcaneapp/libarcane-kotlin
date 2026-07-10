@@ -30,6 +30,7 @@ public data class Environment(
     @Serializable(with = ArcaneInstantSerializer::class)
     public val lastSeen: Instant? = null,
     public val edgeTransport: String? = null,
+    public val lastEdgeTransport: String? = null,
     public val edgeSecurityMode: String? = null,
     public val edgeSessionId: String? = null,
     public val edgeAgentInstance: String? = null,

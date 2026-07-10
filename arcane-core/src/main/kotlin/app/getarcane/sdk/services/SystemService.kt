@@ -6,6 +6,7 @@ import app.getarcane.sdk.http.requestDecoded
 import app.getarcane.sdk.models.system.ConvertDockerRunRequest
 import app.getarcane.sdk.models.system.ConvertDockerRunResponse
 import app.getarcane.sdk.models.system.DockerInfo
+import app.getarcane.sdk.models.system.EnvironmentUpdateJob
 import app.getarcane.sdk.models.system.HealthResponse
 import app.getarcane.sdk.models.system.PruneAllRequest
 import app.getarcane.sdk.models.system.PruneAllResult
@@ -100,6 +101,14 @@ public class SystemService internal constructor(private val rest: RestService) {
     public suspend fun triggerUpgrade(envId: EnvironmentId? = null) {
         rest.postVoid(rest.environmentPath(envId, "system/upgrade"))
     }
+
+    /** Trigger a fleet-wide upgrade of online agents followed by the manager. */
+    public suspend fun triggerUpdateAll(envId: EnvironmentId? = null): EnvironmentUpdateJob =
+        rest.post(rest.environmentPath(envId, "system/upgrade/all"))
+
+    /** Return the most recent fleet-wide update-all job. */
+    public suspend fun updateAllStatus(envId: EnvironmentId? = null): EnvironmentUpdateJob =
+        rest.get(rest.environmentPath(envId, "system/upgrade/all/status"))
 
     // MARK: - WebSocket streams
 

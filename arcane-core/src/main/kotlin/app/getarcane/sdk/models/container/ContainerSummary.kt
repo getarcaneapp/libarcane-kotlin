@@ -19,6 +19,8 @@ public data class ContainerSummary(
     public val hostConfig: ContainerHostConfig,
     public val networkSettings: ContainerNetworkSettings,
     public val mounts: List<ContainerMount>,
+    public val iconLightUrl: String? = null,
+    public val iconDarkUrl: String? = null,
     public val updateInfo: ImageUpdateInfo? = null,
     public val redeployDisabled: Boolean? = null,
 )

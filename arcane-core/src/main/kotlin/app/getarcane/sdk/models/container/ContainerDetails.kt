@@ -19,6 +19,8 @@ public data class ContainerDetails(
     public val mounts: List<ContainerMount>,
     public val labels: Map<String, String>? = null,
     public val composeInfo: ContainerComposeInfo? = null,
+    public val iconLightUrl: String? = null,
+    public val iconDarkUrl: String? = null,
     public val redeployDisabled: Boolean? = null,
 )
 

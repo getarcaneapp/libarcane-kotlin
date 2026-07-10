@@ -7,6 +7,7 @@ import app.getarcane.sdk.http.multipartUpload
 import app.getarcane.sdk.models.base.MessageResponse
 import app.getarcane.sdk.models.builds.BuildFileContent
 import app.getarcane.sdk.models.volume.FileEntry
+import java.nio.file.Path
 
 /** Browses files in the build workspace for an environment. */
 public class BuildsService internal constructor(private val rest: RestService) {
@@ -55,6 +56,18 @@ public class BuildsService internal constructor(private val rest: RestService) {
     public suspend fun downloadFile(path: String, envId: EnvironmentId? = null): ByteArray =
         rest.transport.downloadRaw(
             rest.environmentPath(envId, "builds/browse/download"),
+            query = listOf("path" to path),
+        )
+
+    /** Download a workspace file directly to [destination] without buffering it in memory. */
+    public suspend fun downloadFile(
+        path: String,
+        destination: Path,
+        envId: EnvironmentId? = null,
+    ): Path =
+        rest.transport.downloadRaw(
+            rest.environmentPath(envId, "builds/browse/download"),
+            destination = destination,
             query = listOf("path" to path),
         )
 }
