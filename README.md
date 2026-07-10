@@ -90,6 +90,7 @@ val client = ArcaneClient(
 - `client.containers.stats(...)` / `system.statsStream(...)` → `Flow<...>` (WebSocket)
 - `client.containers.exec(...)` → `TerminalSession` (bidirectional: `send(text)` + `output: Flow<ByteArray>`)
 - `client.images.pullStream(...)` / `projects.deployStream(...)` → `Flow<...>` (NDJSON progress)
+- `client.dashboard.stream(...)` → `Flow<DashboardStreamEvent>` (aggregated multi-environment snapshots)
 
 Collecting a stream opens the connection; cancelling the collector closes it.
 
@@ -108,23 +109,27 @@ Each resource is exposed as a service on `ArcaneClient`:
 | Service | Endpoints |
 | --- | --- |
 | `client.auth` | login, logout, refresh, me, password change, OIDC flow |
-| `client.users` | user CRUD, role assignments |
+| `client.users` | user CRUD, avatars, role assignments |
 | `client.apiKeys` | API key CRUD |
 | `client.roles` / `client.oidcRoleMappings` | v2 RBAC roles + OIDC mappings |
 | `client.environments` | environment CRUD, agent pairing, mTLS bundle |
 | `client.containers` | list, inspect, lifecycle, logs, stats, exec |
-| `client.images` | list, inspect, pull, build, prune, upload |
+| `client.images` | list, inspect, attestations, pull, build, prune, upload |
 | `client.volumes` | volumes, browse, backups |
 | `client.networks` | list, inspect, create, prune, topology |
-| `client.projects` | compose projects: up/down/restart/redeploy/build/pull/destroy/archive |
+| `client.projects` | compose projects: file-tree editing, up/down/restart/redeploy/build/pull/destroy/archive |
 | `client.swarm` | swarm: nodes, services, stacks, configs, secrets, tasks |
-| `client.system` | docker info, prune, convert, upgrade, bulk actions |
-| `client.dashboard` | env overview, action items |
+| `client.system` | docker info, prune, convert, single/fleet upgrade, bulk actions |
+| `client.dashboard` | env overview, action items, aggregated snapshot stream |
 | `client.events` | audit events |
 | `client.webhooks` / `client.notifications` | webhook + notification config |
 | `client.templates` / `client.registries` | templates + container registries |
 | `client.gitops` / `client.builds` / `client.jobs` | GitOps, build workspaces, scheduled jobs |
 | `client.settings` / `client.updater` / `client.vulnerabilities` / `client.ports` / `client.version` | misc |
+
+Binary downloads return `ByteArray` by default. Large build-workspace files and volume files/backups
+also have `Path` overloads that stream to a caller-selected destination and replace it only after a
+successful download.
 
 ## Building
 

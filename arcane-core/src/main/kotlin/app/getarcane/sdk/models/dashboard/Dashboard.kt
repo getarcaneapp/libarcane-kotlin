@@ -23,6 +23,9 @@ public enum class ActionItemKind(public val wire: String) {
 
     @SerialName("expiring_keys")
     EXPIRING_KEYS("expiring_keys"),
+
+    @SerialName("unknown")
+    UNKNOWN("unknown"),
 }
 
 /** Severity of a dashboard action item. */
@@ -33,14 +36,17 @@ public enum class ActionItemSeverity(public val wire: String) {
 
     @SerialName("critical")
     CRITICAL("critical"),
+
+    @SerialName("unknown")
+    UNKNOWN("unknown"),
 }
 
 /** A single attention item rendered on the dashboard. */
 @Serializable
 public data class ActionItem(
-    public val kind: ActionItemKind,
+    public val kind: ActionItemKind = ActionItemKind.UNKNOWN,
     public val count: Int,
-    public val severity: ActionItemSeverity,
+    public val severity: ActionItemSeverity = ActionItemSeverity.UNKNOWN,
 )
 
 /** Collection of dashboard action items. */
@@ -135,4 +141,5 @@ public data class DashboardSnapshot(
     public val imageUsageCounts: ImageUsageCounts,
     public val actionItems: ActionItems,
     public val settings: DashboardSnapshotSettings,
+    public val versionInfo: VersionInfo? = null,
 )

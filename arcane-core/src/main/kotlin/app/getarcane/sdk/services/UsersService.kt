@@ -1,5 +1,6 @@
 package app.getarcane.sdk.services
 
+import app.getarcane.sdk.errors.ArcaneError
 import app.getarcane.sdk.http.RestService
 import app.getarcane.sdk.http.paginated
 import app.getarcane.sdk.models.auth.PasswordChange
@@ -38,6 +39,14 @@ public class UsersService internal constructor(private val rest: RestService) {
     public suspend fun delete(id: String) {
         rest.deleteVoid("users/$id")
     }
+
+    /** Return a user's custom profile picture, or null when no custom avatar exists. */
+    public suspend fun getAvatar(userId: String): ByteArray? =
+        try {
+            rest.transport.downloadRaw("users/$userId/avatar")
+        } catch (_: ArcaneError.NotFound) {
+            null
+        }
 
     public suspend fun changePassword(body: PasswordChange) {
         rest.postVoid("auth/password", body = body)

@@ -41,8 +41,14 @@ public class AuthService internal constructor(
     }
 
     public suspend fun logout() {
-        transport.request<MessageResponse>("auth/logout", method = "POST")
+        var remoteFailure: Throwable? = null
+        try {
+            transport.request<MessageResponse>("auth/logout", method = "POST")
+        } catch (failure: Throwable) {
+            remoteFailure = failure
+        }
         authManager.clear()
+        remoteFailure?.let { throw it }
     }
 
     public suspend fun me(): User {

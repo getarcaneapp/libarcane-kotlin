@@ -8,20 +8,21 @@ import kotlinx.serialization.Serializable
 /** Result of an image update check. */
 @Serializable
 public data class ImageUpdateResponse(
-    public val hasUpdate: Boolean,
-    public val updateType: String,
-    public val currentVersion: String,
+    public val hasUpdate: Boolean = false,
+    public val updateType: String = "",
+    public val currentVersion: String = "",
     public val latestVersion: String? = null,
     public val currentDigest: String? = null,
     public val latestDigest: String? = null,
     @Serializable(with = ArcaneInstantSerializer::class)
-    public val checkTime: Instant,
-    public val responseTimeMs: Int,
+    public val checkTime: Instant? = null,
+    public val responseTimeMs: Int = 0,
     public val error: String? = null,
     public val authMethod: String? = null,
     public val authUsername: String? = null,
     public val authRegistry: String? = null,
     public val usedCredential: Boolean? = null,
+    public val activityId: String? = null,
 )
 
 /** Aggregate summary of image update status across an environment. */

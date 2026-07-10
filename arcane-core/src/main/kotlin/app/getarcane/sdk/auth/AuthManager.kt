@@ -42,16 +42,62 @@ public class AuthManager internal constructor(
     private val json: Json,
     private val scope: CoroutineScope,
 ) {
+    internal data class AuthenticationContext(
+        val headers: Map<String, String>,
+        val credentialGeneration: Long?,
+    )
+
     private val mutex = Mutex()
     private var cachedTokens: TokenPair? = null
     private var refreshJob: Deferred<TokenPair>? = null
     private var capabilities: ServerCapabilities = ServerCapabilities.UNKNOWN
+    private var credentialGeneration: Long = 0
+    private var lastFailedProactiveRefreshAtMillis: Long? = null
 
     /** X-API-Key header (if configured), else a Bearer header from the cached access token, else empty. */
     public suspend fun authenticationHeaders(): Map<String, String> {
-        if (!apiKey.isNullOrEmpty()) return mapOf("X-API-Key" to apiKey)
-        val token = mutex.withLock { ensureLoadedLocked()?.accessToken }
-        return if (token.isNullOrEmpty()) emptyMap() else mapOf("Authorization" to "Bearer $token")
+        return authenticationContext().headers
+    }
+
+    internal suspend fun authenticationContext(): AuthenticationContext {
+        if (!apiKey.isNullOrEmpty()) {
+            return AuthenticationContext(mapOf("X-API-Key" to apiKey), credentialGeneration = null)
+        }
+
+        var tokens = mutex.withLock { ensureLoadedLocked() }
+        val nowMillis = System.currentTimeMillis()
+        val canRetryProactively = mutex.withLock {
+            lastFailedProactiveRefreshAtMillis?.let { nowMillis - it > FAILED_REFRESH_BACKOFF_MILLIS } ?: true
+        }
+        if (
+            tokens?.refreshToken?.isNotEmpty() == true &&
+            tokens.expiresAt.toEpochMilliseconds() - nowMillis < EXPIRY_SKEW_MILLIS &&
+            canRetryProactively
+        ) {
+            try {
+                tokens = refreshTokens()
+                mutex.withLock { lastFailedProactiveRefreshAtMillis = null }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Throwable) {
+                mutex.withLock {
+                    lastFailedProactiveRefreshAtMillis = nowMillis
+                    tokens = ensureLoadedLocked()
+                }
+            }
+        }
+
+        return mutex.withLock {
+            val accessToken = tokens?.accessToken
+            if (accessToken.isNullOrEmpty()) {
+                AuthenticationContext(emptyMap(), credentialGeneration = null)
+            } else {
+                AuthenticationContext(
+                    mapOf("Authorization" to "Bearer $accessToken"),
+                    credentialGeneration = credentialGeneration,
+                )
+            }
+        }
     }
 
     /** Whether a non-empty refresh token is available (never true when using an API key). */
@@ -66,6 +112,9 @@ public class AuthManager internal constructor(
 
     public suspend fun save(tokens: TokenPair) {
         mutex.withLock {
+            credentialGeneration += 1
+            refreshJob?.cancel()
+            refreshJob = null
             cachedTokens = tokens
             tokenStore.saveTokens(tokens)
         }
@@ -73,10 +122,13 @@ public class AuthManager internal constructor(
 
     public suspend fun clear() {
         mutex.withLock {
-            cachedTokens = null
-            refreshJob = null
-            capabilities = ServerCapabilities.UNKNOWN
-            tokenStore.clearTokens()
+            clearLocked()
+        }
+    }
+
+    internal suspend fun clearIfCredentialGenerationMatches(generation: Long) {
+        mutex.withLock {
+            if (generation == credentialGeneration) clearLocked()
         }
     }
 
@@ -95,17 +147,20 @@ public class AuthManager internal constructor(
     /**
      * Refreshes the access token, de-duplicating concurrent calls: the first caller creates the
      * in-flight [Deferred] and performs the post-success persistence; concurrent callers join the
-     * same [Deferred]. On failure the auth state is cleared.
+     * same [Deferred]. Rejected refresh credentials clear auth; transient failures preserve the
+     * current token pair for a later retry.
      */
     public suspend fun refreshTokens(): TokenPair {
         mutex.withLock { refreshJob }?.let { return it.await() }
 
         var isOwner = false
+        var generation = 0L
         val job = mutex.withLock {
             refreshJob ?: run {
                 val refreshToken = ensureLoadedLocked()?.refreshToken
                 if (refreshToken.isNullOrEmpty()) throw ArcaneError.Unauthorized
                 isOwner = true
+                generation = credentialGeneration
                 scope.async(start = CoroutineStart.LAZY) { performRefresh(refreshToken) }
                     .also { refreshJob = it }
             }
@@ -115,6 +170,9 @@ public class AuthManager internal constructor(
         return try {
             val tokens = job.await()
             mutex.withLock {
+                if (generation != credentialGeneration || refreshJob !== job) {
+                    throw CancellationException("Credentials changed while refresh was in flight")
+                }
                 cachedTokens = tokens
                 tokenStore.saveTokens(tokens)
                 if (refreshJob === job) refreshJob = null
@@ -122,7 +180,9 @@ public class AuthManager internal constructor(
             tokens
         } catch (t: Throwable) {
             mutex.withLock { if (refreshJob === job) refreshJob = null }
-            if (t !is CancellationException) runCatching { clear() }
+            if (t is ArcaneError.Unauthorized || t is ArcaneError.Forbidden) {
+                runCatching { clearIfCredentialGenerationMatches(generation) }
+            }
             throw t
         }
     }
@@ -130,6 +190,15 @@ public class AuthManager internal constructor(
     private suspend fun ensureLoadedLocked(): TokenPair? {
         if (cachedTokens == null) cachedTokens = tokenStore.loadTokens()
         return cachedTokens
+    }
+
+    private suspend fun clearLocked() {
+        credentialGeneration += 1
+        refreshJob?.cancel()
+        cachedTokens = null
+        refreshJob = null
+        capabilities = ServerCapabilities.UNKNOWN
+        tokenStore.clearTokens()
     }
 
     private suspend fun performRefresh(refreshToken: String): TokenPair {
@@ -161,4 +230,9 @@ public class AuthManager internal constructor(
 
     private fun refreshUrl(): String =
         URLBuilder(baseUrl).appendPathSegments("auth", "refresh").buildString()
+
+    private companion object {
+        const val EXPIRY_SKEW_MILLIS: Long = 45_000
+        const val FAILED_REFRESH_BACKOFF_MILLIS: Long = 30_000
+    }
 }

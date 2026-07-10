@@ -11,6 +11,7 @@ import io.ktor.client.request.accept
 import io.ktor.client.request.header
 import io.ktor.client.request.request
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.URLBuilder
@@ -18,10 +19,18 @@ import io.ktor.http.URLProtocol
 import io.ktor.http.Url
 import io.ktor.http.appendPathSegments
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
+import io.ktor.utils.io.jvm.javaio.toInputStream
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
+import java.nio.file.AtomicMoveNotSupportedException
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.StandardCopyOption
 
 /**
  * Low-level HTTP transport over a Ktor [HttpClient]. The 401-refresh + idempotent-retry loop is
@@ -52,7 +61,8 @@ public class ArcaneTransport internal constructor(
         val httpMethod = HttpMethod.parse(method)
 
         while (true) {
-            val headers = if (authorized) authManager.authenticationHeaders() else emptyMap()
+            val authentication = if (authorized) authManager.authenticationContext() else null
+            val headers = authentication?.headers.orEmpty()
             val response = try {
                 httpClient.request(buildUrl(path, query)) {
                     this.method = httpMethod
@@ -92,7 +102,11 @@ public class ArcaneTransport internal constructor(
             }
 
             if (status !in 200..299) {
-                if (status == 401) runCatching { authManager.clear() }
+                if (status == 401 && authorized) {
+                    authentication?.credentialGeneration?.let { generation ->
+                        runCatching { authManager.clearIfCredentialGenerationMatches(generation) }
+                    }
+                }
                 throw ArcaneError.fromResponse(status, bytes.decodeToString(), response.headers, json)
             }
             return bytes
@@ -114,6 +128,100 @@ public class ArcaneTransport internal constructor(
         query: List<Pair<String, String>> = emptyList(),
         authorized: Boolean = true,
     ): ByteArray = rawRequestBytes(path, "GET", query, null, authorized)
+
+    /**
+     * Downloads a response directly to [destination]. The caller-visible file is replaced only
+     * after a successful response has been fully written.
+     */
+    public suspend fun downloadRaw(
+        path: String,
+        destination: Path,
+        query: List<Pair<String, String>> = emptyList(),
+        authorized: Boolean = true,
+    ): Path {
+        var didRefresh = false
+        var attempt = 1
+
+        while (true) {
+            val authentication = if (authorized) authManager.authenticationContext() else null
+            val response = try {
+                httpClient.request(buildUrl(path, query)) {
+                    method = HttpMethod.Get
+                    accept(ContentType.Application.OctetStream)
+                    authentication?.headers.orEmpty().forEach { (key, value) -> header(key, value) }
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: ArcaneError) {
+                throw e
+            } catch (e: Throwable) {
+                if (attempt < retryPolicy.maxAttempts) {
+                    sleepBeforeRetry(attempt)
+                    attempt += 1
+                    continue
+                }
+                throw ArcaneError.Transport(e.message ?: e.toString())
+            }
+
+            val status = response.status.value
+            if (status == 401 && authorized && !didRefresh && authManager.hasRefreshCredential()) {
+                response.bodyAsChannel().cancel(null)
+                authManager.refreshTokens()
+                didRefresh = true
+                continue
+            }
+            if (shouldRetry("GET", status) && attempt < retryPolicy.maxAttempts) {
+                response.bodyAsChannel().cancel(null)
+                sleepBeforeRetry(attempt)
+                attempt += 1
+                continue
+            }
+            if (!response.status.isSuccess()) {
+                val bytes: ByteArray = response.body()
+                if (status == 401 && authorized) {
+                    authentication?.credentialGeneration?.let { generation ->
+                        runCatching { authManager.clearIfCredentialGenerationMatches(generation) }
+                    }
+                }
+                throw ArcaneError.fromResponse(status, bytes.decodeToString(), response.headers, json)
+            }
+
+            val absoluteDestination = destination.toAbsolutePath()
+            val directory = absoluteDestination.parent
+                ?: throw ArcaneError.Transport("Download destination has no parent directory")
+            Files.createDirectories(directory)
+            val temporary = Files.createTempFile(directory, ".${absoluteDestination.fileName}.arcane-download-", ".tmp")
+            try {
+                withContext(Dispatchers.IO) {
+                    response.bodyAsChannel().toInputStream().use { input ->
+                        Files.copy(input, temporary, StandardCopyOption.REPLACE_EXISTING)
+                    }
+                    try {
+                        Files.move(
+                            temporary,
+                            absoluteDestination,
+                            StandardCopyOption.ATOMIC_MOVE,
+                            StandardCopyOption.REPLACE_EXISTING,
+                        )
+                    } catch (_: AtomicMoveNotSupportedException) {
+                        Files.move(temporary, absoluteDestination, StandardCopyOption.REPLACE_EXISTING)
+                    }
+                }
+                return destination
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                if (attempt < retryPolicy.maxAttempts) {
+                    sleepBeforeRetry(attempt)
+                    attempt += 1
+                    continue
+                }
+                throw if (e is ArcaneError) e else ArcaneError.Transport(e.message ?: e.toString())
+            } finally {
+                Files.deleteIfExists(temporary)
+            }
+        }
+    }
 
     /** Builds the absolute request [Url] for [path] (resolved against the `/api`-normalized base). */
     public fun buildUrl(path: String, query: List<Pair<String, String>> = emptyList()): Url =
