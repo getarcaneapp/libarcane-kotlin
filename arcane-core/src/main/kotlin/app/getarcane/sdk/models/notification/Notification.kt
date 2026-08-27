@@ -1,11 +1,17 @@
 package app.getarcane.sdk.models.notification
 
 import app.getarcane.sdk.models.base.JsonValue
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 /** Identifiers for notification providers. */
-@Serializable
+@Serializable(with = NotificationProviderSerializer::class)
 public enum class NotificationProvider(public val wire: String) {
     @SerialName("discord")
     DISCORD("discord"),
@@ -34,8 +40,30 @@ public enum class NotificationProvider(public val wire: String) {
     @SerialName("matrix")
     MATRIX("matrix"),
 
+    @SerialName("googlechat")
+    GOOGLE_CHAT("googlechat"),
+
     @SerialName("generic")
     GENERIC("generic"),
+
+    /** A provider introduced by a newer server that this SDK does not understand yet. */
+    UNKNOWN("unknown"),
+}
+
+internal object NotificationProviderSerializer : KSerializer<NotificationProvider> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("NotificationProvider", PrimitiveKind.STRING)
+
+    override fun deserialize(decoder: Decoder): NotificationProvider {
+        val wire = decoder.decodeString()
+        return NotificationProvider.entries.firstOrNull {
+            it != NotificationProvider.UNKNOWN && it.wire == wire
+        } ?: NotificationProvider.UNKNOWN
+    }
+
+    override fun serialize(encoder: Encoder, value: NotificationProvider) {
+        encoder.encodeString(value.wire)
+    }
 }
 
 /** Configured settings for a notification provider. */
