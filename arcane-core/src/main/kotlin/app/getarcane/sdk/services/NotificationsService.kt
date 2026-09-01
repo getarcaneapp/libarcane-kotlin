@@ -2,6 +2,7 @@ package app.getarcane.sdk.services
 
 import app.getarcane.sdk.EnvironmentId
 import app.getarcane.sdk.http.RestService
+import app.getarcane.sdk.http.requestDecoded
 import app.getarcane.sdk.models.notification.AppriseSettings
 import app.getarcane.sdk.models.notification.NotificationDispatchRequest
 import app.getarcane.sdk.models.notification.NotificationProvider
@@ -16,23 +17,27 @@ import app.getarcane.sdk.models.notification.UpdateNotificationSettings
 public class NotificationsService internal constructor(private val rest: RestService) {
     // Provider settings
 
-    /** Get all notification settings for an environment. */
+    /** Get all notification settings for an environment. The endpoint returns the list directly. */
     public suspend fun listSettings(envId: EnvironmentId? = null): List<NotificationSettings> =
-        rest.get(rest.environmentPath(envId, "notifications/settings"))
+        rest.transport.requestDecoded(rest.environmentPath(envId, "notifications/settings"))
 
-    /** Get notification settings for a specific provider. */
+    /** Get notification settings for a specific provider. The endpoint returns the object directly. */
     public suspend fun getSettings(
         provider: NotificationProvider,
         envId: EnvironmentId? = null,
     ): NotificationSettings =
-        rest.get(rest.environmentPath(envId, "notifications/settings/${provider.wire}"))
+        rest.transport.requestDecoded(rest.environmentPath(envId, "notifications/settings/${provider.wire}"))
 
-    /** Create or update notification settings. */
+    /** Create or update notification settings. The endpoint returns the object directly. */
     public suspend fun upsertSettings(
         body: UpdateNotificationSettings,
         envId: EnvironmentId? = null,
     ): NotificationSettings =
-        rest.post(rest.environmentPath(envId, "notifications/settings"), body = body)
+        rest.transport.requestDecoded(
+            rest.environmentPath(envId, "notifications/settings"),
+            method = "POST",
+            body = body,
+        )
 
     /** Delete notification settings for a provider. */
     public suspend fun deleteSettings(provider: NotificationProvider, envId: EnvironmentId? = null) {
