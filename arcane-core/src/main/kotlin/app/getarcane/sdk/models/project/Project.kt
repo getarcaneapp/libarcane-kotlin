@@ -5,7 +5,15 @@ import app.getarcane.sdk.models.base.PaginationResponse
 import app.getarcane.sdk.models.containerregistry.ContainerRegistryCredential
 import app.getarcane.sdk.serialization.ArcaneInstantSerializer
 import kotlinx.datetime.Instant
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 /**
  * A project-related file (compose include, env file, or other on-disk file shown in the project
@@ -25,6 +33,17 @@ public data class CreateProject(
     public val composeContent: String,
     public val envContent: String? = null,
     public val projectFiles: List<ProjectFileDraft>? = null,
+    public val tags: List<String>? = null,
+    public val tagColors: Map<String, String>? = null,
+)
+
+@Serializable
+internal data class CreateProjectConfiguration(
+    val name: String,
+    val composeContent: String,
+    val envContent: String? = null,
+    val tags: List<String>? = null,
+    val tagColors: Map<String, String>? = null,
 )
 
 /** Body for `PUT /environments/{id}/projects/{id}`. */
@@ -35,13 +54,59 @@ public data class UpdateProject(
     public val envContent: String? = null,
     public val fileTreeRevision: String? = null,
     public val fileChanges: List<ProjectFileChange>? = null,
+    public val overrideContent: String? = null,
 )
+
+/** Image pull behavior accepted by project deploy and redeploy. */
+@Serializable(with = DeployPullPolicySerializer::class)
+public enum class DeployPullPolicy(public val wire: String) {
+    @SerialName("missing")
+    MISSING("missing"),
+
+    @SerialName("always")
+    ALWAYS("always"),
+
+    @SerialName("never")
+    NEVER("never"),
+
+    /** A value introduced by a newer server that this SDK does not understand. */
+    UNKNOWN("unknown"),
+}
+
+internal object DeployPullPolicySerializer : KSerializer<DeployPullPolicy> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("DeployPullPolicy", PrimitiveKind.STRING)
+
+    override fun deserialize(decoder: Decoder): DeployPullPolicy {
+        val wire = decoder.decodeString()
+        return DeployPullPolicy.entries.firstOrNull {
+            it != DeployPullPolicy.UNKNOWN && it.wire == wire
+        } ?: DeployPullPolicy.UNKNOWN
+    }
+
+    override fun serialize(encoder: Encoder, value: DeployPullPolicy) {
+        if (value == DeployPullPolicy.UNKNOWN) {
+            throw SerializationException("DeployPullPolicy.UNKNOWN cannot be sent to Arcane")
+        }
+        encoder.encodeString(value.wire)
+    }
+}
 
 /** Configures the deploy/up call. */
 @Serializable
 public data class DeployOptions(
-    public val pullPolicy: String? = null,
+    public val pullPolicy: DeployPullPolicy? = null,
     public val forceRecreate: Boolean? = null,
+    public val removeOrphans: Boolean? = null,
+    public val recreateVolumes: Boolean? = null,
+)
+
+/** Effective project tag and the sources that own it. */
+@Serializable
+public data class ProjectTag(
+    public val name: String,
+    public val color: String,
+    public val sources: List<String> = emptyList(),
 )
 
 /** Body for the include file update endpoint. */
@@ -82,6 +147,8 @@ public data class ProjectUpdateInfo(
     public val updatedImageRefs: List<String>? = null,
     @Serializable(with = ArcaneInstantSerializer::class)
     public val lastCheckedAt: Instant? = null,
+    public val imagesNotPulled: Int = 0,
+    public val notPulledImageRefs: List<String>? = null,
 )
 
 /** Response for `POST projects`. */
@@ -102,6 +169,8 @@ public data class ProjectCreateResponse(
     public val archivedAt: Instant? = null,
     public val createdAt: String,
     public val updatedAt: String,
+    public val activityId: String? = null,
+    public val tags: List<ProjectTag> = emptyList(),
 )
 
 /** The full project view returned by the list/details endpoints. */
@@ -141,6 +210,11 @@ public data class ProjectDetails(
     public val gitOpsManagedBy: String? = null,
     public val lastSyncCommit: String? = null,
     public val gitRepositoryURL: String? = null,
+    public val activityId: String? = null,
+    public val tags: List<ProjectTag> = emptyList(),
+    public val composeFiles: List<String>? = null,
+    public val overrideContent: String? = null,
+    public val overrideFileName: String? = null,
 )
 
 /** Body for the destroy endpoint. */

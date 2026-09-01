@@ -54,6 +54,11 @@ class Post26ContractsTest {
         assertFalse(version("dev").supportsPost26MobileFeatures)
         assertFalse(version("2.7").supportsPost26MobileFeatures)
         assertFalse(version("2.7.0", isSemver = false).supportsPost26MobileFeatures)
+
+        assertFalse(version("2.7.9").supportsProjectWorkspaceContract)
+        assertTrue(version("2.8.0").supportsProjectWorkspaceContract)
+        assertTrue(version("v2.8.1+build.4").supportsProjectWorkspaceContract)
+        assertFalse(version("dev").supportsProjectWorkspaceContract)
     }
 
     private fun version(currentVersion: String, isSemver: Boolean = true): VersionInfo = VersionInfo(
