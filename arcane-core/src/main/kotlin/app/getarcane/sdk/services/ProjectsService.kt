@@ -1,18 +1,29 @@
 package app.getarcane.sdk.services
 
 import app.getarcane.sdk.EnvironmentId
+import app.getarcane.sdk.errors.ArcaneError
+import app.getarcane.sdk.http.MultipartFile
 import app.getarcane.sdk.http.RestService
+import app.getarcane.sdk.http.multipartUpload
 import app.getarcane.sdk.http.paginated
 import app.getarcane.sdk.models.base.SearchPaginationSort
 import app.getarcane.sdk.models.project.BuildProjectRequest
 import app.getarcane.sdk.models.project.CreateProject
+import app.getarcane.sdk.models.project.CreateProjectConfiguration
+import app.getarcane.sdk.models.project.CreateProjectWorkspaceManifest
 import app.getarcane.sdk.models.project.DeployOptions
 import app.getarcane.sdk.models.project.DestroyProject
 import app.getarcane.sdk.models.project.ImagePullRequest
 import app.getarcane.sdk.models.project.IncludeFile
 import app.getarcane.sdk.models.project.ProjectCreateResponse
 import app.getarcane.sdk.models.project.ProjectDetails
+import app.getarcane.sdk.models.project.ProjectFileChange
+import app.getarcane.sdk.models.project.ProjectFileChangeOperation
 import app.getarcane.sdk.models.project.ProjectStatusCounts
+import app.getarcane.sdk.models.project.ProjectWorkspace
+import app.getarcane.sdk.models.project.ProjectWorkspaceFileContent
+import app.getarcane.sdk.models.project.ProjectWorkspaceManifestChange
+import app.getarcane.sdk.models.project.ProjectWorkspaceUpdateManifest
 import app.getarcane.sdk.models.project.PullProgressEvent
 import app.getarcane.sdk.models.project.UpdateIncludeFile
 import app.getarcane.sdk.models.project.UpdateProject
@@ -21,6 +32,8 @@ import app.getarcane.sdk.streaming.LogLine
 import app.getarcane.sdk.streaming.logStream
 import app.getarcane.sdk.streaming.ndjsonFlow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.serialization.encodeToString
 
 /**
  * Docker Compose project management.
@@ -69,6 +82,7 @@ public class ProjectsService internal constructor(private val rest: RestService)
         rest.get(rest.environmentPath(envId, "projects/$projectId/compose"))
 
     /** Get the project's on-disk directory files. */
+    @Deprecated("Use workspace() with current Arcane servers")
     public suspend fun files(envId: EnvironmentId? = null, projectId: String): ProjectDetails =
         rest.get(rest.environmentPath(envId, "projects/$projectId/files"))
 
@@ -81,6 +95,7 @@ public class ProjectsService internal constructor(private val rest: RestService)
         rest.get(rest.environmentPath(envId, "projects/$projectId/updates"))
 
     /** Get the contents of a single project-related file by relative path. */
+    @Deprecated("Use workspaceFile() with current Arcane servers")
     public suspend fun file(
         envId: EnvironmentId? = null,
         projectId: String,
@@ -91,14 +106,110 @@ public class ProjectsService internal constructor(private val rest: RestService)
             listOf("relativePath" to relativePath),
         )
 
+    /** Get the current editable project workspace tree. */
+    public suspend fun workspace(envId: EnvironmentId? = null, projectId: String): ProjectWorkspace =
+        try {
+            rest.get(rest.environmentPath(envId, "projects/$projectId/workspace"))
+        } catch (_: ArcaneError.NotFound) {
+            val legacy = files(envId = envId, projectId = projectId)
+            ProjectWorkspace(
+                files = legacy.projectFiles.orEmpty().map { file ->
+                    file.copy(
+                        editable = file.protected != true,
+                        readOnlyReason = if (file.protected == true) "protected" else null,
+                    )
+                },
+                fileTreeRevision = legacy.fileTreeRevision.orEmpty(),
+            )
+        }
+
+    /** Get text content and editability metadata for one project workspace file. */
+    public suspend fun workspaceFile(
+        envId: EnvironmentId? = null,
+        projectId: String,
+        relativePath: String,
+    ): ProjectWorkspaceFileContent = try {
+        rest.get(
+            rest.environmentPath(envId, "projects/$projectId/workspace/file"),
+            listOf("relativePath" to relativePath),
+        )
+    } catch (_: ArcaneError.NotFound) {
+        val legacy = file(envId = envId, projectId = projectId, relativePath = relativePath)
+        ProjectWorkspaceFileContent(
+            path = legacy.path,
+            relativePath = legacy.relativePath,
+            name = legacy.relativePath.substringAfterLast('/'),
+            content = legacy.content,
+            mimeType = "text/plain; charset=utf-8",
+            size = legacy.content?.encodeToByteArray()?.size?.toLong() ?: 0,
+            editable = true,
+        )
+    }
+
+    /** Download a project workspace file without decoding it as text. */
+    public suspend fun downloadWorkspaceFile(
+        envId: EnvironmentId? = null,
+        projectId: String,
+        relativePath: String,
+    ): ByteArray =
+        rest.transport.downloadRaw(
+            rest.environmentPath(envId, "projects/$projectId/workspace/file/download"),
+            query = listOf("relativePath" to relativePath),
+        )
+
     // MARK: - Mutations
 
     /** Create a new Docker Compose project. */
     public suspend fun create(
         envId: EnvironmentId? = null,
         request: CreateProject,
-    ): ProjectCreateResponse =
-        rest.post(rest.environmentPath(envId, "projects"), body = request)
+        useWorkspaceContract: Boolean = true,
+    ): ProjectCreateResponse {
+        if (!useWorkspaceContract) {
+            val modernFields = buildList {
+                if (!request.projectFiles.isNullOrEmpty()) add("projectFiles")
+                if (!request.tags.isNullOrEmpty()) add("tags")
+                if (!request.tagColors.isNullOrEmpty()) add("tagColors")
+            }
+            if (modernFields.isNotEmpty()) {
+                throw ArcaneError.Validation(
+                    modernFields.associateWith {
+                        listOf("This field requires the Arcane 2.8 project workspace contract.")
+                    },
+                )
+            }
+            return rest.post(rest.environmentPath(envId, "projects"), body = request)
+        }
+        val changes = request.projectFiles.orEmpty().map { draft ->
+            ProjectFileChange(
+                operation = if (draft.isDirectory) {
+                    ProjectFileChangeOperation.CREATE_FOLDER
+                } else {
+                    ProjectFileChangeOperation.CREATE_FILE
+                },
+                relativePath = draft.relativePath,
+                content = draft.content,
+            )
+        }
+        val multipart = buildWorkspaceMultipart(changes, allowEmptyCreateContent = true)
+        val project = CreateProjectConfiguration(
+            name = request.name,
+            composeContent = request.composeContent,
+            envContent = request.envContent,
+            tags = request.tags,
+            tagColors = request.tagColors,
+        )
+        val manifest = CreateProjectWorkspaceManifest(fileChanges = multipart.changes)
+        return rest.transport.multipartUpload(
+            rest.environmentPath(envId, "projects"),
+            ProjectCreateResponse.serializer(),
+            files = multipart.files,
+            fields = mapOf(
+                "project" to rest.transport.json.encodeToString(project),
+                "manifest" to rest.transport.json.encodeToString(manifest),
+            ),
+        )
+    }
 
     /** Update a project's name and/or compose/env content. */
     public suspend fun update(
@@ -116,6 +227,45 @@ public class ProjectsService internal constructor(private val rest: RestService)
     ): ProjectDetails =
         rest.put(rest.environmentPath(envId, "projects/$projectId/includes"), body = request)
 
+    /**
+     * Atomically apply ordered file-tree changes to a project workspace.
+     *
+     * Updated file content and its optional baseline are emitted as separate indexed multipart
+     * uploads. Supplying [ProjectFileChange.baselineContent] prevents overwriting a concurrent
+     * content edit even when the structural file-tree revision is unchanged.
+     */
+    public suspend fun updateWorkspace(
+        envId: EnvironmentId? = null,
+        projectId: String,
+        fileTreeRevision: String,
+        changes: List<ProjectFileChange>,
+    ): ProjectWorkspace {
+        val multipart = buildWorkspaceMultipart(changes)
+        val manifest = ProjectWorkspaceUpdateManifest(
+            fileTreeRevision = fileTreeRevision,
+            fileChanges = multipart.changes,
+        )
+        return try {
+            rest.transport.multipartUpload(
+                rest.environmentPath(envId, "projects/$projectId/workspace"),
+                ProjectWorkspace.serializer(),
+                files = multipart.files,
+                method = "PUT",
+                fields = mapOf("manifest" to rest.transport.json.encodeToString(manifest)),
+            )
+        } catch (_: ArcaneError.NotFound) {
+            val legacy = update(
+                envId = envId,
+                projectId = projectId,
+                request = UpdateProject(fileTreeRevision = fileTreeRevision, fileChanges = changes),
+            )
+            ProjectWorkspace(
+                files = legacy.projectFiles.orEmpty(),
+                fileTreeRevision = legacy.fileTreeRevision ?: fileTreeRevision,
+            )
+        }
+    }
+
     // MARK: - Lifecycle
 
     /**
@@ -129,7 +279,7 @@ public class ProjectsService internal constructor(private val rest: RestService)
         projectId: String,
         options: DeployOptions? = null,
     ) {
-        rest.postVoid(rest.environmentPath(envId, "projects/$projectId/up"), body = options)
+        deployStream(envId, projectId, options).collect()
     }
 
     /** Bring down a project (docker compose down). */
@@ -138,8 +288,12 @@ public class ProjectsService internal constructor(private val rest: RestService)
     }
 
     /** Redeploy a project (down + up). */
-    public suspend fun redeploy(envId: EnvironmentId? = null, projectId: String) {
-        rest.postVoid(rest.environmentPath(envId, "projects/$projectId/redeploy"))
+    public suspend fun redeploy(
+        envId: EnvironmentId? = null,
+        projectId: String,
+        options: DeployOptions? = null,
+    ) {
+        redeployStream(envId, projectId, options).collect()
     }
 
     /** Restart all containers in a project. */
@@ -229,11 +383,13 @@ public class ProjectsService internal constructor(private val rest: RestService)
     public fun redeployStream(
         envId: EnvironmentId? = null,
         projectId: String,
+        options: DeployOptions? = null,
     ): Flow<PullProgressEvent> =
         rest.transport.ndjsonFlow(
             rest.environmentPath(envId, "projects/$projectId/redeploy"),
             PullProgressEvent.serializer(),
             method = "POST",
+            body = options,
         )
 
     /** Pull a project's images and stream NDJSON progress events. */
@@ -282,3 +438,55 @@ public class ProjectsService internal constructor(private val rest: RestService)
         return rest.transport.logStream(rest.environmentPath(envId, "ws/projects/$projectId/logs"), query)
     }
 }
+
+private data class ProjectWorkspaceMultipart(
+    val changes: List<ProjectWorkspaceManifestChange>,
+    val files: List<MultipartFile>,
+)
+
+private fun buildWorkspaceMultipart(
+    changes: List<ProjectFileChange>,
+    allowEmptyCreateContent: Boolean = false,
+): ProjectWorkspaceMultipart {
+    val files = mutableListOf<MultipartFile>()
+    val manifestChanges = changes.map { change ->
+        var uploadIndex: Int? = null
+        var baselineIndex: Int? = null
+        if (change.operation == ProjectFileChangeOperation.CREATE_FILE ||
+            change.operation == ProjectFileChangeOperation.UPDATE_FILE
+        ) {
+            val content = change.content ?: if (
+                allowEmptyCreateContent && change.operation == ProjectFileChangeOperation.CREATE_FILE
+            ) {
+                ""
+            } else {
+                throw ArcaneError.Validation(
+                    mapOf("fileChanges" to listOf("File content is required for create and update operations.")),
+                )
+            }
+            uploadIndex = files.size
+            files += workspaceMultipartFile(change.relativePath, content)
+        }
+        if (change.operation == ProjectFileChangeOperation.UPDATE_FILE && change.baselineContent != null) {
+            baselineIndex = files.size
+            files += workspaceMultipartFile(change.relativePath, change.baselineContent)
+        }
+        ProjectWorkspaceManifestChange(
+            operation = change.operation,
+            relativePath = change.relativePath,
+            newName = change.newName,
+            newParentPath = change.newParentPath,
+            uploadIndex = uploadIndex,
+            baselineIndex = baselineIndex,
+            recursive = change.recursive,
+        )
+    }
+    return ProjectWorkspaceMultipart(manifestChanges, files)
+}
+
+private fun workspaceMultipartFile(relativePath: String, content: String): MultipartFile = MultipartFile(
+    fieldName = "files",
+    filename = relativePath.substringAfterLast('/').ifEmpty { "file" },
+    content = content.encodeToByteArray(),
+    contentType = "text/plain; charset=utf-8",
+)

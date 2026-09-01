@@ -20,6 +20,7 @@ public data class ContainerRegistry(
     public val createdAt: Instant,
     @Serializable(with = ArcaneInstantSerializer::class)
     public val updatedAt: Instant,
+    public val repositoryNames: List<String> = emptyList(),
 )
 
 /** Request body for creating a container registry. */
@@ -35,6 +36,7 @@ public data class CreateContainerRegistry(
     public val awsAccessKeyId: String? = null,
     public val awsSecretAccessKey: String? = null,
     public val awsRegion: String? = null,
+    public val repositoryNames: List<String>? = null,
 )
 
 /** Request body for updating a container registry. */
@@ -50,6 +52,8 @@ public data class UpdateContainerRegistry(
     public val awsAccessKeyId: String? = null,
     public val awsSecretAccessKey: String? = null,
     public val awsRegion: String? = null,
+    /** Omit to preserve current values; pass an empty list to clear them. */
+    public val repositoryNames: List<String>? = null,
 )
 
 /** Response wrapping pull-usage data for multiple registries. */
@@ -97,6 +101,8 @@ public data class ContainerRegistrySync(
     public val createdAt: Instant,
     @Serializable(with = ArcaneInstantSerializer::class)
     public val updatedAt: Instant,
+    /** Null preserves compatibility with peers that predate repository-name metadata. */
+    public val repositoryNames: List<String>? = null,
 )
 
 /** Request body for syncing a collection of registries. */

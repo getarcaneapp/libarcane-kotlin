@@ -14,6 +14,7 @@ import app.getarcane.sdk.models.template.SaveDefaultTemplates
 import app.getarcane.sdk.models.template.Template
 import app.getarcane.sdk.models.template.TemplateContent
 import app.getarcane.sdk.models.template.TemplateRegistry
+import app.getarcane.sdk.models.template.TemplateSourceFilter
 import app.getarcane.sdk.models.template.UpdateTemplate
 import app.getarcane.sdk.models.template.UpdateTemplateRegistry
 import app.getarcane.sdk.pagination.PaginatedResponse
@@ -32,12 +33,13 @@ public class TemplatesService internal constructor(private val rest: RestService
         start: Int = 0,
         limit: Int = 20,
         type: String? = null,
+        source: TemplateSourceFilter = TemplateSourceFilter.ALL,
     ): PaginatedResponse<Template> {
         val query = buildList {
             search?.let { add("search" to it) }
             sort?.let { add("sort" to it) }
             order?.let { add("order" to it.wire) }
-            type?.let { add("type" to it) }
+            (type ?: source.typeQuery)?.let { add("type" to it) }
         }
         return rest.transport.paginated<Template>("templates", start, limit, query)
     }

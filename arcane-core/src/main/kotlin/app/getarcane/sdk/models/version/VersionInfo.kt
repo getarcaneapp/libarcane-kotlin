@@ -29,6 +29,11 @@ public data class VersionInfo(
     public val supportsPost26MobileFeatures: Boolean
         get() = isSemverVersion &&
             currentVersion.toSemanticVersion()?.let { it >= POST_26_VERSION } == true
+
+    /** Whether project create/workspace uses the multipart contract introduced in Arcane 2.8.0. */
+    public val supportsProjectWorkspaceContract: Boolean
+        get() = isSemverVersion &&
+            currentVersion.toSemanticVersion()?.let { it >= PROJECT_WORKSPACE_VERSION } == true
 }
 
 private data class SemanticVersion(
@@ -41,6 +46,7 @@ private data class SemanticVersion(
 }
 
 private val POST_26_VERSION = SemanticVersion(major = 2, minor = 7, patch = 0)
+private val PROJECT_WORKSPACE_VERSION = SemanticVersion(major = 2, minor = 8, patch = 0)
 
 private fun String.toSemanticVersion(): SemanticVersion? {
     val normalized = trim().removePrefix("v").substringBefore('+').substringBefore('-')

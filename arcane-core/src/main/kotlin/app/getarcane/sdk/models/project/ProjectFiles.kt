@@ -17,6 +17,33 @@ public data class ProjectFile(
     public val modTime: Instant? = null,
     public val protected: Boolean? = null,
     public val content: String? = null,
+    public val mode: String? = null,
+    public val linkTarget: String? = null,
+    public val isSymlink: Boolean = false,
+    public val editable: Boolean = false,
+    public val readOnlyReason: String? = null,
+)
+
+/** The current project workspace file tree and its optimistic-concurrency revision. */
+@Serializable
+public data class ProjectWorkspace(
+    public val files: List<ProjectFile>,
+    public val fileTreeRevision: String,
+    public val fileTreeTruncated: Boolean = false,
+    public val activityId: String? = null,
+)
+
+/** Text content and editability metadata for one project workspace file. */
+@Serializable
+public data class ProjectWorkspaceFileContent(
+    public val path: String,
+    public val relativePath: String,
+    public val name: String,
+    public val content: String? = null,
+    public val mimeType: String,
+    public val size: Long = 0,
+    public val editable: Boolean = false,
+    public val readOnlyReason: String? = null,
 )
 
 /** A file or directory staged while creating a project. */
@@ -58,4 +85,28 @@ public data class ProjectFileChange(
     public val newParentPath: String? = null,
     public val content: String? = null,
     public val recursive: Boolean? = null,
+    /** Original content used to reject a concurrent edit to an updated file. */
+    public val baselineContent: String? = null,
+)
+
+@Serializable
+internal data class ProjectWorkspaceUpdateManifest(
+    val fileTreeRevision: String,
+    val fileChanges: List<ProjectWorkspaceManifestChange>,
+)
+
+@Serializable
+internal data class CreateProjectWorkspaceManifest(
+    val fileChanges: List<ProjectWorkspaceManifestChange>,
+)
+
+@Serializable
+internal data class ProjectWorkspaceManifestChange(
+    val operation: ProjectFileChangeOperation,
+    val relativePath: String,
+    val newName: String? = null,
+    val newParentPath: String? = null,
+    val uploadIndex: Int? = null,
+    val baselineIndex: Int? = null,
+    val recursive: Boolean? = null,
 )

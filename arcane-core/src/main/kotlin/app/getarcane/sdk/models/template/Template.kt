@@ -5,6 +5,14 @@ import app.getarcane.sdk.models.meta.TemplateMetadata
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/** Source of templates returned by the merged local and remote template list. */
+@Serializable
+public enum class TemplateSourceFilter(public val typeQuery: String?) {
+    ALL(null),
+    LOCAL("false"),
+    REMOTE("true"),
+}
+
 /** A compose template. */
 @Serializable
 public data class Template(
