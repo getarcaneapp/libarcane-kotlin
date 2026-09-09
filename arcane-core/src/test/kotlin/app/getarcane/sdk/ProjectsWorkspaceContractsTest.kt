@@ -32,6 +32,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -381,6 +382,52 @@ class ProjectsWorkspaceContractsTest {
             ),
         ).jsonObject
         assertEquals("team/app", sync["repositoryNames"]?.jsonArray?.single()?.jsonPrimitive?.content)
+    }
+
+    @Test
+    fun registryServiceIncludesEveryHumaRequiredWireField() = runTest {
+        val recorded = mutableListOf<HttpRequestData>()
+        val response = """{"success":true,"data":${registryJson()}}"""
+        val engine = MockEngine { request ->
+            recorded += request
+            respond(response, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json"))
+        }
+
+        ArcaneClient(ArcaneConfiguration(baseUrl = "https://test.local", engine = engine)).use { client ->
+            client.registries.create(
+                CreateContainerRegistry(
+                    url = "ghcr.io",
+                    username = "user",
+                    token = "secret",
+                    description = "GitHub",
+                    registryType = "generic",
+                    repositoryNames = emptyList(),
+                ),
+            )
+            client.registries.update(
+                "r",
+                UpdateContainerRegistry(url = "ghcr.io", description = "GitHub Container Registry"),
+            )
+        }
+
+        val create = json.parseToJsonElement(renderBody(recorded[0])).jsonObject
+        assertEquals(
+            setOf(
+                "url", "username", "token", "description", "insecure", "enabled", "registryType",
+                "repositoryNames", "awsAccessKeyId", "awsSecretAccessKey", "awsRegion",
+            ),
+            create.keys,
+        )
+        assertEquals(JsonNull, create["insecure"])
+        assertEquals(JsonNull, create["enabled"])
+        assertEquals("", create["awsSecretAccessKey"]?.jsonPrimitive?.content)
+
+        val update = json.parseToJsonElement(renderBody(recorded[1])).jsonObject
+        assertEquals(create.keys, update.keys)
+        assertEquals(JsonNull, update["username"])
+        assertEquals(JsonNull, update["token"])
+        assertEquals(JsonNull, update["awsSecretAccessKey"])
+        assertEquals(JsonNull, update["repositoryNames"])
     }
 
     @Test

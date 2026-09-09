@@ -9,6 +9,11 @@ import app.getarcane.sdk.models.containerregistry.ContainerRegistrySyncRequest
 import app.getarcane.sdk.models.containerregistry.CreateContainerRegistry
 import app.getarcane.sdk.models.containerregistry.UpdateContainerRegistry
 import app.getarcane.sdk.pagination.PaginatedResponse
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 /** Manages container image registry configurations. */
 public class ContainerRegistriesService internal constructor(private val rest: RestService) {
@@ -33,11 +38,11 @@ public class ContainerRegistriesService internal constructor(private val rest: R
 
     /** Create a new container registry. */
     public suspend fun create(body: CreateContainerRegistry): ContainerRegistry =
-        rest.post("container-registries", body = body)
+        rest.post("container-registries", body = body.toRequiredWireBody().toString())
 
     /** Update an existing container registry. */
     public suspend fun update(id: String, body: UpdateContainerRegistry): ContainerRegistry =
-        rest.put("container-registries/$id", body = body)
+        rest.put("container-registries/$id", body = body.toRequiredWireBody().toString())
 
     /** Delete a container registry. */
     public suspend fun delete(id: String) {
@@ -57,4 +62,41 @@ public class ContainerRegistriesService internal constructor(private val rest: R
     /** Get pull-usage and rate-limit visibility for configured registries. */
     public suspend fun pullUsage(): ContainerRegistryPullUsageResponse =
         rest.get("container-registries/pull-usage")
+}
+
+/*
+ * Arcane's Huma request schema currently marks every registry request property as required,
+ * including nullable update fields. ArcaneJson intentionally omits nulls for the rest of the
+ * SDK, so construct these two request bodies explicitly and retain nulls on the wire.
+ */
+private fun CreateContainerRegistry.toRequiredWireBody(): JsonObject = buildJsonObject {
+    put("url", url)
+    put("username", username ?: "")
+    put("token", token ?: "")
+    put("description", description?.let(::JsonPrimitive) ?: JsonNull)
+    put("insecure", insecure?.let(::JsonPrimitive) ?: JsonNull)
+    put("enabled", enabled?.let(::JsonPrimitive) ?: JsonNull)
+    put("registryType", registryType ?: "")
+    put("repositoryNames", repositoryNames?.let { values ->
+        kotlinx.serialization.json.JsonArray(values.map(::JsonPrimitive))
+    } ?: JsonNull)
+    put("awsAccessKeyId", awsAccessKeyId ?: "")
+    put("awsSecretAccessKey", awsSecretAccessKey ?: "")
+    put("awsRegion", awsRegion ?: "")
+}
+
+private fun UpdateContainerRegistry.toRequiredWireBody(): JsonObject = buildJsonObject {
+    put("url", url?.let(::JsonPrimitive) ?: JsonNull)
+    put("username", username?.let(::JsonPrimitive) ?: JsonNull)
+    put("token", token?.let(::JsonPrimitive) ?: JsonNull)
+    put("description", description?.let(::JsonPrimitive) ?: JsonNull)
+    put("insecure", insecure?.let(::JsonPrimitive) ?: JsonNull)
+    put("enabled", enabled?.let(::JsonPrimitive) ?: JsonNull)
+    put("registryType", registryType?.let(::JsonPrimitive) ?: JsonNull)
+    put("repositoryNames", repositoryNames?.let { values ->
+        kotlinx.serialization.json.JsonArray(values.map(::JsonPrimitive))
+    } ?: JsonNull)
+    put("awsAccessKeyId", awsAccessKeyId?.let(::JsonPrimitive) ?: JsonNull)
+    put("awsSecretAccessKey", awsSecretAccessKey?.let(::JsonPrimitive) ?: JsonNull)
+    put("awsRegion", awsRegion?.let(::JsonPrimitive) ?: JsonNull)
 }

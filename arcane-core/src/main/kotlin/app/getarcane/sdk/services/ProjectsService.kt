@@ -107,6 +107,7 @@ public class ProjectsService internal constructor(private val rest: RestService)
         )
 
     /** Get the current editable project workspace tree. */
+    @Suppress("DEPRECATION") // Intentional compatibility fallback for pre-workspace Arcane servers.
     public suspend fun workspace(envId: EnvironmentId? = null, projectId: String): ProjectWorkspace =
         try {
             rest.get(rest.environmentPath(envId, "projects/$projectId/workspace"))
@@ -124,6 +125,7 @@ public class ProjectsService internal constructor(private val rest: RestService)
         }
 
     /** Get text content and editability metadata for one project workspace file. */
+    @Suppress("DEPRECATION") // Intentional compatibility fallback for pre-workspace Arcane servers.
     public suspend fun workspaceFile(
         envId: EnvironmentId? = null,
         projectId: String,
