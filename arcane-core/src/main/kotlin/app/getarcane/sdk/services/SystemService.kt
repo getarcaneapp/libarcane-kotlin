@@ -13,6 +13,7 @@ import app.getarcane.sdk.models.system.PruneAllResult
 import app.getarcane.sdk.models.system.SystemContainerActionResult
 import app.getarcane.sdk.models.system.SystemStats
 import app.getarcane.sdk.models.system.UpgradeCheckResult
+import app.getarcane.sdk.models.system.TriggerUpgradeResult
 import app.getarcane.sdk.streaming.statsStream
 import kotlinx.coroutines.flow.Flow
 
@@ -96,11 +97,11 @@ public class SystemService internal constructor(private val rest: RestService) {
 
     /**
      * Triggers a system upgrade. Returns once the upgrade has been scheduled (HTTP 202 is normal
-     * here — the server is mid-replacement).
+     * here — the server is mid-replacement). [TriggerUpgradeResult.upToDate] distinguishes an
+     * accepted no-restart pull when the environment already runs the newest image.
      */
-    public suspend fun triggerUpgrade(envId: EnvironmentId? = null) {
-        rest.postVoid(rest.environmentPath(envId, "system/upgrade"))
-    }
+    public suspend fun triggerUpgrade(envId: EnvironmentId? = null): TriggerUpgradeResult =
+        rest.post(rest.environmentPath(envId, "system/upgrade"))
 
     /** Trigger a fleet-wide upgrade of online agents followed by the manager. */
     public suspend fun triggerUpdateAll(envId: EnvironmentId? = null): EnvironmentUpdateJob =

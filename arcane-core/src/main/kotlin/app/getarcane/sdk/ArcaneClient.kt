@@ -20,6 +20,7 @@ import app.getarcane.sdk.services.NetworksService
 import app.getarcane.sdk.services.NotificationsService
 import app.getarcane.sdk.services.OidcRoleMappingsService
 import app.getarcane.sdk.services.PortsService
+import app.getarcane.sdk.services.PasskeysService
 import app.getarcane.sdk.services.ProjectsService
 import app.getarcane.sdk.services.RolesService
 import app.getarcane.sdk.services.SettingsService
@@ -29,6 +30,7 @@ import app.getarcane.sdk.services.TemplatesService
 import app.getarcane.sdk.services.UpdaterService
 import app.getarcane.sdk.services.UsersService
 import app.getarcane.sdk.services.VersionService
+import app.getarcane.sdk.services.VariablesService
 import app.getarcane.sdk.services.VolumesService
 import app.getarcane.sdk.services.VulnerabilitiesService
 import app.getarcane.sdk.services.WebhooksService
@@ -90,6 +92,7 @@ public class ArcaneClient private constructor(
     public val rest: RestService = RestService(transport, configuration.defaultEnvironmentId)
 
     public val auth: AuthService = AuthService(transport, authManager)
+    public val passkeys: PasskeysService = PasskeysService(rest, authManager)
     public val users: UsersService = UsersService(rest)
     public val apiKeys: APIKeysService = APIKeysService(rest)
     public val roles: RolesService = RolesService(rest)
@@ -117,6 +120,7 @@ public class ArcaneClient private constructor(
     public val vulnerabilities: VulnerabilitiesService = VulnerabilitiesService(rest)
     public val ports: PortsService = PortsService(rest)
     public val version: VersionService = VersionService(rest)
+    public val variables: VariablesService = VariablesService(rest)
 
     /** A client view scoped to a different default environment, sharing this client's HTTP + auth. */
     public fun scoped(toEnvironment: EnvironmentId): ArcaneClient =
@@ -167,6 +171,20 @@ internal fun buildHttpClient(
     install(WebSockets)
 
     if (logLevel != LogLevel.NONE) {
-        install(Logging) { level = logLevel }
+        install(Logging) {
+            // Request/response bodies may contain tokens, passwords, WebAuthn challenges,
+            // credentials, or recovery codes. The SDK never emits them through Ktor logging.
+            level = when (logLevel) {
+                LogLevel.ALL, LogLevel.BODY -> LogLevel.HEADERS
+                else -> logLevel
+            }
+            sanitizeHeader { name ->
+                name.equals("Authorization", ignoreCase = true) ||
+                    name.equals("Cookie", ignoreCase = true) ||
+                    name.equals("Set-Cookie", ignoreCase = true) ||
+                    name.equals("X-API-Key", ignoreCase = true) ||
+                    name.equals("X-Step-Up-Token", ignoreCase = true)
+            }
+        }
     }
 }

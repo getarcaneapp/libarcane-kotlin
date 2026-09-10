@@ -64,10 +64,10 @@ public fun <T> ArcaneTransport.statsStream(
             } ?: continue
             try {
                 emit(json.decodeFromString(deserializer, text))
-            } catch (e: SerializationException) {
-                throw ArcaneError.Decoding(e.message ?: e.toString())
-            } catch (e: IllegalArgumentException) {
-                throw ArcaneError.Decoding(e.message ?: e.toString())
+            } catch (_: SerializationException) {
+                throw ArcaneError.Decoding("Response could not be decoded.")
+            } catch (_: IllegalArgumentException) {
+                throw ArcaneError.Decoding("Response could not be decoded.")
             }
         }
     } finally {

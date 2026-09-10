@@ -32,7 +32,13 @@ public class MultipartFile(
     public val filename: String,
     public val content: ByteArray,
     public val contentType: String = "application/octet-stream",
-)
+) {
+    init {
+        require(filename.none(Char::isISOControl)) {
+            "Multipart filename must not contain control characters."
+        }
+    }
+}
 
 internal fun buildMultipart(fields: Map<String, String>, files: List<MultipartFile>): List<PartData> = formData {
     fields.forEach { (key, value) -> append(key, value) }
@@ -42,9 +48,16 @@ internal fun buildMultipart(fields: Map<String, String>, files: List<MultipartFi
             file.content,
             Headers.build {
                 append(HttpHeaders.ContentType, file.contentType)
-                append(HttpHeaders.ContentDisposition, "filename=\"${file.filename}\"")
+                append(HttpHeaders.ContentDisposition, "filename=\"${file.filename.asQuotedHeaderValue()}\"")
             },
         )
+    }
+}
+
+private fun String.asQuotedHeaderValue(): String = buildString(length) {
+    this@asQuotedHeaderValue.forEach { character ->
+        if (character == '\\' || character == '"') append('\\')
+        append(character)
     }
 }
 
@@ -81,10 +94,10 @@ public suspend fun <T> ArcaneTransport.multipartUpload(
         }
         return try {
             json.decodeFromString(ApiResponse.serializer(deserializer), bytes.decodeToString()).data
-        } catch (e: SerializationException) {
-            throw ArcaneError.Decoding(e.message ?: e.toString())
-        } catch (e: IllegalArgumentException) {
-            throw ArcaneError.Decoding(e.message ?: e.toString())
+        } catch (_: SerializationException) {
+            throw ArcaneError.Decoding("Response could not be decoded.")
+        } catch (_: IllegalArgumentException) {
+            throw ArcaneError.Decoding("Response could not be decoded.")
         }
     }
 }

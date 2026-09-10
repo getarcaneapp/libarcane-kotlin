@@ -13,6 +13,13 @@ public data class UpgradeCheckResult(
     public val message: String,
 )
 
+/** Result returned after Arcane accepts a self-upgrade request. */
+@Serializable
+public data class TriggerUpgradeResult(
+    public val message: String,
+    public val upToDate: Boolean = false,
+)
+
 /** Status of a fleet-wide update-all job. */
 @Serializable
 public enum class EnvironmentUpdateJobStatus(public val wire: String) {

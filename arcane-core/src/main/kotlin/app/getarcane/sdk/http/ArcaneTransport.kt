@@ -11,6 +11,7 @@ import io.ktor.client.request.accept
 import io.ktor.client.request.header
 import io.ktor.client.request.request
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
@@ -27,6 +28,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
+import java.io.ByteArrayOutputStream
 import java.nio.file.AtomicMoveNotSupportedException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -55,7 +57,14 @@ public class ArcaneTransport internal constructor(
         query: List<Pair<String, String>> = emptyList(),
         body: Any? = null,
         authorized: Boolean = true,
+        requestHeaders: Map<String, String> = emptyMap(),
     ): ByteArray {
+        require(requestHeaders.keys.all { it.equals("X-Step-Up-Token", ignoreCase = true) }) {
+            "Only the request-scoped step-up header is supported."
+        }
+        require(requestHeaders.values.none { value -> value.any(Char::isISOControl) }) {
+            "The request-scoped step-up header is invalid."
+        }
         var didRefresh = false
         var attempt = 1
         val httpMethod = HttpMethod.parse(method)
@@ -68,6 +77,7 @@ public class ArcaneTransport internal constructor(
                     this.method = httpMethod
                     accept(ContentType.Application.Json)
                     headers.forEach { (key, value) -> header(key, value) }
+                    requestHeaders.forEach { (key, value) -> header(key, value) }
                     if (body != null) {
                         contentType(ContentType.Application.Json)
                         setBody(body)
@@ -120,7 +130,59 @@ public class ArcaneTransport internal constructor(
         query: List<Pair<String, String>> = emptyList(),
         body: Any? = null,
         authorized: Boolean = true,
-    ): String = rawRequestBytes(path, method, query, body, authorized).decodeToString()
+        requestHeaders: Map<String, String> = emptyMap(),
+    ): String = rawRequestBytes(path, method, query, body, authorized, requestHeaders).decodeToString()
+
+    /**
+     * Reads a small unauthenticated resource relative to the configured server origin rather than
+     * the normalized `/api` base. This keeps discovery documents on the client-owned Ktor engine,
+     * including its TLS, proxy, cookie, timeout, and cancellation behavior.
+     */
+    internal suspend fun rawOriginResourceBytes(path: String, maximumResponseBytes: Int): ByteArray {
+        require(path.startsWith('/') && !path.startsWith("//") && '?' !in path && '#' !in path) {
+            "Origin resource path must be absolute and contain no query or fragment."
+        }
+        require(
+            path.trim('/').split('/').all { segment ->
+                segment.isNotEmpty() && segment != "." && segment != ".." &&
+                    '\\' !in segment && segment.none(Char::isISOControl)
+            },
+        ) { "Origin resource path contains an invalid segment." }
+        require(maximumResponseBytes > 0) { "Maximum response size must be positive." }
+        var attempt = 1
+        while (true) {
+            val response = try {
+                httpClient.request(buildOriginUrl(path)) {
+                    method = HttpMethod.Get
+                    accept(ContentType.Application.Json)
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: ArcaneError) {
+                throw e
+            } catch (e: Throwable) {
+                if (attempt < retryPolicy.maxAttempts) {
+                    sleepBeforeRetry(attempt)
+                    attempt += 1
+                    continue
+                }
+                throw ArcaneError.Transport(e.message ?: e.toString())
+            }
+
+            val status = response.status.value
+            if (shouldRetry("GET", status) && attempt < retryPolicy.maxAttempts) {
+                response.bodyAsChannel().cancel(null)
+                sleepBeforeRetry(attempt)
+                attempt += 1
+                continue
+            }
+            val bytes = readCapped(response, maximumResponseBytes)
+            if (!response.status.isSuccess()) {
+                throw ArcaneError.fromResponse(status, bytes.decodeToString(), response.headers, json)
+            }
+            return bytes
+        }
+    }
 
     /** Raw bytes of a GET response (binary downloads: mTLS bundles, backups, file contents). */
     public suspend fun downloadRaw(
@@ -231,6 +293,29 @@ public class ArcaneTransport internal constructor(
             query.forEach { (key, value) -> parameters.append(key, value) }
         }.build()
 
+    private fun buildOriginUrl(path: String): Url = URLBuilder(baseUrl).apply {
+        parameters.clear()
+        fragment = ""
+        pathSegments = path.trim('/').split('/').filter { it.isNotEmpty() }
+    }.build()
+
+    private suspend fun readCapped(response: HttpResponse, maximumResponseBytes: Int): ByteArray =
+        withContext(Dispatchers.IO) {
+            response.bodyAsChannel().toInputStream().use { input ->
+                val output = ByteArrayOutputStream(minOf(maximumResponseBytes, 4_096))
+                val buffer = ByteArray(minOf(maximumResponseBytes + 1, 8_192))
+                while (true) {
+                    val count = input.read(buffer)
+                    if (count < 0) break
+                    if (output.size() + count > maximumResponseBytes) {
+                        throw ArcaneError.Transport("Response exceeds the configured size limit.")
+                    }
+                    output.write(buffer, 0, count)
+                }
+                output.toByteArray()
+            }
+        }
+
     /** Builds the WebSocket [Url] for [path], rewriting the scheme (https→wss, http→ws). */
     internal fun webSocketUrl(path: String, query: List<Pair<String, String>> = emptyList()): Url =
         URLBuilder(buildUrl(path, query)).apply {
@@ -266,14 +351,15 @@ public suspend inline fun <reified T> ArcaneTransport.request(
     query: List<Pair<String, String>> = emptyList(),
     body: Any? = null,
     authorized: Boolean = true,
+    requestHeaders: Map<String, String> = emptyMap(),
 ): T {
-    val text = rawRequestText(path, method, query, body, authorized)
+    val text = rawRequestText(path, method, query, body, authorized, requestHeaders)
     return try {
         json.decodeFromString<ApiResponse<T>>(text).data
-    } catch (e: SerializationException) {
-        throw ArcaneError.Decoding(e.message ?: e.toString())
-    } catch (e: IllegalArgumentException) {
-        throw ArcaneError.Decoding(e.message ?: e.toString())
+    } catch (_: SerializationException) {
+        throw ArcaneError.Decoding("Response could not be decoded.")
+    } catch (_: IllegalArgumentException) {
+        throw ArcaneError.Decoding("Response could not be decoded.")
     }
 }
 
@@ -284,14 +370,15 @@ public suspend inline fun <reified T> ArcaneTransport.requestDecoded(
     query: List<Pair<String, String>> = emptyList(),
     body: Any? = null,
     authorized: Boolean = true,
+    requestHeaders: Map<String, String> = emptyMap(),
 ): T {
-    val text = rawRequestText(path, method, query, body, authorized)
+    val text = rawRequestText(path, method, query, body, authorized, requestHeaders)
     return try {
         json.decodeFromString<T>(text)
-    } catch (e: SerializationException) {
-        throw ArcaneError.Decoding(e.message ?: e.toString())
-    } catch (e: IllegalArgumentException) {
-        throw ArcaneError.Decoding(e.message ?: e.toString())
+    } catch (_: SerializationException) {
+        throw ArcaneError.Decoding("Response could not be decoded.")
+    } catch (_: IllegalArgumentException) {
+        throw ArcaneError.Decoding("Response could not be decoded.")
     }
 }
 
@@ -306,10 +393,10 @@ public suspend inline fun <reified T> ArcaneTransport.paginated(
     val text = rawRequestText(path, "GET", withPaging, null, authorized = true)
     return try {
         json.decodeFromString<PaginatedResponse<T>>(text)
-    } catch (e: SerializationException) {
-        throw ArcaneError.Decoding(e.message ?: e.toString())
-    } catch (e: IllegalArgumentException) {
-        throw ArcaneError.Decoding(e.message ?: e.toString())
+    } catch (_: SerializationException) {
+        throw ArcaneError.Decoding("Response could not be decoded.")
+    } catch (_: IllegalArgumentException) {
+        throw ArcaneError.Decoding("Response could not be decoded.")
     }
 }
 

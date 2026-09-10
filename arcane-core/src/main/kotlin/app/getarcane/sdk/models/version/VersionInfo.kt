@@ -34,6 +34,11 @@ public data class VersionInfo(
     public val supportsProjectWorkspaceContract: Boolean
         get() = isSemverVersion &&
             currentVersion.toSemanticVersion()?.let { it >= PROJECT_WORKSPACE_VERSION } == true
+
+    /** Whether this environment is at or above the supported Arcane v2 self-upgrade floor. */
+    public val supportsSystemUpgrade: Boolean
+        get() = isSemverVersion &&
+            currentVersion.toSemanticVersion()?.let { it >= SYSTEM_UPGRADE_VERSION } == true
 }
 
 private data class SemanticVersion(
@@ -47,6 +52,7 @@ private data class SemanticVersion(
 
 private val POST_26_VERSION = SemanticVersion(major = 2, minor = 7, patch = 0)
 private val PROJECT_WORKSPACE_VERSION = SemanticVersion(major = 2, minor = 8, patch = 0)
+private val SYSTEM_UPGRADE_VERSION = SemanticVersion(major = 2, minor = 0, patch = 0)
 
 private fun String.toSemanticVersion(): SemanticVersion? {
     val normalized = trim().removePrefix("v").substringBefore('+').substringBefore('-')

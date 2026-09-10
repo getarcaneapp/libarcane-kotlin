@@ -4,6 +4,7 @@ import app.getarcane.sdk.ServerCapabilities
 import app.getarcane.sdk.errors.ArcaneError
 import app.getarcane.sdk.errors.fromResponse
 import app.getarcane.sdk.http.ApiResponse
+import app.getarcane.sdk.models.auth.AuthenticationResult
 import app.getarcane.sdk.models.auth.LoginResponse
 import app.getarcane.sdk.models.auth.RefreshRequest
 import app.getarcane.sdk.models.auth.TokenRefreshResponse
@@ -108,6 +109,17 @@ public class AuthManager internal constructor(
 
     public suspend fun save(loginResponse: LoginResponse) {
         save(TokenPair(loginResponse.token, loginResponse.refreshToken, loginResponse.expiresAt))
+    }
+
+    /** Persists only a fully authenticated result; an MFA challenge leaves existing tokens intact. */
+    public suspend fun save(authenticationResult: AuthenticationResult) {
+        when (authenticationResult) {
+            is AuthenticationResult.Authenticated -> {
+                save(authenticationResult.response)
+                recordCapabilities(authenticationResult.response.user)
+            }
+            is AuthenticationResult.MfaRequired -> Unit
+        }
     }
 
     public suspend fun save(tokens: TokenPair) {
@@ -223,8 +235,8 @@ public class AuthManager internal constructor(
         return try {
             val envelope = json.decodeFromString(ApiResponse.serializer(TokenRefreshResponse.serializer()), bodyText)
             TokenPair(envelope.data.token, envelope.data.refreshToken, envelope.data.expiresAt)
-        } catch (e: Throwable) {
-            throw ArcaneError.Decoding(e.message ?: e.toString())
+        } catch (_: Throwable) {
+            throw ArcaneError.Decoding("Response could not be decoded.")
         }
     }
 

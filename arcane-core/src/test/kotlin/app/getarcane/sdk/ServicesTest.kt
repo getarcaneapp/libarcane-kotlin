@@ -5,11 +5,13 @@ import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.HttpRequestData
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.HttpMethod
 import io.ktor.http.headersOf
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import app.getarcane.sdk.models.user.UpdateProfile
 
 /** Validates a wired service decodes a real response through client -> service -> transport. */
 class ServicesTest {
@@ -91,5 +93,18 @@ class ServicesTest {
         ArcaneClient(ArcaneConfiguration(baseUrl = "https://test.local", engine = engine)).use { client ->
             assertNull(client.users.getAvatar("missing"))
         }
+    }
+
+    @Test
+    fun selfProfileMutationUsesTheAuthenticatedAccountRoute() = runTest {
+        val body = """{"success":true,"data":{"id":"u1","username":"alice","displayName":"Alice A","email":"alice@example.com"}}"""
+        val (client, recorded) = clientReturning(body)
+        client.use {
+            val user = it.auth.updateProfile(UpdateProfile(displayName = "Alice A", email = "alice@example.com"))
+            assertEquals("Alice A", user.displayName)
+        }
+
+        assertEquals(HttpMethod.Put, recorded.single().method)
+        assertEquals("/api/auth/me/profile", recorded.single().url.encodedPath)
     }
 }

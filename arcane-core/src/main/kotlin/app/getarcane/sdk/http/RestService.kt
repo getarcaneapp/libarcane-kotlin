@@ -13,48 +13,63 @@ public class RestService internal constructor(
     public val transport: ArcaneTransport,
     public val defaultEnvironmentId: EnvironmentId,
 ) {
-    public suspend inline fun <reified T> get(path: String, query: List<Pair<String, String>> = emptyList()): T =
-        transport.request(path, "GET", query)
+    public suspend inline fun <reified T> get(
+        path: String,
+        query: List<Pair<String, String>> = emptyList(),
+        requestHeaders: Map<String, String> = emptyMap(),
+    ): T = transport.request(path, "GET", query, requestHeaders = requestHeaders)
 
     public suspend inline fun <reified T> post(
         path: String,
         body: Any? = null,
         query: List<Pair<String, String>> = emptyList(),
-    ): T = transport.request(path, "POST", query, body)
+        requestHeaders: Map<String, String> = emptyMap(),
+    ): T = transport.request(path, "POST", query, body, requestHeaders = requestHeaders)
 
     public suspend inline fun <reified T> put(
         path: String,
         body: Any? = null,
         query: List<Pair<String, String>> = emptyList(),
-    ): T = transport.request(path, "PUT", query, body)
+        requestHeaders: Map<String, String> = emptyMap(),
+    ): T = transport.request(path, "PUT", query, body, requestHeaders = requestHeaders)
 
     public suspend inline fun <reified T> patch(
         path: String,
         body: Any? = null,
         query: List<Pair<String, String>> = emptyList(),
-    ): T = transport.request(path, "PATCH", query, body)
+        requestHeaders: Map<String, String> = emptyMap(),
+    ): T = transport.request(path, "PATCH", query, body, requestHeaders = requestHeaders)
 
-    public suspend inline fun <reified T> delete(path: String, query: List<Pair<String, String>> = emptyList()): T =
-        transport.request(path, "DELETE", query)
+    public suspend inline fun <reified T> delete(
+        path: String,
+        query: List<Pair<String, String>> = emptyList(),
+        requestHeaders: Map<String, String> = emptyMap(),
+    ): T = transport.request(path, "DELETE", query, requestHeaders = requestHeaders)
 
-    public suspend fun deleteVoid(path: String, query: List<Pair<String, String>> = emptyList()) {
-        transport.request<MessageResponse>(path, "DELETE", query)
+    public suspend fun deleteVoid(
+        path: String,
+        query: List<Pair<String, String>> = emptyList(),
+        requestHeaders: Map<String, String> = emptyMap(),
+    ) {
+        transport.request<MessageResponse>(path, "DELETE", query, requestHeaders = requestHeaders)
     }
 
     public suspend fun postVoid(
         path: String,
         body: Any? = null,
         query: List<Pair<String, String>> = emptyList(),
+        requestHeaders: Map<String, String> = emptyMap(),
     ) {
-        transport.request<MessageResponse>(path, "POST", query, body)
+        transport.request<MessageResponse>(path, "POST", query, body, requestHeaders = requestHeaders)
     }
 
     public suspend fun putVoid(
         path: String,
         body: Any? = null,
         query: List<Pair<String, String>> = emptyList(),
+        requestHeaders: Map<String, String> = emptyMap(),
     ) {
-        transport.request<MessageResponse>(path, "PUT", query, body)
+        transport.request<MessageResponse>(path, "PUT", query, body, requestHeaders = requestHeaders)
     }
 
     public suspend inline fun <reified T> paginated(
