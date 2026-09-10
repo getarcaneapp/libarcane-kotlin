@@ -11,6 +11,7 @@ agp = "9.1.1"
 androidxSecurity = "1.1.0-alpha06"
 androidxBrowser = "1.8.0"
 androidxDatastore = "1.1.1"
+androidxCredentials = "1.6.0"
 appauth = "0.11.1"
 
 [libraries]
@@ -38,6 +39,8 @@ junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "androidxSecurity" }
 androidx-browser = { module = "androidx.browser:browser", version.ref = "androidxBrowser" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidxDatastore" }
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "androidxCredentials" }
+androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "androidxCredentials" }
 appauth = { module = "net.openid:appauth", version.ref = "appauth" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 

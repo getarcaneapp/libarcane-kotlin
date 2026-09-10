@@ -14,6 +14,7 @@ import app.getarcane.sdk.models.role.Role
  */
 public val User.isGlobalAdmin: Boolean
     get() {
+        serverIsGlobalAdmin?.let { return it }
         roleAssignments?.let { assignments ->
             if (assignments.any { it.roleId == Role.BuiltIn.ADMIN && it.environmentId == null }) {
                 return true

@@ -2,7 +2,11 @@ package app.getarcane.sdk.models.user
 
 import app.getarcane.sdk.models.role.RoleAssignmentSummary
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -28,6 +32,13 @@ public data class User(
     public val requiresPasswordChange: Boolean = false,
     public val roleAssignments: List<RoleAssignmentSummary>? = null,
     public val permissionsByEnv: Map<String, List<String>>? = null,
+    public val fontSize: Int? = null,
+    public val avatarUrl: String? = null,
+    public val timeFormat: UserTimeFormat? = null,
+    public val lastLogin: String? = null,
+    public val preferences: UserPreferences? = null,
+    @SerialName("isGlobalAdmin")
+    public val serverIsGlobalAdmin: Boolean? = null,
 ) {
     public companion object {
         /** Reserved [permissionsByEnv] key for permissions that apply across every environment. */
@@ -55,6 +66,13 @@ public object UserSerializer : KSerializer<User> {
         val requiresPasswordChange: Boolean = false,
         val roleAssignments: List<RoleAssignmentSummary>? = null,
         val permissionsByEnv: Map<String, List<String>>? = null,
+        val fontSize: Int? = null,
+        val avatarUrl: String? = null,
+        val timeFormat: UserTimeFormat? = null,
+        val lastLogin: String? = null,
+        val preferences: UserPreferences? = null,
+        @SerialName("isGlobalAdmin")
+        val serverIsGlobalAdmin: Boolean? = null,
     )
 
     override val descriptor: SerialDescriptor = Surrogate.serializer().descriptor
@@ -83,6 +101,12 @@ public object UserSerializer : KSerializer<User> {
             requiresPasswordChange = s.requiresPasswordChange,
             roleAssignments = s.roleAssignments,
             permissionsByEnv = s.permissionsByEnv,
+            fontSize = s.fontSize,
+            avatarUrl = s.avatarUrl,
+            timeFormat = s.timeFormat,
+            lastLogin = s.lastLogin,
+            preferences = s.preferences,
+            serverIsGlobalAdmin = s.serverIsGlobalAdmin,
         )
     }
 
@@ -103,6 +127,12 @@ public object UserSerializer : KSerializer<User> {
                 requiresPasswordChange = value.requiresPasswordChange,
                 roleAssignments = value.roleAssignments,
                 permissionsByEnv = value.permissionsByEnv,
+                fontSize = value.fontSize,
+                avatarUrl = value.avatarUrl,
+                timeFormat = value.timeFormat,
+                lastLogin = value.lastLogin,
+                preferences = value.preferences,
+                serverIsGlobalAdmin = value.serverIsGlobalAdmin,
             ),
         )
     }
@@ -120,7 +150,12 @@ public data class CreateUser(
     public val email: String? = null,
     public val roles: List<String>? = null,
     public val locale: String? = null,
-)
+    public val timeFormat: UserTimeFormat? = null,
+) {
+    override fun toString(): String =
+        "CreateUser(username=$username, password=<redacted>, displayName=$displayName, email=$email, " +
+            "roles=$roles, locale=$locale, timeFormat=$timeFormat)"
+}
 
 /** Fields for updating an existing user. */
 @Serializable
@@ -131,4 +166,77 @@ public data class UpdateUser(
     public val roles: List<String>? = null,
     public val locale: String? = null,
     public val password: String? = null,
+    public val timeFormat: UserTimeFormat? = null,
+) {
+    override fun toString(): String =
+        "UpdateUser(username=$username, displayName=$displayName, email=$email, roles=$roles, " +
+            "locale=$locale, password=${if (password == null) "null" else "<redacted>"}, " +
+            "timeFormat=$timeFormat)"
+}
+
+/**
+ * Fields that a signed-in user may change on their own account. This deliberately excludes
+ * administrator-only fields such as username, roles, and password.
+ */
+@Serializable
+public data class UpdateProfile(
+    public val displayName: String? = null,
+    public val email: String? = null,
+    public val locale: String? = null,
+    public val timeFormat: UserTimeFormat? = null,
+    public val fontSize: Int? = null,
+    public val preferences: UserPreferences? = null,
 )
+
+/** Time-display preference accepted by current Arcane user/profile contracts. */
+@Serializable(with = UserTimeFormatSerializer::class)
+public enum class UserTimeFormat(public val wire: String) {
+    @SerialName("auto") AUTO("auto"),
+    @SerialName("12h") TWELVE_HOUR("12h"),
+    @SerialName("24h") TWENTY_FOUR_HOUR("24h"),
+    UNKNOWN("unknown"),
+}
+
+internal object UserTimeFormatSerializer : KSerializer<UserTimeFormat> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("UserTimeFormat", PrimitiveKind.STRING)
+
+    override fun deserialize(decoder: Decoder): UserTimeFormat {
+        val wire = decoder.decodeString()
+        return UserTimeFormat.entries.firstOrNull { it.wire == wire } ?: UserTimeFormat.UNKNOWN
+    }
+
+    override fun serialize(encoder: Encoder, value: UserTimeFormat) {
+        if (value == UserTimeFormat.UNKNOWN) {
+            throw SerializationException("Cannot encode unknown user time format")
+        }
+        encoder.encodeString(value.wire)
+    }
+}
+
+/** Per-user UI preferences emitted by Arcane and accepted by the self-profile route. */
+@Serializable
+public data class UserPreferences(
+    public val themeMode: String? = null,
+    public val applicationTheme: String? = null,
+    public val accentColor: String? = null,
+    public val iconCatalog: String? = null,
+    public val oledMode: Boolean? = null,
+    public val glassEffectsEnabled: Boolean? = null,
+    public val animationsEnabled: Boolean? = null,
+    public val sidebarHoverExpansion: Boolean? = null,
+    public val keyboardShortcutsEnabled: Boolean? = null,
+    public val mobileNavigationMode: String? = null,
+    public val mobileNavigationShowLabels: Boolean? = null,
+    public val defaultLandingPage: String? = null,
+)
+
+/** Image formats accepted by Arcane's self-avatar endpoint. */
+public enum class AvatarImageFormat(
+    public val mediaType: String,
+    public val fileExtension: String,
+) {
+    PNG("image/png", "png"),
+    JPEG("image/jpeg", "jpg"),
+    WEBP("image/webp", "webp"),
+}

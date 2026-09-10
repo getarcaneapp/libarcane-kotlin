@@ -59,6 +59,14 @@ class Post26ContractsTest {
         assertTrue(version("2.8.0").supportsProjectWorkspaceContract)
         assertTrue(version("v2.8.1+build.4").supportsProjectWorkspaceContract)
         assertFalse(version("dev").supportsProjectWorkspaceContract)
+
+        assertFalse(version("1.20.0").supportsSystemUpgrade)
+        assertTrue(version("2.0.0").supportsSystemUpgrade)
+        assertTrue(version("2.7.9").supportsSystemUpgrade)
+        assertTrue(version("2.8.0").supportsSystemUpgrade)
+        assertTrue(version("v2.10.2+build.4").supportsSystemUpgrade)
+        assertFalse(version("dev").supportsSystemUpgrade)
+        assertFalse(version("2.0.0", isSemver = false).supportsSystemUpgrade)
     }
 
     private fun version(currentVersion: String, isSemver: Boolean = true): VersionInfo = VersionInfo(

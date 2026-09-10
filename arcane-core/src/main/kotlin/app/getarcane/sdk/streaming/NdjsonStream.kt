@@ -85,10 +85,10 @@ internal suspend fun <T> FlowCollector<T>.collectNdjson(
         val looksLikeJson = trimmed.startsWith("{") || trimmed.startsWith("[")
         try {
             emit(json.decodeFromString(deserializer, trimmed))
-        } catch (e: SerializationException) {
-            if (looksLikeJson) throw ArcaneError.Decoding(e.message ?: e.toString())
-        } catch (e: IllegalArgumentException) {
-            if (looksLikeJson) throw ArcaneError.Decoding(e.message ?: e.toString())
+        } catch (_: SerializationException) {
+            if (looksLikeJson) throw ArcaneError.Decoding("Response could not be decoded.")
+        } catch (_: IllegalArgumentException) {
+            if (looksLikeJson) throw ArcaneError.Decoding("Response could not be decoded.")
         }
     }
 }

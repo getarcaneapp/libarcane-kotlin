@@ -134,6 +134,14 @@ public object Permission {
         public const val DELETE: String = "templates:delete"
     }
 
+    public object Variables {
+        public const val READ: String = "variables:read"
+        public const val CREATE: String = "variables:create"
+        public const val UPDATE: String = "variables:update"
+        public const val DELETE: String = "variables:delete"
+        public const val SYNC: String = "variables:sync"
+    }
+
     public object GitRepositories {
         public const val LIST: String = "git-repositories:list"
         public const val READ: String = "git-repositories:read"

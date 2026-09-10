@@ -47,7 +47,9 @@ public data class OidcCallbackRequest(
     public val code: String,
     public val state: String,
     public val mobileRedirectUri: String? = null,
-)
+) {
+    override fun toString(): String = "OidcCallbackRequest([REDACTED])"
+}
 
 /** Response returned after a successful OIDC callback, carrying tokens and the user. */
 @Serializable
@@ -58,7 +60,9 @@ public data class OidcCallbackResponse(
     @Serializable(with = ArcaneInstantSerializer::class)
     public val expiresAt: Instant,
     public val user: User,
-)
+) {
+    override fun toString(): String = "OidcCallbackResponse([REDACTED])"
+}
 
 /** Request body for starting the OIDC device authorization flow. */
 @Serializable
@@ -75,13 +79,17 @@ public data class OidcDeviceAuthResponse(
     public val verificationUriComplete: String? = null,
     public val expiresIn: Int,
     public val interval: Int? = null,
-)
+) {
+    override fun toString(): String = "OidcDeviceAuthResponse([REDACTED])"
+}
 
 /** Request body for polling the OIDC device token endpoint. */
 @Serializable
 public data class OidcDeviceTokenRequest(
     public val deviceCode: String,
-)
+) {
+    override fun toString(): String = "OidcDeviceTokenRequest([REDACTED])"
+}
 
 /** Response returned when the OIDC device flow completes, carrying tokens and the user. */
 @Serializable
@@ -92,4 +100,6 @@ public data class OidcDeviceTokenResponse(
     @Serializable(with = ArcaneInstantSerializer::class)
     public val expiresAt: Instant,
     public val user: User,
-)
+) {
+    override fun toString(): String = "OidcDeviceTokenResponse([REDACTED])"
+}

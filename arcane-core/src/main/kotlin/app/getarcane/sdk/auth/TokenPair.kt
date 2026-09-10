@@ -11,4 +11,6 @@ public data class TokenPair(
     public val refreshToken: String,
     @Serializable(with = ArcaneInstantSerializer::class)
     public val expiresAt: Instant,
-)
+) {
+    override fun toString(): String = "TokenPair([REDACTED])"
+}

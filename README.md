@@ -9,7 +9,10 @@ Hand-written Kotlin SDK for the [Arcane](https://github.com/getarcaneapp/arcane)
 Two Gradle modules:
 
 - **`arcane-core`** — pure Kotlin/JVM. Auth, token storage interface, environment scoping, REST helpers, WebSocket + NDJSON streams (as `Flow`s), and per-resource services. Runs on any JVM and is unit-tested with Ktor's `MockEngine` (no device/emulator).
-- **`arcane-android`** — thin Android layer: a Keystore-backed secure `TokenStore` and the OIDC browser flow (Custom Tabs). Apps using only API-key or username/password auth, or providing their own token storage, can depend on `arcane-core` alone.
+- **`arcane-android`** — thin Android layer: a Keystore-backed secure `TokenStore`, OIDC Custom
+  Tabs, and Arcane's same-origin passkey browser bridge backed by Android's credential provider.
+  Apps using only API-key or username/password auth, or providing their own token storage, can
+  depend on `arcane-core` alone.
 
 Concurrency is coroutines-first: blocking calls are `suspend` functions and streams are `Flow`s.
 
@@ -68,6 +71,10 @@ Three paths:
 - **API key** — set `apiKey` on `ArcaneConfiguration`; sent as `X-API-Key` (takes precedence over a bearer token).
 - **Username / password** — `client.auth.login(username, password)`. Tokens are cached and persisted via the configured `TokenStore`; a 401 triggers a single `auth/refresh` (concurrent calls are de-duplicated) and one retry.
 - **OIDC** — on Android, `OidcAuthenticator(client)` drives the Custom Tabs flow (`startSignIn` → app redirect → `completeSignIn`), or the device-code flow (`beginDeviceFlow` / `pollDeviceToken`).
+- **Passkeys / MFA** — `client.passkeys` owns the typed begin/finish, step-up, enrollment, recovery,
+  and mobile-login contracts. On Android, `AndroidPasskeyBrowserBridge(client)` preserves Arcane's
+  required server origin while the browser invokes the platform credential provider. Ceremony JSON
+  stays opaque and is never included in SDK diagnostics.
 
 ### Secure token storage (Android)
 
@@ -108,7 +115,8 @@ Each resource is exposed as a service on `ArcaneClient`:
 
 | Service | Endpoints |
 | --- | --- |
-| `client.auth` | login, logout, refresh, me, password change, OIDC flow |
+| `client.auth` | login, logout, refresh, current-account update/avatar, password change, OIDC flow |
+| `client.passkeys` | passkey login/enrollment, MFA, step-up, recovery, mobile exchange |
 | `client.users` | user CRUD, avatars, role assignments |
 | `client.apiKeys` | API key CRUD |
 | `client.roles` / `client.oidcRoleMappings` | v2 RBAC roles + OIDC mappings |
@@ -124,6 +132,7 @@ Each resource is exposed as a service on `ArcaneClient`:
 | `client.events` | audit events |
 | `client.webhooks` / `client.notifications` | webhook + notification config |
 | `client.templates` / `client.registries` | templates + container registries |
+| `client.variables` | scoped global-variable CRUD and environment sync |
 | `client.gitops` / `client.builds` / `client.jobs` | GitOps, build workspaces, scheduled jobs |
 | `client.settings` / `client.updater` / `client.vulnerabilities` / `client.ports` / `client.version` | misc |
 
