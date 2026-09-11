@@ -12,6 +12,7 @@ import app.getarcane.sdk.models.image.ImageBuildRecord
 import app.getarcane.sdk.models.image.ImageBuildRequest
 import app.getarcane.sdk.models.image.ImageDetailSummary
 import app.getarcane.sdk.models.image.ImageAttestationList
+import app.getarcane.sdk.models.image.ImageHistoryItem
 import app.getarcane.sdk.models.image.ImageListResponse
 import app.getarcane.sdk.models.image.ImageLoadResult
 import app.getarcane.sdk.models.image.ImageProgressEvent
@@ -77,6 +78,13 @@ public class ImagesService internal constructor(private val rest: RestService) {
     /** Inspect a single image by ID. */
     public suspend fun inspect(envId: EnvironmentId? = null, id: String): ImageDetailSummary =
         rest.get(rest.environmentPath(envId, "images/$id"))
+
+    /** Return Docker layer history for an image ID or reference. */
+    public suspend fun history(
+        envId: EnvironmentId? = null,
+        imageId: String,
+    ): List<ImageHistoryItem> =
+        rest.get(rest.environmentPath(envId, "images/$imageId/history"))
 
     /** Return in-toto attestations attached to an image. */
     public suspend fun attestations(
