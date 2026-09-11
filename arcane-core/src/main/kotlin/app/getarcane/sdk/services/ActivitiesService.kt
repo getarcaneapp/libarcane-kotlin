@@ -7,12 +7,15 @@ import app.getarcane.sdk.models.activity.Activity
 import app.getarcane.sdk.models.activity.ActivityDetail
 import app.getarcane.sdk.models.activity.ActivityStatus
 import app.getarcane.sdk.models.activity.ActivityStreamEvent
+import app.getarcane.sdk.models.activity.ActivityStreamEventType
 import app.getarcane.sdk.models.activity.ActivityType
 import app.getarcane.sdk.models.activity.ClearActivityHistoryResult
 import app.getarcane.sdk.models.base.SortOrder
+import app.getarcane.sdk.models.stream.ClientStreamEvent
 import app.getarcane.sdk.pagination.PaginatedResponse
 import app.getarcane.sdk.streaming.ndjsonFlow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.mapNotNull
 
 /** Lists, inspects, streams, cancels, and clears v2 background activities for an environment. */
 public class ActivitiesService internal constructor(private val rest: RestService) {
@@ -46,17 +49,30 @@ public class ActivitiesService internal constructor(private val rest: RestServic
             listOf("limit" to limit.toString()),
         )
 
-    /** Stream activity snapshots and updates as a cold NDJSON [Flow]. */
+    /**
+     * Stream activity snapshots and updates as a cold NDJSON [Flow] through Arcane's multiplexed
+     * client stream. When [envId] is supplied, activity frames are filtered to that source while
+     * connection heartbeats remain visible to the collector.
+     */
     public fun stream(
         envId: EnvironmentId? = null,
         limit: Int = 50,
     ): Flow<ActivityStreamEvent> =
         rest.transport.ndjsonFlow(
-            rest.environmentPath(envId, "activities/stream"),
-            ActivityStreamEvent.serializer(),
+            "stream",
+            ClientStreamEvent.serializer(),
             method = "GET",
-            query = listOf("limit" to limit.toString()),
-        )
+            query = listOf("channels" to "activities", "limit" to limit.toString()),
+        ).mapNotNull { envelope ->
+            envelope.activity?.takeIf { event ->
+                envId == null || event.environmentId == envId.rawValue
+            } ?: envelope.type?.takeIf { it == "heartbeat" }?.let {
+                ActivityStreamEvent(
+                    type = ActivityStreamEventType.HEARTBEAT,
+                    timestamp = envelope.timestamp,
+                )
+            }
+        }
 
     /** Request cancellation of a running or queued activity. */
     public suspend fun cancel(
