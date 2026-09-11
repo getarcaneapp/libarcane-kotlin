@@ -4,6 +4,7 @@ import app.getarcane.sdk.EnvironmentId
 import app.getarcane.sdk.errors.ArcaneError
 import app.getarcane.sdk.http.MultipartFile
 import app.getarcane.sdk.http.RestService
+import app.getarcane.sdk.http.activityBatchHeaders
 import app.getarcane.sdk.http.multipartUpload
 import app.getarcane.sdk.http.paginated
 import app.getarcane.sdk.models.base.SearchPaginationSort
@@ -280,8 +281,9 @@ public class ProjectsService internal constructor(private val rest: RestService)
         envId: EnvironmentId? = null,
         projectId: String,
         options: DeployOptions? = null,
+        activityBatchId: String? = null,
     ) {
-        deployStream(envId, projectId, options).collect()
+        deployStream(envId, projectId, options, activityBatchId).collect()
     }
 
     /** Bring down a project (docker compose down). */
@@ -294,8 +296,9 @@ public class ProjectsService internal constructor(private val rest: RestService)
         envId: EnvironmentId? = null,
         projectId: String,
         options: DeployOptions? = null,
+        activityBatchId: String? = null,
     ) {
-        redeployStream(envId, projectId, options).collect()
+        redeployStream(envId, projectId, options, activityBatchId).collect()
     }
 
     /** Restart all containers in a project. */
@@ -339,8 +342,13 @@ public class ProjectsService internal constructor(private val rest: RestService)
         envId: EnvironmentId? = null,
         projectId: String,
         request: ImagePullRequest? = null,
+        activityBatchId: String? = null,
     ) {
-        rest.postVoid(rest.environmentPath(envId, "projects/$projectId/pull"), body = request)
+        rest.postVoid(
+            rest.environmentPath(envId, "projects/$projectId/pull"),
+            body = request,
+            requestHeaders = activityBatchHeaders(activityBatchId),
+        )
     }
 
     /**
@@ -351,8 +359,13 @@ public class ProjectsService internal constructor(private val rest: RestService)
         envId: EnvironmentId? = null,
         projectId: String,
         request: BuildProjectRequest? = null,
+        activityBatchId: String? = null,
     ) {
-        rest.postVoid(rest.environmentPath(envId, "projects/$projectId/build"), body = request)
+        rest.postVoid(
+            rest.environmentPath(envId, "projects/$projectId/build"),
+            body = request,
+            requestHeaders = activityBatchHeaders(activityBatchId),
+        )
     }
 
     // MARK: - NDJSON progress streams
@@ -362,12 +375,14 @@ public class ProjectsService internal constructor(private val rest: RestService)
         envId: EnvironmentId? = null,
         projectId: String,
         options: DeployOptions? = null,
+        activityBatchId: String? = null,
     ): Flow<PullProgressEvent> =
         rest.transport.ndjsonFlow(
             rest.environmentPath(envId, "projects/$projectId/up"),
             PullProgressEvent.serializer(),
             method = "POST",
             body = options,
+            requestHeaders = activityBatchHeaders(activityBatchId),
         )
 
     /** Tear down a project and stream NDJSON progress events. */
@@ -386,12 +401,14 @@ public class ProjectsService internal constructor(private val rest: RestService)
         envId: EnvironmentId? = null,
         projectId: String,
         options: DeployOptions? = null,
+        activityBatchId: String? = null,
     ): Flow<PullProgressEvent> =
         rest.transport.ndjsonFlow(
             rest.environmentPath(envId, "projects/$projectId/redeploy"),
             PullProgressEvent.serializer(),
             method = "POST",
             body = options,
+            requestHeaders = activityBatchHeaders(activityBatchId),
         )
 
     /** Pull a project's images and stream NDJSON progress events. */
@@ -399,12 +416,14 @@ public class ProjectsService internal constructor(private val rest: RestService)
         envId: EnvironmentId? = null,
         projectId: String,
         request: ImagePullRequest? = null,
+        activityBatchId: String? = null,
     ): Flow<PullProgressEvent> =
         rest.transport.ndjsonFlow(
             rest.environmentPath(envId, "projects/$projectId/pull"),
             PullProgressEvent.serializer(),
             method = "POST",
             body = request,
+            requestHeaders = activityBatchHeaders(activityBatchId),
         )
 
     /** Build a project's images and stream NDJSON progress events. */
@@ -412,12 +431,14 @@ public class ProjectsService internal constructor(private val rest: RestService)
         envId: EnvironmentId? = null,
         projectId: String,
         request: BuildProjectRequest? = null,
+        activityBatchId: String? = null,
     ): Flow<PullProgressEvent> =
         rest.transport.ndjsonFlow(
             rest.environmentPath(envId, "projects/$projectId/build"),
             PullProgressEvent.serializer(),
             method = "POST",
             body = request,
+            requestHeaders = activityBatchHeaders(activityBatchId),
         )
 
     // MARK: - Streaming

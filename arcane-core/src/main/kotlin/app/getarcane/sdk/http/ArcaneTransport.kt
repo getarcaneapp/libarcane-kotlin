@@ -59,12 +59,7 @@ public class ArcaneTransport internal constructor(
         authorized: Boolean = true,
         requestHeaders: Map<String, String> = emptyMap(),
     ): ByteArray {
-        require(requestHeaders.keys.all { it.equals("X-Step-Up-Token", ignoreCase = true) }) {
-            "Only the request-scoped step-up header is supported."
-        }
-        require(requestHeaders.values.none { value -> value.any(Char::isISOControl) }) {
-            "The request-scoped step-up header is invalid."
-        }
+        validateRequestHeaders(requestHeaders)
         var didRefresh = false
         var attempt = 1
         val httpMethod = HttpMethod.parse(method)

@@ -2,6 +2,7 @@ package app.getarcane.sdk.services
 
 import app.getarcane.sdk.EnvironmentId
 import app.getarcane.sdk.http.RestService
+import app.getarcane.sdk.http.activityBatchHeaders
 import app.getarcane.sdk.http.requestDecoded
 import app.getarcane.sdk.models.base.SearchPaginationSort
 import app.getarcane.sdk.models.container.ContainerCreate
@@ -81,8 +82,15 @@ public class ContainersService internal constructor(private val rest: RestServic
         rest.postVoid(rest.environmentPath(envId, "containers/$id/restart"))
     }
 
-    public suspend fun redeploy(envId: EnvironmentId? = null, id: String): ContainerDetails =
-        rest.post(rest.environmentPath(envId, "containers/$id/redeploy"))
+    public suspend fun redeploy(
+        envId: EnvironmentId? = null,
+        id: String,
+        activityBatchId: String? = null,
+    ): ContainerDetails =
+        rest.post(
+            rest.environmentPath(envId, "containers/$id/redeploy"),
+            requestHeaders = activityBatchHeaders(activityBatchId),
+        )
 
     public suspend fun pause(envId: EnvironmentId? = null, id: String) {
         rest.postVoid(rest.environmentPath(envId, "containers/$id/pause"))

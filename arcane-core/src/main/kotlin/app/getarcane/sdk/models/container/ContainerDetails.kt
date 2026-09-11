@@ -22,6 +22,7 @@ public data class ContainerDetails(
     public val iconLightUrl: String? = null,
     public val iconDarkUrl: String? = null,
     public val redeployDisabled: Boolean? = null,
+    public val activityId: String? = null,
 )
 
 /** Paginated container list response. Includes optional groups + status counts. */

@@ -80,6 +80,8 @@ public data class ActivityStartedBy(
 public data class Activity(
     public val id: String,
     public val environmentId: String,
+    /** Client correlation ID supplied through `X-Arcane-Batch-Id`, when available. */
+    public val batchId: String? = null,
     public val sourceEnvironmentId: String? = null,
     public val sourceEnvironmentName: String? = null,
     public val type: ActivityType = ActivityType.UNKNOWN,

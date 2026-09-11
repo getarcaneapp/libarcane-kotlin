@@ -3,6 +3,7 @@ package app.getarcane.sdk.services
 import app.getarcane.sdk.EnvironmentId
 import app.getarcane.sdk.http.MultipartFile
 import app.getarcane.sdk.http.RestService
+import app.getarcane.sdk.http.activityBatchHeaders
 import app.getarcane.sdk.http.multipartUpload
 import app.getarcane.sdk.http.multipartUploadNdjson
 import app.getarcane.sdk.http.paginated
@@ -113,37 +114,57 @@ public class ImagesService internal constructor(private val rest: RestService) {
      * Initiate an image pull and resolve once the server has accepted the request. Use [pullStream]
      * for progress.
      */
-    public suspend fun pull(envId: EnvironmentId? = null, options: ImagePullOptions) {
-        rest.postVoid(rest.environmentPath(envId, "images/pull"), body = options)
+    public suspend fun pull(
+        envId: EnvironmentId? = null,
+        options: ImagePullOptions,
+        activityBatchId: String? = null,
+    ) {
+        rest.postVoid(
+            rest.environmentPath(envId, "images/pull"),
+            body = options,
+            requestHeaders = activityBatchHeaders(activityBatchId),
+        )
     }
 
     /** Initiate an image pull and stream NDJSON progress frames as they arrive. */
     public fun pullStream(
         envId: EnvironmentId? = null,
         options: ImagePullOptions,
+        activityBatchId: String? = null,
     ): Flow<PullProgressEvent> =
         rest.transport.ndjsonFlow(
             rest.environmentPath(envId, "images/pull"),
             PullProgressEvent.serializer(),
             method = "POST",
             body = options,
+            requestHeaders = activityBatchHeaders(activityBatchId),
         )
 
     /** Initiate an image build. Use [buildStream] for progress. */
-    public suspend fun build(envId: EnvironmentId? = null, request: ImageBuildRequest) {
-        rest.postVoid(rest.environmentPath(envId, "images/build"), body = request)
+    public suspend fun build(
+        envId: EnvironmentId? = null,
+        request: ImageBuildRequest,
+        activityBatchId: String? = null,
+    ) {
+        rest.postVoid(
+            rest.environmentPath(envId, "images/build"),
+            body = request,
+            requestHeaders = activityBatchHeaders(activityBatchId),
+        )
     }
 
     /** Initiate an image build and stream NDJSON progress frames as they arrive. */
     public fun buildStream(
         envId: EnvironmentId? = null,
         request: ImageBuildRequest,
+        activityBatchId: String? = null,
     ): Flow<ImageProgressEvent> =
         rest.transport.ndjsonFlow(
             rest.environmentPath(envId, "images/build"),
             ImageProgressEvent.serializer(),
             method = "POST",
             body = request,
+            requestHeaders = activityBatchHeaders(activityBatchId),
         )
 
     // MARK: - Upload

@@ -251,11 +251,16 @@ public data class BuildProjectRequest(
 /** One frame of the streaming pull progress. */
 @Serializable
 public data class PullProgressEvent(
+    public val type: String? = null,
+    public val phase: String? = null,
     public val status: String? = null,
     public val id: String? = null,
     public val progress: String? = null,
     public val progressDetail: Detail? = null,
     public val error: String? = null,
+    public val log: String? = null,
+    public val activityId: String? = null,
+    public val done: Boolean? = null,
     /**
      * Human-readable build/lifecycle output emitted by Docker Compose operations (deploy, build,
      * pull-images). Absent for pure image-pull layer frames.
