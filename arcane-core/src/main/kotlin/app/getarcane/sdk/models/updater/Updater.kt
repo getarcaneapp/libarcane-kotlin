@@ -42,6 +42,7 @@ public data class UpdaterResult(
     public val endTime: String? = null,
     public val duration: String = "",
     public val items: List<UpdaterResourceResult> = emptyList(),
+    public val activityId: String? = null,
 )
 
 /** Live status of the updater. */

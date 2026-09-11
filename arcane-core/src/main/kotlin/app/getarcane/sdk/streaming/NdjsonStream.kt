@@ -3,6 +3,7 @@ package app.getarcane.sdk.streaming
 import app.getarcane.sdk.errors.ArcaneError
 import app.getarcane.sdk.errors.fromResponse
 import app.getarcane.sdk.http.ArcaneTransport
+import app.getarcane.sdk.http.validateRequestHeaders
 import io.ktor.client.request.header
 import io.ktor.client.request.prepareRequest
 import io.ktor.client.request.setBody
@@ -38,7 +39,9 @@ public fun <T> ArcaneTransport.ndjsonFlow(
     method: String = "POST",
     query: List<Pair<String, String>> = emptyList(),
     body: Any? = null,
+    requestHeaders: Map<String, String> = emptyMap(),
 ): Flow<T> = flow {
+    validateRequestHeaders(requestHeaders)
     var didRefresh = false
     while (true) {
         val headers = authManager.authenticationHeaders()
@@ -46,6 +49,7 @@ public fun <T> ArcaneTransport.ndjsonFlow(
             this.method = HttpMethod.parse(method)
             header(HttpHeaders.Accept, NDJSON_ACCEPT)
             headers.forEach { (key, value) -> header(key, value) }
+            requestHeaders.forEach { (key, value) -> header(key, value) }
             if (body != null) {
                 contentType(ContentType.Application.Json)
                 setBody(body)

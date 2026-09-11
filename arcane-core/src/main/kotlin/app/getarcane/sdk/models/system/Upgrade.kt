@@ -57,6 +57,9 @@ public enum class EnvironmentUpdateResultStatus(public val wire: String) {
     @SerialName("skipped_offline")
     SKIPPED_OFFLINE("skipped_offline"),
 
+    @SerialName("skipped_up_to_date")
+    SKIPPED_UP_TO_DATE("skipped_up_to_date"),
+
     @SerialName("failed")
     FAILED("failed"),
 

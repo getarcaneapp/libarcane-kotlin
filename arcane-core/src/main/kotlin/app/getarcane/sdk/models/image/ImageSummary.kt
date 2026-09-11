@@ -70,6 +70,9 @@ public data class ImageProgressEvent(
     public val id: String? = null,
     public val progressDetail: ImageProgressDetail? = null,
     public val error: String? = null,
+    public val log: String? = null,
+    public val activityId: String? = null,
+    public val done: Boolean? = null,
 )
 
 /** Paginated list response for images. */
