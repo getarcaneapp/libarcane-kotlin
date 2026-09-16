@@ -3,7 +3,10 @@ package app.getarcane.sdk.models.network
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Distinguishes network nodes from container nodes. */
+/**
+ * Distinguishes network nodes from container nodes. Unknown wire values coerce to [UNKNOWN]
+ * so newer server node kinds do not make the complete topology response undecodable.
+ */
 @Serializable
 public enum class TopologyNodeType(public val wire: String) {
     @SerialName("network")
@@ -11,6 +14,9 @@ public enum class TopologyNodeType(public val wire: String) {
 
     @SerialName("container")
     CONTAINER("container"),
+
+    @SerialName("unknown")
+    UNKNOWN("unknown"),
 }
 
 /** Additional context shown by the UI. */
@@ -28,7 +34,7 @@ public data class TopologyNodeMetadata(
 public data class TopologyNode(
     public val id: String,
     public val name: String,
-    public val type: TopologyNodeType,
+    public val type: TopologyNodeType = TopologyNodeType.UNKNOWN,
     public val metadata: TopologyNodeMetadata = TopologyNodeMetadata(),
 )
 
