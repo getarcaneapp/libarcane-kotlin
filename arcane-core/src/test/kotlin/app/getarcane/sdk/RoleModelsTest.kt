@@ -211,6 +211,8 @@ class RoleModelsTest {
     @Test
     fun permissionConstants() {
         assertEquals("containers:start", Permission.Containers.START)
+        assertEquals("containers:edit", Permission.Containers.EDIT)
+        assertEquals("images:commit", Permission.Images.COMMIT)
         assertEquals("roles:list", Permission.Roles.LIST)
         assertEquals("git-repositories:sync", Permission.GitRepositories.SYNC)
         assertEquals("*", Permission.SUDO)
