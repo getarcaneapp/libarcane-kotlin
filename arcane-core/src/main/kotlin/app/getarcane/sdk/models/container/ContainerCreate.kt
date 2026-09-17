@@ -22,6 +22,7 @@ public data class PortBindingCreate(
 @Serializable
 public data class HostConfigCreate(
     public val binds: List<String>? = null,
+    public val mounts: List<ContainerMountCreate>? = null,
     public val portBindings: Map<String, List<PortBindingCreate>>? = null,
     public val restartPolicy: ContainerRestartPolicyCreate? = null,
     public val networkMode: String? = null,
@@ -33,12 +34,36 @@ public data class HostConfigCreate(
     public val cpuShares: Long? = null,
     public val readonlyRootfs: Boolean? = null,
     public val publishAllPorts: Boolean? = null,
+    public val capAdd: List<String>? = null,
+    public val capDrop: List<String>? = null,
+)
+
+/** Typed bind or volume mount used by container create/edit. */
+@Serializable
+public data class ContainerMountCreate(
+    public val type: String,
+    public val source: String,
+    public val target: String,
+    public val readOnly: Boolean? = null,
+)
+
+/** Healthcheck durations use seconds in the create/edit API. */
+@Serializable
+public data class ContainerHealthcheckCreate(
+    public val test: List<String>? = null,
+    public val interval: Long? = null,
+    public val timeout: Long? = null,
+    public val startPeriod: Long? = null,
+    public val startInterval: Long? = null,
+    public val retries: Int? = null,
 )
 
 /** Network endpoint settings for container creation. */
 @Serializable
 public data class EndpointSettingsCreate(
     public val aliases: List<String>? = null,
+    public val ipv4Address: String? = null,
+    public val ipv6Address: String? = null,
 )
 
 /** Network configuration for container creation. */
@@ -60,6 +85,7 @@ public data class ContainerCreate(
     public val environment: List<String>? = null,
     public val env: List<String>? = null,
     public val labels: Map<String, String>? = null,
+    public val healthcheck: ContainerHealthcheckCreate? = null,
     public val exposedPorts: Map<String, JsonValue>? = null,
     public val hostConfig: HostConfigCreate? = null,
     public val networkingConfig: NetworkingConfigCreate? = null,
