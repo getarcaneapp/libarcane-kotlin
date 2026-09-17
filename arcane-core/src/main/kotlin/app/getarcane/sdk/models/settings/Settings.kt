@@ -32,6 +32,7 @@ public data class SettingDto(
 @Serializable
 public data class UpdateSettings(
     public val projectsDirectory: String? = null,
+    public val templatesDirectory: String? = null,
     public val followProjectSymlinks: String? = null,
     public val swarmStackSourcesDirectory: String? = null,
     public val diskUsagePath: String? = null,
@@ -42,6 +43,10 @@ public data class UpdateSettings(
     public val dockerClientRefreshInterval: String? = null,
     public val autoInjectEnv: String? = null,
     public val environmentHealthInterval: String? = null,
+    public val eventCleanupInterval: String? = null,
+    public val expiredSessionsCleanupInterval: String? = null,
+    public val activityHistoryRetentionDays: String? = null,
+    public val activityHistoryMaxEntries: String? = null,
     public val dockerPruneMode: String? = null,
     public val defaultDeployPullPolicy: String? = null,
     public val scheduledPruneEnabled: String? = null,
@@ -86,6 +91,8 @@ public data class UpdateSettings(
     public val trivyCpuLimit: String? = null,
     public val trivyMemoryLimitMb: String? = null,
     public val trivyConcurrentScanContainers: String? = null,
+    public val trivyConfig: String? = null,
+    public val trivyIgnore: String? = null,
     public val authOidcConfig: String? = null,
     public val oidcClientId: String? = null,
     public val oidcClientSecret: String? = null,
