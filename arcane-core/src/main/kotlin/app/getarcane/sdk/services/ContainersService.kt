@@ -5,9 +5,15 @@ import app.getarcane.sdk.http.RestService
 import app.getarcane.sdk.http.activityBatchHeaders
 import app.getarcane.sdk.http.requestDecoded
 import app.getarcane.sdk.models.base.SearchPaginationSort
+import app.getarcane.sdk.models.container.ContainerCommitRequest
+import app.getarcane.sdk.models.container.ContainerCommitResult
 import app.getarcane.sdk.models.container.ContainerCreate
 import app.getarcane.sdk.models.container.ContainerCreated
 import app.getarcane.sdk.models.container.ContainerDetails
+import app.getarcane.sdk.models.container.ContainerEdit
+import app.getarcane.sdk.models.container.ContainerEditConfig
+import app.getarcane.sdk.models.container.ContainerGenerateComposeRequest
+import app.getarcane.sdk.models.container.ContainerGenerateComposeResponse
 import app.getarcane.sdk.models.container.ContainerListResponse
 import app.getarcane.sdk.models.container.ContainerStatsPayload
 import app.getarcane.sdk.models.container.ContainerStatusCounts
@@ -58,6 +64,24 @@ public class ContainersService internal constructor(private val rest: RestServic
     public suspend fun create(envId: EnvironmentId? = null, body: ContainerCreate): ContainerCreated =
         rest.post(rest.environmentPath(envId, "containers"), body = body)
 
+    public suspend fun editConfig(envId: EnvironmentId? = null, id: String): ContainerEditConfig =
+        rest.get(rest.environmentPath(envId, "containers/$id/edit-config"))
+
+    public suspend fun edit(envId: EnvironmentId? = null, id: String, body: ContainerEdit): ContainerDetails =
+        rest.post(rest.environmentPath(envId, "containers/$id/edit"), body = body)
+
+    public suspend fun commit(
+        envId: EnvironmentId? = null,
+        id: String,
+        body: ContainerCommitRequest,
+    ): ContainerCommitResult = rest.post(rest.environmentPath(envId, "containers/$id/commit"), body = body)
+
+    public suspend fun generateCompose(
+        envId: EnvironmentId? = null,
+        body: ContainerGenerateComposeRequest,
+    ): ContainerGenerateComposeResponse =
+        rest.post(rest.environmentPath(envId, "containers/generate-compose"), body = body)
+
     public suspend fun delete(
         envId: EnvironmentId? = null,
         id: String,
@@ -102,10 +126,6 @@ public class ContainersService internal constructor(private val rest: RestServic
 
     public suspend fun kill(envId: EnvironmentId? = null, id: String, signal: String = "SIGKILL") {
         rest.postVoid(rest.environmentPath(envId, "containers/$id/kill"), query = listOf("signal" to signal))
-    }
-
-    public suspend fun rename(envId: EnvironmentId? = null, id: String, newName: String) {
-        rest.postVoid(rest.environmentPath(envId, "containers/$id/rename"), query = listOf("name" to newName))
     }
 
     public suspend fun setAutoUpdate(envId: EnvironmentId? = null, id: String, enabled: Boolean) {

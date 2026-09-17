@@ -2,6 +2,9 @@ package app.getarcane.sdk
 
 import app.getarcane.sdk.models.role.OidcRoleMapping
 import app.getarcane.sdk.models.role.OidcRoleMappingSource
+import app.getarcane.sdk.models.role.AccessSurfaceAccessMode
+import app.getarcane.sdk.models.role.AccessSurfaceKind
+import app.getarcane.sdk.models.role.AccessSurfaceScopeMode
 import app.getarcane.sdk.models.role.Permission
 import app.getarcane.sdk.models.role.PermissionResourceScope
 import app.getarcane.sdk.models.role.PermissionsManifest
@@ -10,6 +13,7 @@ import app.getarcane.sdk.models.role.RoleAssignment
 import app.getarcane.sdk.models.role.RoleAssignmentSource
 import app.getarcane.sdk.models.role.SetUserAssignments
 import app.getarcane.sdk.models.role.UserAssignmentInput
+import app.getarcane.sdk.models.user.User
 import app.getarcane.sdk.serialization.ArcaneJson
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -101,16 +105,93 @@ class RoleModelsTest {
             """
             {"resources":[
               {"key":"containers","label":"Containers","scope":"env","actions":[
-                {"key":"start","permission":"containers:start","label":"Start"},
+                {"key":"start","permission":"containers:start","label":"Start","requires":["containers:inspect"]},
                 {"key":"stop","permission":"containers:stop","label":"Stop","description":"Stop a container"}]},
               {"key":"users","label":"Users","scope":"global","actions":[
-                {"key":"list","permission":"users:list","label":"List"}]}]}
+                {"key":"list","permission":"users:list","label":"List"}]}],
+             "presets":[{"key":"viewer","label":"Viewer","permissions":["containers:list"]}],
+             "accessSurfaces":[
+               {"id":"route.containers","kind":"route","label":"Containers","accessMode":"permissions",
+                "matchMode":"any-of","scopeMode":"selected-env-plus-global","permissions":["containers:list"]},
+               {"id":"route.future","kind":"future-kind","label":"Future","accessMode":"future-mode",
+                "matchMode":"all-of","scopeMode":"future-scope"}]}
             """.trimIndent(),
         )
         assertEquals(2, manifest.resources.size)
         assertEquals(PermissionResourceScope.ENV, manifest.resources[0].scopeKind)
         assertEquals(PermissionResourceScope.GLOBAL, manifest.resources[1].scopeKind)
         assertEquals("Stop a container", manifest.resources[0].actions[1].description)
+        assertEquals(listOf("containers:inspect"), manifest.resources[0].actions[0].requires)
+        assertEquals("viewer", manifest.presets.single().key)
+        assertEquals(AccessSurfaceKind.ROUTE, manifest.accessSurfaces[0].kind)
+        assertEquals("future-kind", manifest.accessSurfaces[1].kind.wire)
+        assertEquals("future-mode", manifest.accessSurfaces[1].accessMode.wire)
+    }
+
+    @Test
+    fun missingManifestAdditionsDefaultForOlderServers() {
+        val manifest = json.decodeFromString<PermissionsManifest>("""{"resources":[]}""")
+        assertTrue(manifest.presets.isEmpty())
+        assertTrue(manifest.accessSurfaces.isEmpty())
+    }
+
+    @Test
+    fun permissionSelectionIncludesTransitiveRequirements() {
+        val manifest = json.decodeFromString<PermissionsManifest>(
+            """
+            {"resources":[{"key":"containers","label":"Containers","scope":"env","actions":[
+              {"key":"edit","permission":"containers:edit","label":"Edit","requires":["containers:inspect"]},
+              {"key":"inspect","permission":"containers:inspect","label":"Inspect","requires":["containers:list"]}
+            ]}]}
+            """.trimIndent(),
+        )
+        assertEquals(
+            listOf("containers:edit", "images:list", "containers:inspect", "containers:list"),
+            manifest.normalizePermissionSelection(listOf("containers:edit", "images:list", "containers:edit")),
+        )
+    }
+
+    @Test
+    fun accessSurfaceEvaluationHonorsModesScopesUnknownsAndCycles() {
+        val manifest = json.decodeFromString<PermissionsManifest>(
+            """
+            {"accessSurfaces":[
+              {"id":"selected","kind":"route","accessMode":"permissions","matchMode":"all-of",
+               "scopeMode":"selected-env-plus-global","permissions":["containers:list","containers:inspect"]},
+              {"id":"any-env","kind":"route","accessMode":"permissions","matchMode":"any-of",
+               "scopeMode":"any-effective-scope","permissions":["containers:start"]},
+              {"id":"parent","kind":"landing","accessMode":"any-child","matchMode":"any-of",
+               "scopeMode":"global-only","children":["selected","cycle-a"]},
+              {"id":"cycle-a","kind":"landing","accessMode":"any-child","matchMode":"any-of",
+               "scopeMode":"global-only","children":["cycle-b"]},
+              {"id":"cycle-b","kind":"landing","accessMode":"any-child","matchMode":"any-of",
+               "scopeMode":"global-only","children":["cycle-a"]},
+              {"id":"unknown","kind":"route","accessMode":"future","matchMode":"any-of",
+               "scopeMode":"global-only","permissions":["*"]}
+            ]}
+            """.trimIndent(),
+        )
+        val user = User(
+            id = "u1",
+            username = "restricted",
+            permissionsByEnv = mapOf(
+                "global" to listOf("containers:list"),
+                "env-a" to listOf("containers:inspect"),
+                "env-b" to listOf("containers:start"),
+            ),
+        )
+        assertTrue(manifest.canAccessSurface("selected", user, "env-a"))
+        assertFalse(manifest.canAccessSurface("selected", user, "env-b"))
+        assertTrue(manifest.canAccessSurface("any-env", user, "env-a"))
+        assertTrue(manifest.canAccessSurface("parent", user, "env-a"))
+        assertFalse(manifest.canAccessSurface("cycle-a", user, "env-a"))
+        assertFalse(manifest.canAccessSurface("unknown", user, "env-a"))
+        assertFalse(manifest.canAccessSurface("missing", user, "env-a"))
+        assertEquals(AccessSurfaceAccessMode.PERMISSIONS, manifest.accessSurfaces[0].accessMode)
+        assertEquals(
+            AccessSurfaceScopeMode.SELECTED_ENVIRONMENT_PLUS_GLOBAL,
+            manifest.accessSurfaces[0].scopeMode,
+        )
     }
 
     @Test
@@ -130,6 +211,8 @@ class RoleModelsTest {
     @Test
     fun permissionConstants() {
         assertEquals("containers:start", Permission.Containers.START)
+        assertEquals("containers:edit", Permission.Containers.EDIT)
+        assertEquals("images:commit", Permission.Images.COMMIT)
         assertEquals("roles:list", Permission.Roles.LIST)
         assertEquals("git-repositories:sync", Permission.GitRepositories.SYNC)
         assertEquals("*", Permission.SUDO)
